@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="7" fill="#0F2E22"/>
+  <rect width="32" height="32" rx="7" fill="#3A2A2D"/>
   <clipPath id="h"><rect x="0" y="0" width="32" height="18"/></clipPath>
   <circle cx="16" cy="18" r="7.5" fill="#C9A227" clip-path="url(#h)"/>
-  <rect x="5" y="18" width="22" height="1.6" rx="0.8" fill="#F7F4EC" opacity="0.9"/>
+  <rect x="5" y="18" width="22" height="1.6" rx="0.8" fill="#F6EDE4" opacity="0.9"/>
 </svg>

@@ -128,7 +128,7 @@ export default function HowItWorksPage() {
               "radial-gradient(ellipse 90% 60% at 50% 100%, color-mix(in srgb, var(--gold) 22%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-7 px-5 py-24 text-center text-[#F0EDE2] sm:py-32">
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-7 px-5 py-24 text-center text-[#F3E9DE] sm:py-32">
           <HorizonDraw className="max-w-56 !opacity-60" />
           <Reveal>
             <h2 id="begin-title" className="text-display text-balance">
@@ -144,7 +144,7 @@ export default function HowItWorksPage() {
           <Reveal>
             <BloomButton
               href="/contact?topic=conversation"
-              className="!bg-[#D8B23A] !text-[#0B1512]"
+              className="!bg-[#E3B04B] !text-[#251A1D]"
             >
               {ctaLabels.bookConversation}
             </BloomButton>

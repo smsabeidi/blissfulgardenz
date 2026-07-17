@@ -5,8 +5,8 @@ import type { ReactNode } from "react";
 // (bg-brand), where the theme-following gold-text would fail contrast in dawn.
 export function Eyebrow({ children, tone = "auto" }: { children: ReactNode; tone?: "auto" | "dark" }) {
   return (
-    <p className={`text-meta flex items-center gap-3 ${tone === "dark" ? "text-[#E3C25B]" : "text-gold-text"}`}>
-      <span aria-hidden className={`inline-block h-px w-6 ${tone === "dark" ? "bg-[#D8B23A]" : "bg-gold"}`} />
+    <p className={`text-meta flex items-center gap-3 ${tone === "dark" ? "text-[#EFC66B]" : "text-gold-text"}`}>
+      <span aria-hidden className={`inline-block h-px w-6 ${tone === "dark" ? "bg-[#E3B04B]" : "bg-gold"}`} />
       {children}
     </p>
   );

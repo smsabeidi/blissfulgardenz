@@ -32,7 +32,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       aria-pressed={isDusk}
       aria-label={isDusk ? "Switch to dawn mode" : "Switch to dusk mode"}
-      className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-hairline text-ink transition-colors duration-300 hover:bg-raised ${className}`}
+      className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-current/25 text-current transition-colors duration-300 hover:bg-raised ${className}`}
     >
       <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.5">
         {/* Sun core / moon body */}

@@ -129,7 +129,7 @@ export function TierGrid() {
             className="flex h-full flex-col rounded-[2rem] bg-brand p-1.5 ring-1 ring-gold/60 lg:scale-[1.02]"
             style={{ boxShadow: "0 18px 50px var(--shadow-tint)" }}
           >
-            <p className="py-2.5 text-center text-meta text-[#E3C25B]">Recommended</p>
+            <p className="py-2.5 text-center text-meta text-[#EFC66B]">Recommended</p>
             <div
               className="flex-1 rounded-[calc(2rem-6px)] bg-surface p-8"
               style={{

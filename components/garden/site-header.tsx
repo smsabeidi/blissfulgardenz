@@ -63,8 +63,8 @@ function Flyout({
     return (
       <Link
         href={item.href}
-        className={`group relative px-1 py-2 text-[15px] font-medium text-ink transition-colors hover:text-gold-text ${
-          active ? "text-gold-text" : ""
+        className={`group relative px-1 py-2 text-[15px] font-medium text-current transition-colors hover:text-[color:var(--nav-accent)] ${
+          active ? "text-[color:var(--nav-accent)]" : ""
         }`}
       >
         {item.label}
@@ -83,8 +83,8 @@ function Flyout({
       <Link
         href={item.href}
         aria-expanded={open}
-        className={`group relative flex items-center gap-1 px-1 py-2 text-[15px] font-medium text-ink transition-colors hover:text-gold-text ${
-          active ? "text-gold-text" : ""
+        className={`group relative flex items-center gap-1 px-1 py-2 text-[15px] font-medium text-current transition-colors hover:text-[color:var(--nav-accent)] ${
+          active ? "text-[color:var(--nav-accent)]" : ""
         }`}
       >
         {item.label}
@@ -163,7 +163,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-brand text-[#F0EDE2] lg:hidden"
+      className="fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-brand text-[#F3E9DE] lg:hidden"
       role="dialog"
       aria-modal="true"
       aria-label="Site menu"
@@ -215,7 +215,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
           href={nav.membership.href}
           onClick={onClose}
           style={{ animationDelay: `${itemIndex++ * 60}ms` }}
-          className="animate-rise mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gold px-7 text-[15px] font-medium text-[#0B1512]"
+          className="animate-rise mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gold px-7 text-[15px] font-medium text-[#251A1D]"
         >
           {nav.membership.label}
         </Link>
@@ -250,7 +250,7 @@ export function SiteHeader() {
   const close = useCallback(() => setMenuOpen(false), []);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50">
+    <header className="site-header fixed inset-x-0 top-0 z-50" data-compressed={compressed ? "1" : "0"}>
       {/* The blur lives on this inner bar, never on <header> itself: a
           backdrop-filter ancestor would become the containing block for the
           fixed full-screen mobile menu and squash it into the bar. */}
@@ -272,7 +272,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <Link
             href={nav.membership.href}
-            className="hidden h-10 items-center rounded-full bg-gold px-5 text-[14px] font-medium text-[#0B1512] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none sm:inline-flex"
+            className="hidden h-10 items-center rounded-full bg-gold px-5 text-[14px] font-medium text-[#251A1D] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none sm:inline-flex"
           >
             {nav.membership.label}
           </Link>

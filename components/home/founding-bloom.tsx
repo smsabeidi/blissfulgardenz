@@ -13,17 +13,17 @@ export function FoundingBloom({ context = "home" }: { context?: string }) {
         alt=""
         fill
         sizes="100vw"
-        className="object-cover object-center"
+        className="photo-warm object-cover object-center"
       />
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to bottom, rgba(11,21,18,0.55) 0%, rgba(11,21,18,0.72) 55%, rgba(11,21,18,0.88) 100%)",
+            "linear-gradient(to bottom, rgba(37,26,29,0.55) 0%, rgba(37,26,29,0.72) 55%, rgba(37,26,29,0.88) 100%)",
         }}
       />
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-32 text-center text-[#F0EDE2] sm:py-44">
+      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-32 text-center text-[#F3E9DE] sm:py-44">
         <HorizonDraw className="!opacity-70 max-w-56" />
         <h2 id="founding-title" className="text-display text-balance">
           The Garden opens soon.

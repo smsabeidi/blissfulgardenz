@@ -45,7 +45,7 @@ export default function AboutPage() {
             fill
             priority
             sizes="100vw"
-            className="object-cover"
+            className="photo-warm object-cover"
           />
           {/* Depth floor: the eyebrow sits on this scrim, AA in both themes. */}
           <div
@@ -53,7 +53,7 @@ export default function AboutPage() {
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, rgba(11,21,18,0.78) 0%, rgba(11,21,18,0.30) 42%, rgba(11,21,18,0) 70%)",
+                "linear-gradient(to top, rgba(37,26,29,0.78) 0%, rgba(37,26,29,0.30) 42%, rgba(37,26,29,0) 70%)",
             }}
           />
           <div className="absolute inset-x-0 bottom-0">
@@ -128,18 +128,18 @@ export default function AboutPage() {
           alt=""
           fill
           sizes="100vw"
-          className="object-cover opacity-25 mix-blend-luminosity"
+          className="photo-warm object-cover opacity-25 mix-blend-luminosity"
         />
         <div
           aria-hidden
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(11,21,18,0.50) 0%, rgba(11,21,18,0.66) 55%, rgba(11,21,18,0.82) 100%)",
+              "linear-gradient(to bottom, rgba(37,26,29,0.50) 0%, rgba(37,26,29,0.66) 55%, rgba(37,26,29,0.82) 100%)",
           }}
         />
         <div className="relative mx-auto max-w-7xl px-5 py-24 sm:py-36 lg:px-8">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center text-[#F0EDE2]">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center text-[#F3E9DE]">
             <Reveal>
               <h2 id="walk-title" className="text-display text-balance">
                 Walk with us.
@@ -157,14 +157,14 @@ export default function AboutPage() {
                 </BloomButton>
                 <QuietButton
                   href="/conversations/how-it-works"
-                  className="!border-white/25 !text-[#F0EDE2] hover:!bg-white/10"
+                  className="!border-white/25 !text-[#F3E9DE] hover:!bg-white/10"
                 >
                   {ctaLabels.bookConversation}
                 </QuietButton>
               </div>
             </Reveal>
             <Reveal className="w-full">
-              <div className="mt-4 rounded-2xl border border-white/15 bg-[#0B1512]/30 px-6 py-5 text-left">
+              <div className="mt-4 rounded-2xl border border-white/15 bg-[#251A1D]/30 px-6 py-5 text-left">
                 <p className="text-[14px] leading-relaxed text-white/70">{disclaimer.short}</p>
               </div>
             </Reveal>

@@ -75,7 +75,7 @@ export default function ConversationsPage() {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(11, 21, 18, 0.26) 0%, rgba(11, 21, 18, 0) 45%)",
+                    "linear-gradient(to top, rgba(37, 26, 29, 0.26) 0%, rgba(37, 26, 29, 0) 45%)",
                 }}
               />
             </div>
@@ -168,7 +168,7 @@ export default function ConversationsPage() {
       </section>
 
       {/* 4 · Confidentiality promise */}
-      <section aria-labelledby="confidence-title" className="bg-brand text-[#F0EDE2]">
+      <section aria-labelledby="confidence-title" className="bg-brand text-[#F3E9DE]">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
             <div className="flex flex-col gap-5 lg:col-span-5">

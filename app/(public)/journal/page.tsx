@@ -41,7 +41,7 @@ export default function JournalPage() {
       {/* Featured letter: full-width dusk card */}
       <Reveal className="mt-14">
         <Link href={`/journal/${featured.slug}`} className="group block">
-          <article className="relative grid grid-cols-1 gap-8 overflow-hidden rounded-[2rem] bg-brand p-8 text-[#F0EDE2] sm:p-12 lg:grid-cols-12 lg:items-end">
+          <article className="relative grid grid-cols-1 gap-8 overflow-hidden rounded-[2rem] bg-brand p-8 text-[#F3E9DE] sm:p-12 lg:grid-cols-12 lg:items-end">
             <Image
               src="/images/photos/couple-path.jpg"
               alt=""
@@ -55,12 +55,12 @@ export default function JournalPage() {
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(to top, rgba(11,21,18,0.72) 10%, rgba(11,21,18,0.25) 60%, rgba(11,21,18,0.15) 100%)",
+                  "linear-gradient(to top, rgba(37,26,29,0.72) 10%, rgba(37,26,29,0.25) 60%, rgba(37,26,29,0.15) 100%)",
               }}
             />
             <div className="relative flex flex-col gap-4 lg:col-span-7">
-              <p className="text-meta text-[#E3C25B]">{featured.pillar}</p>
-              <h2 className="text-display text-balance group-hover:underline group-hover:decoration-[#D8B23A] group-hover:underline-offset-8">
+              <p className="text-meta text-[#EFC66B]">{featured.pillar}</p>
+              <h2 className="text-display text-balance group-hover:underline group-hover:decoration-[#E3B04B] group-hover:underline-offset-8">
                 {featured.title}
               </h2>
             </div>
@@ -68,7 +68,7 @@ export default function JournalPage() {
               <p className="text-lede max-w-[52ch] !text-white/80">{featured.excerpt}</p>
               <p className="flex items-center gap-4 text-[14px] text-white/60">
                 {featured.readMinutes} minute read
-                <span className="font-medium text-[#E3C25B]">
+                <span className="font-medium text-[#EFC66B]">
                   Read the letter
                   <span
                     aria-hidden

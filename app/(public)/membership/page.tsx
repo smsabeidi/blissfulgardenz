@@ -45,13 +45,13 @@ function GatePhoto({ className, sizes }: { className: string; sizes: string }) {
         alt=""
         fill
         sizes={sizes}
-        className="object-cover"
+        className="photo-warm object-cover"
       />
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to top, rgba(11,21,18,0.30) 0%, transparent 40%)",
+          background: "linear-gradient(to top, rgba(37,26,29,0.30) 0%, transparent 40%)",
         }}
       />
     </div>
@@ -142,7 +142,7 @@ export default function MembershipPage() {
       <JoinBar />
 
       {/* 4 · Conversations benefit strip */}
-      <section aria-labelledby="conversation-rate-title" className="bg-brand text-[#F0EDE2]">
+      <section aria-labelledby="conversation-rate-title" className="bg-brand text-[#F3E9DE]">
         <div className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
           <div className="grid grid-cols-1 items-end gap-10 lg:grid-cols-12">
             <div className="flex flex-col gap-4 lg:col-span-7">

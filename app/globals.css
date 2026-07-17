@@ -8,45 +8,47 @@
 /* ------------------------------------------------------------------ */
 
 :root {
-  --canvas: #f7f4ec;
-  --surface: #fffdf6;
-  --surface-raised: #fbf7ec;
-  --ink: #1e2b24;
-  --ink-muted: #56675c;
-  --brand: #0f2e22;
-  --gold: #c9a227;
-  --gold-text: #7a5f1b;
-  --sage: #9db4a0;
-  --terracotta: #b85c38;
-  --hairline: rgba(15, 46, 34, 0.16);
-  --shadow-tint: rgba(15, 46, 34, 0.1);
-  --btn-bg: #0f2e22;
-  --btn-ink: #f7f4ec;
-  --error: #a4432d;
-  --success: #2e5d3e;
-  --focus-ring: #7a5f1b;
-  --hero-sky: linear-gradient(to bottom, #f2ead6 0%, #f6e9c9 34%, #ecdba8 62%, #f7f4ec 100%);
+  --canvas: #f1e7df;
+  --surface: #f8f1ea;
+  --surface-raised: #eadcd1;
+  --ink: #4a3733;
+  --ink-muted: #8a7268;
+  --brand: #3a2a2d;
+  --gold: #e3b04b;
+  --gold-text: #82601f;
+  --sage: #c9a99b;
+  --terracotta: #c06b44;
+  --hairline: rgba(74, 55, 51, 0.16);
+  --shadow-tint: rgba(74, 55, 51, 0.12);
+  --btn-bg: #3a2a2d;
+  --btn-ink: #f6ebdd;
+  --error: #b0442c;
+  --success: #6b7f4f;
+  --focus-ring: #82601f;
+  --hero-sky: linear-gradient(to bottom, #4a3136 0%, #5c3d3c 40%, #8a5a48 78%, #c98a54 100%);
+  --sun: radial-gradient(circle at 50% 38%, #fdf6d8 0%, #f8e8b0 42%, #f0d086 72%, #e3b04b 100%);
 }
 
 [data-theme="dusk"] {
-  --canvas: #0b1512;
-  --surface: #10201a;
-  --surface-raised: #152922;
-  --ink: #e9e4d6;
-  --ink-muted: #a7b5a9;
-  --brand: #16382b;
-  --gold: #d8b23a;
-  --gold-text: #e3c25b;
-  --sage: #7e9483;
-  --terracotta: #d08a66;
-  --hairline: rgba(233, 228, 214, 0.16);
+  --canvas: #2a1e21;
+  --surface: #332529;
+  --surface-raised: #3c2c30;
+  --ink: #f0e4d8;
+  --ink-muted: #b39a8d;
+  --brand: #3f2e32;
+  --gold: #efc66b;
+  --gold-text: #efc66b;
+  --sage: #9a7a6f;
+  --terracotta: #d98b5f;
+  --hairline: rgba(240, 228, 216, 0.15);
   --shadow-tint: rgba(0, 0, 0, 0.45);
-  --btn-bg: #d8b23a;
-  --btn-ink: #0b1512;
+  --btn-bg: #efc66b;
+  --btn-ink: #2a1e21;
   --error: #e58a6c;
-  --success: #8fbf9a;
-  --focus-ring: #e3c25b;
-  --hero-sky: linear-gradient(to bottom, #0d1f18 0%, #123227 40%, #1c3a23 68%, #0b1512 100%);
+  --success: #b5c49b;
+  --focus-ring: #efc66b;
+  --hero-sky: linear-gradient(to bottom, #241a1d 0%, #2e2124 45%, #45302f 80%, #5c3d38 100%);
+  --sun: radial-gradient(circle at 50% 38%, #f9edc4 0%, #f2dc9c 45%, #e6bd6a 75%, #cf9a45 100%);
 }
 
 @theme inline {
@@ -83,24 +85,24 @@
 
 .text-display-xl {
   font-family: var(--font-display);
-  font-size: clamp(3.1rem, 1.2rem + 5.8vw, 6rem);
-  line-height: 0.98;
-  letter-spacing: -0.01em;
-  font-weight: 500;
+  font-size: clamp(3.2rem, 1rem + 6.5vw, 7rem);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-weight: 460;
 }
 .text-display {
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 1.2rem + 3.4vw, 3.7rem);
-  line-height: 1.04;
-  letter-spacing: -0.005em;
-  font-weight: 500;
+  font-size: clamp(2.3rem, 1.1rem + 3.6vw, 3.9rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 460;
 }
 .text-display-sm {
   font-family: var(--font-display);
-  font-size: clamp(1.55rem, 1.2rem + 1.1vw, 2rem);
-  line-height: 1.14;
-  letter-spacing: 0;
-  font-weight: 500;
+  font-size: clamp(1.5rem, 1.2rem + 1vw, 1.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  font-weight: 470;
 }
 .text-lede {
   font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem);
@@ -151,7 +153,7 @@ body {
 
 ::selection {
   background: var(--gold);
-  color: #0b1512;
+  color: #2a1e21;
 }
 
 :focus-visible {
@@ -186,7 +188,7 @@ body {
   top: -100%;
   z-index: 100;
   background: var(--brand);
-  color: #f7f4ec;
+  color: #f6ebdd;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
 }
@@ -251,4 +253,23 @@ body {
   line-height: 0.85;
   padding-right: 0.12em;
   color: var(--gold-text);
+}
+
+
+/* Warm grade: pulls the green-garden photographs toward the Golden Hour
+   palette (amber sepia shift). Applied to photos awaiting warm re-shoots. */
+.photo-warm {
+  filter: sepia(0.32) hue-rotate(-12deg) saturate(0.92) brightness(1.02);
+}
+
+
+/* Header color regimes: token ink normally; cream when floating over the
+   dark hero scene (body[data-darkhero], set by the hero) and not compressed. */
+.site-header {
+  color: var(--ink);
+  --nav-accent: var(--gold-text);
+}
+body[data-darkhero="1"] .site-header[data-compressed="0"] {
+  color: #f5ebdd;
+  --nav-accent: #efc66b;
 }

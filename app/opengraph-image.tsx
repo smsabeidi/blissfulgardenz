@@ -17,7 +17,7 @@ export default function OpenGraphImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(to bottom, #F2EAD6 0%, #F6E9C9 40%, #ECDBA8 62%, #F7F4EC 100%)",
+          background: "linear-gradient(to bottom, #F2EAD6 0%, #F6E9C9 40%, #ECDBA8 62%, #F6EDE4 100%)",
           position: "relative",
           fontFamily: "Georgia, serif",
         }}
@@ -57,7 +57,7 @@ export default function OpenGraphImage() {
             gap: 10,
           }}
         >
-          <div style={{ fontSize: 64, color: "#0F2E22", fontWeight: 600, display: "flex" }}>
+          <div style={{ fontSize: 64, color: "#3A2A2D", fontWeight: 600, display: "flex" }}>
             Blissful Gardenz
           </div>
           <div style={{ fontSize: 30, color: "#56675C", fontStyle: "italic", display: "flex" }}>

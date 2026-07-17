@@ -29,7 +29,7 @@ export function NewsletterForm({
           <path d="M4 13c2.5 1.5 4 4 4.5 6C10 14 14 8.5 20 5.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <div>
-          <p className={`text-[15px] font-medium ${tone === "dark" ? "text-[#F0EDE2]" : "text-ink"}`}>{successTitle}</p>
+          <p className={`text-[15px] font-medium ${tone === "dark" ? "text-[#F3E9DE]" : "text-ink"}`}>{successTitle}</p>
           <p className={`text-[14px] ${tone === "dark" ? "text-white/60" : "text-ink-muted"}`}>{successBody}</p>
         </div>
       </div>
@@ -66,7 +66,7 @@ export function NewsletterForm({
           type="submit"
           disabled={isPending}
           className={`group inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[15px] font-medium transition-transform duration-300 active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none ${
-            tone === "dark" ? "bg-[#D8B23A] text-[#0B1512]" : "bg-btn text-btn-ink"
+            tone === "dark" ? "bg-[#E3B04B] text-[#251A1D]" : "bg-btn text-btn-ink"
           }`}
         >
           {isPending ? "Planting..." : buttonLabel}

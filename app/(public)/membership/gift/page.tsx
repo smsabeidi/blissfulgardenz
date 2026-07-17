@@ -58,19 +58,19 @@ export default function GiftPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to top, rgba(11,21,18,0.70) 0%, rgba(11,21,18,0.24) 45%, transparent 70%), linear-gradient(to bottom, rgba(11,21,18,0.30) 0%, transparent 30%)",
+              "linear-gradient(to top, rgba(37,26,29,0.70) 0%, rgba(37,26,29,0.24) 45%, transparent 70%), linear-gradient(to bottom, rgba(37,26,29,0.30) 0%, transparent 30%)",
           }}
         />
         <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end px-5 pb-14 pt-32 lg:px-8">
           <Reveal>
-            <p className="text-meta mb-6 text-[#F4EFDF] [text-shadow:0_1px_12px_rgba(11,21,18,0.5)]">
+            <p className="text-meta mb-6 text-[#F5EBDD] [text-shadow:0_1px_12px_rgba(37,26,29,0.5)]">
               Gift membership
             </p>
           </Reveal>
           <Reveal>
             <h1
               id="gift-title"
-              className="text-display-xl max-w-4xl text-balance text-[#FBF8EE] [text-shadow:0_2px_24px_rgba(11,21,18,0.55)]"
+              className="text-display-xl max-w-4xl text-balance text-[#FBF4EA] [text-shadow:0_2px_24px_rgba(37,26,29,0.55)]"
             >
               The Wedding Gift of Harmony
             </h1>
@@ -141,7 +141,7 @@ export default function GiftPage() {
               "radial-gradient(ellipse 90% 60% at 50% 100%, color-mix(in srgb, var(--gold) 22%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-24 text-center text-[#F0EDE2] sm:py-32">
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-5 py-24 text-center text-[#F3E9DE] sm:py-32">
           <HorizonDraw className="max-w-56 !opacity-60" />
           <h2 id="gift-capture-title" className="text-display text-balance">
             Gifting opens with the platform.

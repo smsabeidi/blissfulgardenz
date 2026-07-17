@@ -1,24 +1,26 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant, Outfit, Newsreader } from "next/font/google";
+import { Bodoni_Moda, Instrument_Sans, Newsreader } from "next/font/google";
 import { brand } from "@/content/site";
 import "./globals.css";
 
-// Typography upgrade (redesign pass): Cormorant carries the luxury display
-// voice (high-fashion contrast serif), Outfit is the modern geometric UI sans,
-// Newsreader reads the long-form. Variables keep the old names so the token
-// sheet and every component pick the new faces up without edits.
-const display = Cormorant({
+// Golden Hour type system (reference-driven: Solare / Saol Display at
+// casadisolare.com and unseen.co). Bodoni Moda is the closest open face to
+// that monumental high-contrast serif (variable weight + optical size + true
+// italics); Instrument Sans stands in for Neue Montreal as the quiet
+// grotesque. Variables keep their historic names so tokens and components
+// pick the swap up without edits.
+const display = Bodoni_Moda({
   variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: "variable",
   style: ["normal", "italic"],
   display: "swap",
 });
 
-const sans = Outfit({
+const sans = Instrument_Sans({
   variable: "--font-inter-tight",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600"],
+  weight: "variable",
   display: "swap",
 });
 
@@ -47,8 +49,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F7F4EC" },
-    { media: "(prefers-color-scheme: dark)", color: "#0B1512" },
+    { media: "(prefers-color-scheme: light)", color: "#F6EDE4" },
+    { media: "(prefers-color-scheme: dark)", color: "#251A1D" },
   ],
 };
 

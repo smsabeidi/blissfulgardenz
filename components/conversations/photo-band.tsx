@@ -14,7 +14,7 @@ const duotoneGround =
   "linear-gradient(140deg, var(--brand) 0%, color-mix(in srgb, var(--brand) 72%, var(--sage)) 58%, color-mix(in srgb, var(--brand) 58%, var(--gold)) 100%)";
 
 const scrimFloor =
-  "linear-gradient(to top, rgba(11, 21, 18, 0.72) 0%, rgba(11, 21, 18, 0.3) 55%, rgba(11, 21, 18, 0.16) 100%)";
+  "linear-gradient(to top, rgba(37, 26, 29, 0.72) 0%, rgba(37, 26, 29, 0.3) 55%, rgba(37, 26, 29, 0.16) 100%)";
 
 export function ConversationPhotoBand({
   titleId,
@@ -40,7 +40,7 @@ export function ConversationPhotoBand({
         <Reveal>
           <div className="flex flex-col gap-3">
             {kicker}
-            <h1 id={titleId} className="text-display max-w-4xl text-balance text-[#F0EDE2]">
+            <h1 id={titleId} className="text-display max-w-4xl text-balance text-[#F3E9DE]">
               {title}
             </h1>
           </div>

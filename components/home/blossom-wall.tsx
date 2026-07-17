@@ -76,7 +76,7 @@ export function BlossomWall() {
               aria-pressed={active === i}
               className={`relative flex h-11 w-11 items-center justify-center rounded-full font-[family-name:var(--font-display)] text-sm ring-2 ring-[var(--canvas)] transition-all duration-300 ${
                 active === i
-                  ? "z-10 scale-110 bg-brand text-[#F0EDE2]"
+                  ? "z-10 scale-110 bg-brand text-[#F3E9DE]"
                   : "bg-[color-mix(in_srgb,var(--sage)_26%,transparent)] text-ink hover:scale-105"
               }`}
             >

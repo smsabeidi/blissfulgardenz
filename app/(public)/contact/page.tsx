@@ -89,7 +89,7 @@ export default async function ContactPage({
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(to top, rgba(11,21,18,0.5) 0%, rgba(11,21,18,0.06) 50%)",
+                  "linear-gradient(to top, rgba(37,26,29,0.5) 0%, rgba(37,26,29,0.06) 50%)",
               }}
             />
           </div>

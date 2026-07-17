@@ -60,7 +60,7 @@ export function BloomButton({
   tone = "auto",
 }: ButtonProps) {
   const palette =
-    tone === "gold" ? "bg-[#D8B23A] text-[#0B1512]" : "bg-btn text-btn-ink";
+    tone === "gold" ? "bg-[#E3B04B] text-[#251A1D]" : "bg-btn text-btn-ink";
   const classes = `group relative inline-flex h-12 items-center justify-center gap-3 whitespace-nowrap rounded-full ${palette} pl-7 ${
     arrow ? "pr-3" : "pr-7"
   } text-[15px] font-medium tracking-[0.01em] transition-transform duration-300 active:scale-[0.98] motion-reduce:transition-none ${className}`;

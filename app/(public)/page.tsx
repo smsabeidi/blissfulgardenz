@@ -203,7 +203,7 @@ export default function HomePage() {
       </section>
 
       {/* 7 · Inner Garden invitation */}
-      <section aria-labelledby="garden-title" className="bg-brand text-[#F0EDE2]">
+      <section aria-labelledby="garden-title" className="bg-brand text-[#F3E9DE]">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
           <div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-2">
             <div className="flex flex-col gap-6">
@@ -227,7 +227,7 @@ export default function HomePage() {
                   <BloomButton href="/membership" tone="gold">{ctaLabels.membership}</BloomButton>
                   <Link
                     href="/membership/gift"
-                    className="text-[15px] font-medium text-[#E3C25B] underline-offset-4 hover:underline"
+                    className="text-[15px] font-medium text-[#EFC66B] underline-offset-4 hover:underline"
                   >
                     Or give it as a wedding gift
                   </Link>
@@ -281,7 +281,7 @@ export default function HomePage() {
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <RevealItem index={0} className="lg:col-span-7">
             <Link href={`/journal/${featured.slug}`} className="group block h-full">
-              <article className="relative flex h-full flex-col justify-between gap-8 overflow-hidden rounded-[2rem] bg-brand p-10 text-[#F0EDE2]">
+              <article className="relative flex h-full flex-col justify-between gap-8 overflow-hidden rounded-[2rem] bg-brand p-10 text-[#F3E9DE]">
                 <Image
                   src="/images/photos/couple-path.jpg"
                   alt=""
@@ -294,12 +294,12 @@ export default function HomePage() {
                   className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(to top, rgba(11,21,18,0.72) 10%, rgba(11,21,18,0.25) 60%, rgba(11,21,18,0.15) 100%)",
+                      "linear-gradient(to top, rgba(37,26,29,0.72) 10%, rgba(37,26,29,0.25) 60%, rgba(37,26,29,0.15) 100%)",
                   }}
                 />
                 <div className="relative flex flex-col gap-4">
-                  <p className="text-meta text-[#E3C25B]">{featured.pillar}</p>
-                  <h3 className="text-display text-balance group-hover:underline group-hover:decoration-[#D8B23A] group-hover:underline-offset-8">
+                  <p className="text-meta text-[#EFC66B]">{featured.pillar}</p>
+                  <h3 className="text-display text-balance group-hover:underline group-hover:decoration-[#E3B04B] group-hover:underline-offset-8">
                     {featured.title}
                   </h3>
                   <p className="text-lede max-w-[52ch] !text-white/80">{featured.excerpt}</p>

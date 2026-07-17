@@ -5,6 +5,33 @@ creative concept) and the project taste skills (design-taste-frontend, high-end-
 gpt-taste, minimalist-ui, imagegen-frontend-web). Where skills conflict with the PRD, the PRD wins
 (it is the contract); where the PRD is silent, the taste skills govern.
 
+
+## GOLDEN HOUR DIRECTION (v3, supersedes all green-palette rules below)
+
+User-directed re-skin referencing casadisolare.com (monumental sun, plum ground, wordmark-scale
+didone with italic accents) and unseen.co (Saol Display + Neue Montreal, dusty blush world,
+dreamy comfort). The deep-green "Living Garden" palette is retired.
+
+**Palette:** dawn canvas #F1E7DF (blush sand), dusk canvas #2A1E21 (plum espresso), ink #4A3733 /
+#F0E4D8, brand anchor #3A2A2D (espresso plum), gold #E3B04B / #EFC66B, gold-text #82601F,
+dusty rose #C9A99B, terracotta #C06B44, butter sun radial (--sun). Both hero skies are plum
+(dawn: plum warming to amber at the horizon; dusk: deeper plum). Success #6B7F4F, error #B0442C.
+
+**Type:** Bodoni Moda variable (display, weight ~460, tracking -0.03 to -0.045em, italic accents
+inside headlines in the same family), Instrument Sans variable (UI/body), Newsreader (long-form).
+
+**Hero:** the monumental sun. An enormous butter radial-gradient sphere resting on the section's
+bottom edge over the plum sky, motto at wordmark scale (clamp to 10.5rem) with "on the" in gold
+italic, CTAs floating ON the sun in plum. Sun rises against scroll (scrub, no pinning). Header
+runs a cream over-dark regime on the hero (body[data-darkhero] + .site-header[data-compressed]).
+
+**Imagery:** warm Mediterranean grade (cream/ochre/terracotta/wheat). chairs.jpg is the warm
+courtyard version; green-library holdovers wear .photo-warm (sepia shift) until re-shot. The
+leaf-macro (gold drop on dark) stays: it matches natively.
+
+Where anything below this section says deep green, sage, ivory, or Fraunces/Cormorant, this
+section wins.
+
 ## Design Read
 
 Reading this as: premium wellness/relationship-enrichment marketing site for a multigenerational

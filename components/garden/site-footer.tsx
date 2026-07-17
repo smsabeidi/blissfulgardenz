@@ -6,13 +6,13 @@ import { NewsletterForm } from "./newsletter-form";
 // Seeds of Harmony capture, motto lockup, quiet credits.
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden bg-[#0B1512] text-[#E9E4D6]">
+    <footer className="relative overflow-hidden bg-[#251A1D] text-[#F0E4D8]">
       {/* Botanical silhouette band along the footer top */}
       <svg
         aria-hidden
         viewBox="0 0 1440 60"
         preserveAspectRatio="none"
-        className="absolute inset-x-0 top-0 h-10 w-full text-[#152922]"
+        className="absolute inset-x-0 top-0 h-10 w-full text-[#33252A]"
       >
         <path
           fill="currentColor"
@@ -29,12 +29,12 @@ export function SiteFooter() {
                     <rect x="0" y="0" width="32" height="17" />
                   </clipPath>
                 </defs>
-                <circle cx="16" cy="17" r="7.5" fill="#D8B23A" clipPath="url(#bg-horizon-clip-footer)" />
-                <rect x="3" y="17" width="26" height="1.4" rx="0.7" fill="#E9E4D6" opacity="0.85" />
+                <circle cx="16" cy="17" r="7.5" fill="#E3B04B" clipPath="url(#bg-horizon-clip-footer)" />
+                <rect x="3" y="17" width="26" height="1.4" rx="0.7" fill="#F0E4D8" opacity="0.85" />
               </svg>
               <span className="font-[family-name:var(--font-display)] text-xl">Blissful Gardenz</span>
             </div>
-            <p className="font-[family-name:var(--font-display)] text-2xl italic text-[#D8B23A]">
+            <p className="font-[family-name:var(--font-display)] text-2xl italic text-[#E3B04B]">
               {brand.motto}
             </p>
             <div className="mt-2 flex flex-col gap-3">
@@ -48,12 +48,12 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:col-span-7">
             {footer.columns.map((col) => (
               <nav key={col.title} aria-label={col.title} className="flex flex-col gap-3">
-                <p className="text-meta text-[#D8B23A]/80">{col.title}</p>
+                <p className="text-meta text-[#E3B04B]/80">{col.title}</p>
                 {col.links.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-[15px] text-white/75 transition-colors hover:text-[#E3C25B]"
+                    className="text-[15px] text-white/75 transition-colors hover:text-[#EFC66B]"
                   >
                     {link.label}
                   </Link>
