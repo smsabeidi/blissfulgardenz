@@ -49,6 +49,124 @@ contexts. No pure #000/#fff anywhere.
   audience, PRD §4). Fluid display scale via clamp(); H1 never exceeds 2-3 lines (wide containers,
   max-w-5xl/6xl).
 
+## Type scale (7 steps, exact values; two parallel builders must produce identical hierarchy)
+
+| Step | Voice | Size | Leading | Tracking | Weight |
+|---|---|---|---|---|---|
+| display-xl (hero H1) | Fraunces | clamp(2.75rem, 1.2rem + 5vw, 5.25rem) | 1.02 | -0.02em | 560 |
+| display (section H2) | Fraunces | clamp(2rem, 1.1rem + 3vw, 3.25rem) | 1.08 | -0.015em | 540 |
+| display-sm (H3, card titles, quotes) | Fraunces | clamp(1.375rem, 1.1rem + 1vw, 1.75rem) | 1.18 | -0.01em | 520 |
+| lede (section intro) | Inter Tight | clamp(1.125rem, 1rem + 0.4vw, 1.3125rem) | 1.55 | 0 | 400 |
+| body | Inter Tight | clamp(1.0625rem, 1rem + 0.2vw, 1.125rem) | 1.65 | 0 | 400 |
+| long-form (Journal/legal prose) | Source Serif 4 | 1.1875rem | 1.75 | 0 | 400, measure 62-68ch |
+| meta / eyebrow | Inter Tight | 0.75rem | 1.4 | 0.18em uppercase | 500 |
+
+Weights pinned in next/font: Fraunces 400-600 (opsz auto, SOFT ~80, WONK 0), Inter Tight
+400/500/600, Source Serif 4 400/600 + italic. Quotes: Fraunces italic at display-sm.
+
+## Full Dawn → Dusk token map (every token, both values; no invented dusk colors)
+
+| Token | Dawn | Dusk |
+|---|---|---|
+| `--canvas` | #F7F4EC | #0B1512 |
+| `--surface` | #FFFDF6 | #10201A |
+| `--surface-raised` | #FBF7EC | #152922 |
+| `--ink` | #1E2B24 | #E9E4D6 |
+| `--ink-muted` | #56675C | #A7B5A9 |
+| `--brand` | #0F2E22 | #16382B |
+| `--gold` (decorative only) | #C9A227 | #D8B23A |
+| `--gold-text` (small text/links, AA) | #7A5F1B | #E3C25B |
+| `--sage` | #9DB4A0 | #7E9483 |
+| `--terracotta` | #B85C38 | #D08A66 |
+| `--hairline` | rgba(15,46,34,.16) | rgba(233,228,214,.16) |
+| `--shadow` | rgba(15,46,34,.10) | rgba(0,0,0,.45) |
+| `--btn-bg` / `--btn-ink` | #0F2E22 / #F7F4EC | #D8B23A / #0B1512 |
+| `--error` / `--error-dusk-safe` | #A4432D | #E58A6C |
+| `--success` | #2E5D3E | #8FBF9A |
+| `--focus-ring` | #7A5F1B | #E3C25B |
+
+Pre-paint theme bootstrap: blocking inline script in <head> sets `data-theme` from
+localStorage → prefers-color-scheme before first paint. No flash, ever.
+
+## Component anatomy (the eight core components, dimensioned)
+
+1. **BloomButton** (primary): 48px height, px-7, rounded-full, `--btn-bg`/`--btn-ink`, label
+   15px Inter Tight 500; trailing 32px circle (bg ivory/15 dawn, soil/15 dusk) holding a thin
+   arrow, flush right with 12px inset; hover: 4-petal SVG glyph scales 0→1 at 35% opacity
+   behind label + arrow circle translates 2px diagonally; active scale(0.98); focus: 2px
+   `--focus-ring` ring, 2px offset. One line, never wraps.
+2. **QuietButton**: same metrics, transparent bg, 1px `--hairline` border, `--ink` label;
+   hover: gold underline draws under label + surface-raised fill.
+3. **PetalCard** (double bezel): outer p-1.5 rounded-[2rem] bg `--surface-raised` ring-1
+   `--hairline`; inner rounded-[calc(2rem-6px)] bg `--surface` p-8 with inset top highlight
+   (1px ivory/60 dawn, ivory/10 dusk); shadow 0 18px 50px `--shadow`.
+4. **Input**: 48px height, rounded-xl, bg `--surface`, 1px `--hairline`; label ABOVE, 13px 500;
+   focus: gold-ink bottom border grows edge-to-edge (240ms) + focus ring; error: border +
+   message below in `--error`, 13px, with thin warning glyph, aria-describedby; success:
+   drawn-check in `--success`. Placeholder never acts as label.
+5. **Eyebrow**: meta step in `--gold-text`, preceded by a 24px 1px gold dash. Max 1 per 3 sections.
+6. **TierColumn**: Bloom is featured: garden-deep outer bezel + gold hairline + "Recommended"
+   small-caps tag, scale(1.02) desktop; mobile: stacked tier cards with "Everything included"
+   disclosure, never a squeezed 11-row table.
+7. **PullQuote**: Fraunces italic display-sm, oversized drawn gold quotation glyph; NO left
+   border, no background track; attribution: name + role in meta step.
+8. **FilterChip**: 36px pill, px-4, 1px hairline; active: `--brand` bg + ivory text (dawn),
+   gold bg + soil text (dusk); count of active filters announced aria-live.
+
+## Horizon Line — mechanical spec (one motif, four roles, never two animating at once)
+
+- **Progress role**: single fixed 1px line directly under the header (z-40), gold at 0.9
+  opacity, width = scroll progress. Always present; suppressed only while the membership
+  sticky join bar is visible (one fixed accessory besides header, max).
+- **Section-draw role**: each major section owns ONE `.horizon-rule` (1px gold at 0.35) that
+  draws scaleX 0→1 (origin left, 600ms, once) on entry. Draws never overlap the hero
+  choreography; staggered so only one line animates at a time.
+- **Nav role**: active link carries a static 1px gold underline; hover draws it left→right 200ms.
+- **Transition role**: on route change the progress line pulses (brief glow) + content
+  crossfades 300ms. No full-screen wipe this phase.
+- Dusk: all roles use `--gold` dusk value. Reduced motion: rules render pre-drawn at 0.35,
+  progress line still tracks scroll (informational), hover underline appears without draw.
+- Hero handoff: the hero's horizon (sun-disc on a 1px gold line at 62% height) is the motif's
+  origin; module 2's section draw continues it.
+
+## Dawn Hero — composition spec
+
+Layers back→front: L1 sky gradient (time-of-day tint target), L2 sun disc + 1px gold horizon
+at 62% viewport height, L3 distant botanical silhouette band (drawn flora SVG, 8% parallax),
+L4 foreground grasses/leaves (SVG, 12% parallax, anchored bottom), L5 content. SSR default
+frame = late-morning gold. Post-hydration: time tint crossfades L1 ONLY (600ms; dawn 5-10h,
+gold 10-16h, amber 16-19h, deep-green dusk 19-5h); layout never shifts. First-visit 1.2s
+choreography (horizon draws → sun rises 12px → headline rises with light), localStorage-gated
+with try/catch; reduced-motion and repeat visits: gentle fade only. Two CTAs max in hero.
+
+## Header & navigation spec
+
+Desktop (≥1024): left interim lockup; center 5 links: About · Conversations · Books ·
+Watch & Listen · Journal (short labels); right: ThemeToggle + gold pill "The Inner Garden" +
+quiet "Sign in". About and Conversations open flyout panels (rounded-2xl surface, 1px hairline,
+fade + 4px rise 200ms, hover + focus open, Esc closes, caret rotates). Below 1024: hamburger →
+full-screen MobileMenu (dusk botanical panel, two-level list with children indented under
+About/Conversations, staggered 60ms reveal, focus-trapped, scroll-locked, active page marked
+with gold underline). Header ≤72px, compresses to frosted bar after 80px scroll.
+
+## Structural anti-slop rulings (binding on the build)
+
+- Text over texture/imagery ALWAYS gets a scrim or duotone depth floor, contrast-verified in
+  both themes.
+- Five Pillars = pillars-on-the-Line: one golden strand crossing the section, five stations
+  that bloom on scroll arrival, Fraunces numerals, text alternating above/below the line,
+  vertical line-walk on mobile. No icon-circle cards.
+- Conversations preview = asymmetric band: Premarital + Marital prominent, Rebuilding entry
+  deliberately smaller, softer, quieter. Never three equal cards.
+- Journal latest = featured-plus-two, not 3-up.
+- Couple Seat sits ABOVE the tier table on /membership (the emotional frame for pricing).
+- Trilogy Shelf is Home's single pinned/scroll-hijack moment (the only one on the page).
+- Max ONE centered section in a row; the mission/founder module is left-asymmetric.
+- Botanical means drawn flora: no abstract blobs, no wavy dividers.
+- Blossom Wall (illustrative stories) never appears on the Rebuilding page. Its section header
+  carries a small-caps sage label: "Member stories · illustrative until launch"; individual
+  cards stay clean.
+
 ## Iconography
 
 `@phosphor-icons/react`, thin/light weight only, one family, standardized. (The PRD's ~30 custom
