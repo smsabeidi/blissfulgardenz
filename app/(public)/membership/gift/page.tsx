@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { NewsletterForm } from "@/components/garden/newsletter-form";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
-import { Eyebrow, SectionHeading } from "@/components/garden/primitives";
+import { SectionHeading } from "@/components/garden/primitives";
 import { QuietButton } from "@/components/garden/buttons";
 import { ctaLabels } from "@/content/site";
 
@@ -36,20 +37,53 @@ const steps = [
 export default function GiftPage() {
   return (
     <>
-      {/* 1 · Emotional opening for the gift-giver */}
+      {/* 1 · Full-bleed bouquet opening: the gift itself, photographed. A wide
+          cinematic crop via fixed-height container; the title sits bottom-left
+          on a rising scrim (the home-hero type idiom). */}
       <section
         aria-labelledby="gift-title"
-        className="mx-auto max-w-7xl px-5 pb-24 pt-40 sm:pb-28 sm:pt-48 lg:px-8"
+        className="relative flex h-[56vh] max-h-[640px] min-h-[420px] flex-col overflow-hidden"
       >
-        <div className="flex max-w-5xl flex-col items-start gap-7">
+        <Image
+          src="/images/photos/bouquet.jpg"
+          alt="A wedding bouquet of garden flowers resting on linen"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        {/* Depth floor: title over photo always sits on a scrim (DESIGN.md) */}
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, rgba(11,21,18,0.70) 0%, rgba(11,21,18,0.24) 45%, transparent 70%), linear-gradient(to bottom, rgba(11,21,18,0.30) 0%, transparent 30%)",
+          }}
+        />
+        <div className="relative z-10 mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end px-5 pb-14 pt-32 lg:px-8">
           <Reveal>
-            <Eyebrow>Gift membership</Eyebrow>
+            <p className="text-meta mb-6 text-[#F4EFDF] [text-shadow:0_1px_12px_rgba(11,21,18,0.5)]">
+              Gift membership
+            </p>
           </Reveal>
           <Reveal>
-            <h1 id="gift-title" className="text-display-xl text-balance">
+            <h1
+              id="gift-title"
+              className="text-display-xl max-w-4xl text-balance text-[#FBF8EE] [text-shadow:0_2px_24px_rgba(11,21,18,0.55)]"
+            >
               The Wedding Gift of Harmony
             </h1>
           </Reveal>
+        </div>
+      </section>
+
+      {/* 1b · The gift-giver lede, on the canvas below the photograph */}
+      <section
+        aria-label="Who the gift is for"
+        className="mx-auto max-w-7xl px-5 pb-24 pt-16 sm:pb-28 sm:pt-20 lg:px-8"
+      >
+        <div className="flex max-w-5xl flex-col items-start gap-7">
           <Reveal>
             <p className="text-lede max-w-[60ch]">
               For parents, mentors, and officiants: a season inside the Inner Garden, given to a

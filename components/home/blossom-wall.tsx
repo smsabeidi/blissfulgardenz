@@ -1,67 +1,105 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { illustrativeStories, storiesLabel } from "@/content/library";
 
-// The Blossom Wall: stories drift gently like petals; motion pauses on hover
-// and disappears entirely under reduced motion. Labeled illustrative at the
-// section level (design ruling D21); cards stay clean.
+// One beautifully typeset story at a time (adapted from 21st.dev "Minimal
+// Testimonial"): Cormorant italic quote with a soft blur/fade crossfade,
+// initials as the selector row (no stock faces, ever), auto-advance that
+// pauses on hover/focus and disables under reduced motion. Illustrative
+// label per design ruling D21.
+
+const ROTATE_MS = 6500;
 
 export function BlossomWall() {
-  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const reduce = useRef(false);
+  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
+
+  useEffect(() => {
+    if (paused || reduce.current) return;
+    timer.current = setInterval(
+      () => setActive((a) => (a + 1) % illustrativeStories.length),
+      ROTATE_MS
+    );
+    return () => {
+      if (timer.current) clearInterval(timer.current);
+    };
+  }, [paused]);
+
+  const select = useCallback((i: number) => {
+    setActive(i);
+    setPaused(true);
+  }, []);
 
   return (
-    <div className="flex flex-col gap-10">
+    <div
+      className="mx-auto flex max-w-3xl flex-col gap-12"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={() => setPaused(false)}
+    >
       <p className="text-meta text-sage">{storiesLabel}</p>
-      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {illustrativeStories.map((story, i) => {
-          const drift = reduce ? 0 : (i % 3) - 1;
-          return (
-            <motion.li
+
+      {/* Quote stage */}
+      <div className="relative min-h-[9.5rem] sm:min-h-[8rem]" aria-live="polite">
+        {illustrativeStories.map((story, i) => (
+          <blockquote
+            key={story.name}
+            aria-hidden={active !== i}
+            className={`absolute inset-0 font-[family-name:var(--font-display)] text-[1.7rem] italic leading-[1.3] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-[2.1rem] ${
+              active === i
+                ? "translate-y-0 opacity-100 blur-0"
+                : "pointer-events-none translate-y-3 opacity-0 blur-sm"
+            }`}
+          >
+            &ldquo;{story.quote}&rdquo;
+          </blockquote>
+        ))}
+      </div>
+
+      {/* Selector row */}
+      <div className="flex items-center gap-6">
+        <div className="flex -space-x-1.5">
+          {illustrativeStories.map((story, i) => (
+            <button
               key={story.name}
-              initial={reduce ? { opacity: 0 } : { opacity: 0, y: 28 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className={`${i === 0 ? "sm:col-span-2 lg:col-span-1" : ""}`}
+              type="button"
+              onClick={() => select(i)}
+              aria-label={`Story from ${story.name}`}
+              aria-pressed={active === i}
+              className={`relative flex h-11 w-11 items-center justify-center rounded-full font-[family-name:var(--font-display)] text-sm ring-2 ring-[var(--canvas)] transition-all duration-300 ${
+                active === i
+                  ? "z-10 scale-110 bg-brand text-[#F0EDE2]"
+                  : "bg-[color-mix(in_srgb,var(--sage)_26%,transparent)] text-ink hover:scale-105"
+              }`}
             >
-              <motion.figure
-                animate={
-                  reduce
-                    ? undefined
-                    : { y: [drift * 3, drift * -3, drift * 3] }
-                }
-                transition={
-                  reduce
-                    ? undefined
-                    : { duration: 9 + i, repeat: Infinity, ease: "easeInOut" }
-                }
-                whileHover={{ y: 0 }}
-                className="flex h-full flex-col justify-between gap-6 rounded-[2rem] bg-raised p-1.5 ring-1 ring-hairline"
-                style={{ boxShadow: "0 18px 50px var(--shadow-tint)" }}
-              >
-                <div className="flex h-full flex-col justify-between gap-6 rounded-[calc(2rem-6px)] bg-surface p-7">
-                  <blockquote className="font-[family-name:var(--font-display)] text-xl italic leading-snug">
-                    &ldquo;{story.quote}&rdquo;
-                  </blockquote>
-                  <figcaption className="flex items-center gap-3">
-                    <span
-                      aria-hidden
-                      className="flex h-9 w-9 items-center justify-center rounded-full bg-[color-mix(in_srgb,var(--terracotta)_16%,transparent)] font-[family-name:var(--font-display)] text-sm text-terracotta"
-                    >
-                      {story.name.charAt(0)}
-                    </span>
-                    <span>
-                      <span className="block text-[15px] font-medium">{story.name}</span>
-                      <span className="block text-[13px] text-ink-muted">{story.stage}</span>
-                    </span>
-                  </figcaption>
-                </div>
-              </motion.figure>
-            </motion.li>
-          );
-        })}
-      </ul>
+              {story.name.charAt(0)}
+            </button>
+          ))}
+        </div>
+        <div aria-hidden className="h-9 w-px bg-hairline" />
+        <div className="relative min-h-[2.75rem] flex-1">
+          {illustrativeStories.map((story, i) => (
+            <div
+              key={story.name}
+              aria-hidden={active !== i}
+              className={`absolute inset-0 flex flex-col justify-center transition-all duration-400 ${
+                active === i ? "translate-x-0 opacity-100" : "pointer-events-none -translate-x-2 opacity-0"
+              }`}
+            >
+              <span className="text-[15px] font-medium">{story.name}</span>
+              <span className="text-[13px] text-ink-muted">{story.stage}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

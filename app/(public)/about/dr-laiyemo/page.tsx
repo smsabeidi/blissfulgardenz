@@ -56,25 +56,33 @@ export default function DrLaiyemoPage() {
       >
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
           <Reveal className="lg:col-span-5">
-            <div className="relative mx-auto max-w-sm overflow-hidden rounded-[2rem] lg:max-w-none">
-              <Image
-                src={brand.founder.portrait}
-                alt="Portrait of Dr. Adeyinka Laiyemo, founder of Blissful Gardenz."
-                width={900}
-                height={1125}
-                sizes="(max-width: 1024px) 90vw, 40vw"
-                className="aspect-[4/5] w-full object-cover"
-                priority
-              />
-              {/* Duotone grade: deep-green multiply below, gold light above. */}
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0 rounded-[2rem]"
-                style={{
-                  background:
-                    "linear-gradient(to top, color-mix(in srgb, var(--brand) 38%, transparent), transparent 55%), linear-gradient(to bottom, color-mix(in srgb, var(--gold) 12%, transparent), transparent 40%)",
-                }}
-              />
+            {/* The portrait in the house double-bezel frame: the PetalCard
+                shell, kept for an image. The real face is this page's only
+                photograph. */}
+            <div
+              className="mx-auto max-w-sm rounded-[2rem] bg-raised p-1.5 ring-1 ring-hairline lg:max-w-none"
+              style={{ boxShadow: "0 18px 50px var(--shadow-tint)" }}
+            >
+              <div className="relative overflow-hidden rounded-[calc(2rem-6px)]">
+                <Image
+                  src={brand.founder.portrait}
+                  alt="Portrait of Dr. Adeyinka Laiyemo, founder of Blissful Gardenz."
+                  width={900}
+                  height={1125}
+                  sizes="(max-width: 1024px) 90vw, 40vw"
+                  className="aspect-[4/5] w-full object-cover"
+                  priority
+                />
+                {/* Duotone grade: deep-green multiply below, gold light above. */}
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, color-mix(in srgb, var(--brand) 38%, transparent), transparent 55%), linear-gradient(to bottom, color-mix(in srgb, var(--gold) 12%, transparent), transparent 40%)",
+                  }}
+                />
+              </div>
             </div>
           </Reveal>
           <div className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">

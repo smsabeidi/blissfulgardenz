@@ -6,6 +6,7 @@ import { TrilogyShelf } from "@/components/home/trilogy-shelf";
 import { BlossomWall } from "@/components/home/blossom-wall";
 import { FoundingBloom } from "@/components/home/founding-bloom";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
+import { WatchCard, PosterFrame } from "@/components/watch/poster";
 import { Eyebrow, SectionHeading, PetalCard } from "@/components/garden/primitives";
 import { BloomButton, QuietButton } from "@/components/garden/buttons";
 import { brand, ctaLabels } from "@/content/site";
@@ -193,45 +194,8 @@ export default function HomePage() {
             aria-label="Coming films"
           >
             {rail.map((video) => (
-              <li key={video.slug} className="w-[300px] shrink-0 snap-start">
-                <Link href={`/watch/${video.slug}`} className="group flex h-full flex-col gap-4">
-                  <div
-                    className="relative flex aspect-video items-end overflow-hidden rounded-3xl p-5"
-                    style={{
-                      background:
-                        "linear-gradient(140deg, var(--brand) 0%, color-mix(in srgb, var(--brand) 70%, var(--sage)) 60%, color-mix(in srgb, var(--brand) 55%, var(--gold)) 100%)",
-                    }}
-                  >
-                    <span
-                      aria-hidden
-                      className="absolute right-4 top-4 rounded-full bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.14em] text-white/80"
-                    >
-                      {video.duration}
-                    </span>
-                    <svg
-                      aria-hidden
-                      viewBox="0 0 64 64"
-                      className="absolute left-5 top-5 h-8 w-8 text-[#E3C25B] opacity-80"
-                    >
-                      <path
-                        d="M32 54V30M32 30c0-10 8-16 16-16 0 10-7 16-16 16zM32 38c0-8-6-12-12-12 0 8 5 12 12 12z"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                    <p className="relative font-[family-name:var(--font-display)] text-xl leading-tight text-[#F0EDE2]">
-                      {video.title}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 text-[13px] text-ink-muted">
-                    <span className="rounded-full bg-[color-mix(in_srgb,var(--sage)_22%,transparent)] px-2.5 py-0.5 font-medium text-ink">
-                      {video.pillar}
-                    </span>
-                    {video.topic}
-                  </div>
-                </Link>
+              <li key={video.slug} className="w-[320px] shrink-0 snap-start">
+                <WatchCard video={video} />
               </li>
             ))}
           </ul>
@@ -272,36 +236,13 @@ export default function HomePage() {
             </div>
             <div className="flex flex-col gap-4">
               {/* Library peek: two tastefully veiled member films + tier snapshot */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {firstSeason
                   .filter((v) => v.locked)
                   .slice(0, 2)
                   .map((video, i) => (
                     <RevealItem key={video.slug} index={i}>
-                      <div
-                        className="relative flex aspect-[4/3] flex-col justify-end overflow-hidden rounded-3xl p-5"
-                        style={{
-                          background:
-                            "linear-gradient(150deg, #152922 0%, #1C3A2E 55%, #24463A 100%)",
-                        }}
-                      >
-                        <div aria-hidden className="absolute inset-0 backdrop-blur-[2px]" />
-                        <span
-                          aria-hidden
-                          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-[#D8B23A]/20 text-[#E3C25B]"
-                        >
-                          <svg viewBox="0 0 16 16" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <rect x="3.5" y="7" width="9" height="6" rx="1.5" />
-                            <path d="M5.5 7V5.5a2.5 2.5 0 0 1 5 0V7" />
-                          </svg>
-                        </span>
-                        <p className="relative font-[family-name:var(--font-display)] text-lg leading-tight text-[#F0EDE2]/90">
-                          {video.title}
-                        </p>
-                        <p className="relative mt-1 text-[12px] uppercase tracking-[0.14em] text-white/50">
-                          Inside the Inner Garden
-                        </p>
-                      </div>
+                      <PosterFrame video={video} />
                     </RevealItem>
                   ))}
               </div>
@@ -340,15 +281,30 @@ export default function HomePage() {
         <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <RevealItem index={0} className="lg:col-span-7">
             <Link href={`/journal/${featured.slug}`} className="group block h-full">
-              <article className="flex h-full flex-col justify-between gap-8 rounded-[2rem] bg-brand p-10 text-[#F0EDE2]">
-                <div className="flex flex-col gap-4">
+              <article className="relative flex h-full flex-col justify-between gap-8 overflow-hidden rounded-[2rem] bg-brand p-10 text-[#F0EDE2]">
+                <Image
+                  src="/images/photos/couple-path.jpg"
+                  alt=""
+                  fill
+                  sizes="(max-width: 1024px) 90vw, 640px"
+                  className="object-cover opacity-40 mix-blend-luminosity transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transition-none"
+                />
+                <div
+                  aria-hidden
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(to top, rgba(11,21,18,0.72) 10%, rgba(11,21,18,0.25) 60%, rgba(11,21,18,0.15) 100%)",
+                  }}
+                />
+                <div className="relative flex flex-col gap-4">
                   <p className="text-meta text-[#E3C25B]">{featured.pillar}</p>
                   <h3 className="text-display text-balance group-hover:underline group-hover:decoration-[#D8B23A] group-hover:underline-offset-8">
                     {featured.title}
                   </h3>
-                  <p className="text-lede max-w-[52ch] !text-white/70">{featured.excerpt}</p>
+                  <p className="text-lede max-w-[52ch] !text-white/80">{featured.excerpt}</p>
                 </div>
-                <p className="text-[14px] text-white/50">{featured.readMinutes} minute read</p>
+                <p className="relative text-[14px] text-white/60">{featured.readMinutes} minute read</p>
               </article>
             </Link>
           </RevealItem>

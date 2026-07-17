@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Reveal, RevealItem } from "@/components/garden/reveal";
 import { Eyebrow } from "@/components/garden/primitives";
@@ -6,9 +7,11 @@ import { articles } from "@/content/library";
 
 // Journal index (PRD §7.7): editorial, not a blog grid. One featured letter as
 // a full-width brand-dark card (same idiom as Home module 9), the remaining
-// letters as an asymmetric pair of bordered rows. FilterChips skipped on
-// purpose: three articles do not need a filter (considered emptiness beats
-// empty controls).
+// letters as an asymmetric pair of bordered rows. Redesign pass: the featured
+// card carries the couple-path photograph as a luminosity-blended duotone
+// backdrop under a scrim (same technique as the Home featured card).
+// FilterChips skipped on purpose: three articles do not need a filter
+// (considered emptiness beats empty controls).
 
 export const metadata: Metadata = {
   title: "Journal",
@@ -38,16 +41,32 @@ export default function JournalPage() {
       {/* Featured letter: full-width dusk card */}
       <Reveal className="mt-14">
         <Link href={`/journal/${featured.slug}`} className="group block">
-          <article className="grid grid-cols-1 gap-8 rounded-[2rem] bg-brand p-8 text-[#F0EDE2] sm:p-12 lg:grid-cols-12 lg:items-end">
-            <div className="flex flex-col gap-4 lg:col-span-7">
+          <article className="relative grid grid-cols-1 gap-8 overflow-hidden rounded-[2rem] bg-brand p-8 text-[#F0EDE2] sm:p-12 lg:grid-cols-12 lg:items-end">
+            <Image
+              src="/images/photos/couple-path.jpg"
+              alt=""
+              fill
+              sizes="(max-width: 1280px) 92vw, 1216px"
+              className="object-cover opacity-40 mix-blend-luminosity transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.03] motion-reduce:transition-none"
+            />
+            {/* Depth floor: text over imagery always gets a scrim (DESIGN.md) */}
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to top, rgba(11,21,18,0.72) 10%, rgba(11,21,18,0.25) 60%, rgba(11,21,18,0.15) 100%)",
+              }}
+            />
+            <div className="relative flex flex-col gap-4 lg:col-span-7">
               <p className="text-meta text-[#E3C25B]">{featured.pillar}</p>
               <h2 className="text-display text-balance group-hover:underline group-hover:decoration-[#D8B23A] group-hover:underline-offset-8">
                 {featured.title}
               </h2>
             </div>
-            <div className="flex flex-col gap-6 lg:col-span-5">
-              <p className="text-lede max-w-[52ch] !text-white/70">{featured.excerpt}</p>
-              <p className="flex items-center gap-4 text-[14px] text-white/50">
+            <div className="relative flex flex-col gap-6 lg:col-span-5">
+              <p className="text-lede max-w-[52ch] !text-white/80">{featured.excerpt}</p>
+              <p className="flex items-center gap-4 text-[14px] text-white/60">
                 {featured.readMinutes} minute read
                 <span className="font-medium text-[#E3C25B]">
                   Read the letter

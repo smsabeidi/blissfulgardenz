@@ -1,25 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter_Tight, Source_Serif_4 } from "next/font/google";
+import { Cormorant, Outfit, Newsreader } from "next/font/google";
 import { brand } from "@/content/site";
 import "./globals.css";
 
-const fraunces = Fraunces({
+// Typography upgrade (redesign pass): Cormorant carries the luxury display
+// voice (high-fashion contrast serif), Outfit is the modern geometric UI sans,
+// Newsreader reads the long-form. Variables keep the old names so the token
+// sheet and every component pick the new faces up without edits.
+const display = Cormorant({
   variable: "--font-fraunces",
   subsets: ["latin"],
-  weight: "variable",
+  weight: ["400", "500", "600"],
   style: ["normal", "italic"],
-  axes: ["opsz"],
   display: "swap",
 });
 
-const interTight = Inter_Tight({
+const sans = Outfit({
   variable: "--font-inter-tight",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600"],
   display: "swap",
 });
 
-const sourceSerif = Source_Serif_4({
+const longform = Newsreader({
   variable: "--font-source-serif",
   subsets: ["latin"],
   weight: ["400", "600"],
@@ -65,7 +68,7 @@ export default function RootLayout({
       lang="en"
       data-theme="dawn"
       suppressHydrationWarning
-      className={`${fraunces.variable} ${interTight.variable} ${sourceSerif.variable} h-full`}
+      className={`${display.variable} ${sans.variable} ${longform.variable} h-full`}
     >
       <body className="grain flex min-h-full flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />

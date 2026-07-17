@@ -37,17 +37,16 @@ banned beige+brass default; the exact hexes are named in the client brief (overr
 One accent (gold) locked across the whole page. Terracotta appears only in testimonial/quote
 contexts. No pure #000/#fff anywhere.
 
-## Typography (three voices, PRD contractual)
+## Typography (three voices; upgraded in the redesign pass, supersedes PRD §5.1 defaults)
 
-- **Display:** Fraunces (variable, optical size + SOFT/WONK axes). Brand-justified: the PRD names
-  it explicitly (taste-skill serif ban overridden by brief). Tight tracking, leading 1.05-1.1,
-  italic descenders get leading-[1.1] + pb-1.
-- **UI sans:** Inter Tight (taste-skill-approved as a pairing partner; not plain Inter). Nav,
-  buttons, forms, meta.
-- **Long-form serif:** Source Serif 4. Journal articles, letters, book excerpts.
-- All via `next/font/google`, `display: swap`, subsets. Base body 17-18px (multigenerational
-  audience, PRD §4). Fluid display scale via clamp(); H1 never exceeds 2-3 lines (wide containers,
-  max-w-5xl/6xl).
+- **Display:** Cormorant 400-600 + italics. High-contrast luxury serif; replaces Fraunces after
+  the client-side read flagged the original as templated (the taste-skill Fraunces ban now
+  applies in full). Weight 500 at display sizes; tracking near 0; leading 0.98-1.14.
+- **UI sans:** Outfit 300-600 (taste-skill approved family). Nav, buttons, forms, meta. Ledes
+  set at 300 for air.
+- **Long-form serif:** Newsreader 400/600 + italics. Journal articles, letters, legal prose.
+- All via `next/font/google` (CSS variables kept from phase 1 so tokens/components were
+  unaffected by the swap). Base body 17-18px. H1 never exceeds 2-3 lines.
 
 ## Type scale (7 steps, exact values; two parallel builders must produce identical hierarchy)
 
@@ -219,13 +218,26 @@ Bloom micro-interactions (petal bloom on primary hover, gold underline focus, dr
 Considered emptiness (designed empty/filter-zero states) · Seasonal token architecture (summer
 active).
 
-## Imagery
+## Imagery (redesign pass: photographic, image-led)
 
-No client photography yet (PRD §21). Image generation skipped this phase (10 free credits on the
-connected account; not spent autonomously). Stand-ins: layered botanical SVG/gradient compositions
-in deep-green duotone, dawn-gradient skies, grain overlay; the real portrait (Dr Adeyinka.jpg)
-duotone-graded on Home/About. Designed poster frames for video slots; typographic book covers.
-No picsum/stock, no div-based fake screenshots, no fake photo credits.
+Editorial photo library generated on Higgsfield (soul_2, user-directed spend), one consistent
+grade: golden-hour/dusk private garden, deep greens + warm gold, medium-format film character,
+NO people with identifiable faces (couples only distant/from behind). Library at
+public/images/photos/: hero-dawn, hero-dusk, chairs (conversations: two chairs facing, the book-one
+cover motif), gate-path (membership threshold), leaf-macro (texture), couple-path (journal/watch),
+bouquet (gift). Real assets: Dr. Laiyemo portrait, three real book covers. Treatment rules:
+photos always sit under a scrim or deep-green duotone when text overlays (AA verified); Ken Burns
+only in the hero; swap-ready for the client's own photography at M-next. The hand-drawn SVG flora
+remains for the footer band and small accents only. No picsum/stock, no fake photo credits.
+
+## Hero (redesign pass, supersedes the layered-SVG comp)
+
+Image-led editorial: full-bleed hero-dawn photograph (hero-dusk under [data-theme="dusk"]),
+bottom-left type block (eyebrow, display-xl, lede ≤20 words, 2 CTAs gold/quiet), Horizon Line
+drawn at the photo's horizon (~58%), canvas-colored scrim rising from the fold. Motion: one-time
+Ken Burns settle (scale 1.06→1, 14s), scroll parallax 10%, first-visit blur-rise choreography,
+reduced-motion = static with pre-drawn line. Time-of-day tinting is retired; theme carries the
+light. Blur-rise (opacity+y+blur) is the house entrance motion site-wide via Reveal.
 
 ## Motion inventory decisions (PRD §5.3 table, per row)
 

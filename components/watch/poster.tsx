@@ -1,12 +1,22 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Video } from "@/content/library";
 
 // Designed poster frames for the first season (design ruling D10: a program
-// announcement, never fake play behavior). Server-safe: no state, no handlers,
-// shared by the client watch grid and the server detail page so the poster
-// idiom has a single source. Art direction follows the home rail: deep-green
-// gradient, duration badge, sprout glyph, Fraunces title. Locked films render
-// veiled and always link to /membership (design ruling D6).
+// announcement, never fake play behavior). Redesign pass: posters are now
+// photographic stills from the Higgsfield garden library, rendered as a
+// deep-green duotone (brand ground + luminosity-blended photo + scrim) so
+// every pillar reads as one graded film program. Gradient wash remains as
+// the no-photo fallback. Locked films render veiled and always link to
+// /membership (design ruling D6).
+
+const pillarPhoto: Record<Video["pillar"], string> = {
+  Emotional: "/images/photos/chairs.jpg",
+  Social: "/images/photos/couple-path.jpg",
+  Financial: "/images/photos/leaf-macro.jpg",
+  Physical: "/images/photos/hero-dawn.jpg",
+  Mental: "/images/photos/gate-path.jpg",
+};
 
 const pillarWash: Record<Video["pillar"], string> = {
   Emotional:
@@ -77,12 +87,20 @@ export function PosterFrame({
       }`}
       style={{ background: locked ? lockedWash : pillarWash[video.pillar] }}
     >
-      {/* Depth floor: text over the gradient always gets a scrim (DESIGN.md) */}
+      {/* Photographic still, duotone-graded into the brand green */}
+      <Image
+        src={pillarPhoto[video.pillar]}
+        alt=""
+        fill
+        sizes="(max-width: 640px) 90vw, 480px"
+        className={`object-cover mix-blend-luminosity ${locked ? "opacity-30" : "opacity-55"}`}
+      />
+      {/* Depth floor: text over imagery always gets a scrim (DESIGN.md) */}
       <div
         aria-hidden
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to top, rgba(11, 21, 18, 0.5) 0%, rgba(11, 21, 18, 0) 55%)",
+          background: "linear-gradient(to top, rgba(11, 21, 18, 0.62) 0%, rgba(11, 21, 18, 0.08) 55%)",
         }}
       />
 

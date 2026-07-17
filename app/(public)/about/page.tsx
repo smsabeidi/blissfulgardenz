@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { StoryPath } from "@/components/about/story-path";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow, SectionHeading } from "@/components/garden/primitives";
@@ -33,23 +34,45 @@ const values = [
 export default function AboutPage() {
   return (
     <>
-      {/* 1 · The mission, spoken plainly (centered display quote) */}
-      <section
-        aria-labelledby="mission-title"
-        className="mx-auto max-w-7xl px-5 pb-24 pt-28 sm:pb-32 sm:pt-36 lg:px-8"
-      >
-        <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
-          <Reveal>
-            <Eyebrow>Our story</Eyebrow>
-          </Reveal>
-          <Reveal>
-            <h1 id="mission-title" className="text-display-xl text-balance">
-              {brand.mission}.
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="text-lede max-w-2xl text-balance">{brand.description}</p>
-          </Reveal>
+      {/* 1 · Arrival: a low photographic band (first light over the hedges),
+          then the mission spoken plainly beneath it. The only text on the
+          photo is the section eyebrow, seated on the bottom scrim. */}
+      <section aria-labelledby="mission-title" className="pb-24 sm:pb-32">
+        <div className="relative h-[40vh] min-h-[280px] w-full overflow-hidden">
+          <Image
+            src="/images/photos/hero-dawn.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          {/* Depth floor: the eyebrow sits on this scrim, AA in both themes. */}
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, rgba(11,21,18,0.78) 0%, rgba(11,21,18,0.30) 42%, rgba(11,21,18,0) 70%)",
+            }}
+          />
+          <div className="absolute inset-x-0 bottom-0">
+            <div className="mx-auto max-w-7xl px-5 pb-6 lg:px-8">
+              <Eyebrow tone="dark">Our story</Eyebrow>
+            </div>
+          </div>
+        </div>
+        <div className="mx-auto max-w-7xl px-5 pt-16 sm:pt-24 lg:px-8">
+          <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 text-center">
+            <Reveal>
+              <h1 id="mission-title" className="text-display-xl text-balance">
+                {brand.mission}.
+              </h1>
+            </Reveal>
+            <Reveal>
+              <p className="text-lede max-w-2xl text-balance">{brand.description}</p>
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -96,35 +119,56 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* 4 · The close: two doors into the garden */}
-      <section
-        aria-labelledby="walk-title"
-        className="mx-auto max-w-7xl px-5 py-24 sm:py-36 lg:px-8"
-      >
-        <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center">
-          <Reveal>
-            <h2 id="walk-title" className="text-display text-balance">
-              Walk with us.
-            </h2>
-          </Reveal>
-          <Reveal>
-            <p className="text-lede max-w-xl text-balance">
-              Begin as a member of the Inner Garden, or begin with one unhurried conversation.
-            </p>
-          </Reveal>
-          <Reveal>
-            <div className="flex flex-col items-center gap-4 sm:flex-row">
-              <BloomButton href="/membership">{ctaLabels.membership}</BloomButton>
-              <QuietButton href="/conversations/how-it-works">
-                {ctaLabels.bookConversation}
-              </QuietButton>
-            </div>
-          </Reveal>
-          <Reveal className="w-full">
-            <div className="mt-4 rounded-2xl border border-hairline px-6 py-5 text-left">
-              <p className="text-[14px] leading-relaxed text-ink-muted">{disclaimer.short}</p>
-            </div>
-          </Reveal>
+      {/* 4 · The close: two doors into the garden, under the leaf at first
+          light. Duotone treatment from the poster technique: brand ground +
+          luminosity-blended photo at low opacity + scrim for the text floor. */}
+      <section aria-labelledby="walk-title" className="relative overflow-hidden bg-brand">
+        <Image
+          src="/images/photos/leaf-macro.jpg"
+          alt=""
+          fill
+          sizes="100vw"
+          className="object-cover opacity-25 mix-blend-luminosity"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, rgba(11,21,18,0.50) 0%, rgba(11,21,18,0.66) 55%, rgba(11,21,18,0.82) 100%)",
+          }}
+        />
+        <div className="relative mx-auto max-w-7xl px-5 py-24 sm:py-36 lg:px-8">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center text-[#F0EDE2]">
+            <Reveal>
+              <h2 id="walk-title" className="text-display text-balance">
+                Walk with us.
+              </h2>
+            </Reveal>
+            <Reveal>
+              <p className="text-lede max-w-xl text-balance !text-white/75">
+                Begin as a member of the Inner Garden, or begin with one unhurried conversation.
+              </p>
+            </Reveal>
+            <Reveal>
+              <div className="flex flex-col items-center gap-4 sm:flex-row">
+                <BloomButton href="/membership" tone="gold">
+                  {ctaLabels.membership}
+                </BloomButton>
+                <QuietButton
+                  href="/conversations/how-it-works"
+                  className="!border-white/25 !text-[#F0EDE2] hover:!bg-white/10"
+                >
+                  {ctaLabels.bookConversation}
+                </QuietButton>
+              </div>
+            </Reveal>
+            <Reveal className="w-full">
+              <div className="mt-4 rounded-2xl border border-white/15 bg-[#0B1512]/30 px-6 py-5 text-left">
+                <p className="text-[14px] leading-relaxed text-white/70">{disclaimer.short}</p>
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
     </>

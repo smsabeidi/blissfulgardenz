@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { BloomButton } from "@/components/garden/buttons";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
@@ -14,10 +15,12 @@ export const metadata: Metadata = {
     "Private, unhurried 60-minute conversations with Dr. Laiyemo: premarital, marital, and rebuilding paths, rooted in the five pillars of a healthy relationship.",
 };
 
-// Conversations hub: philosophy opening, the asymmetric three-paths band (same
-// idiom as Home: two prominent PetalCards, Rebuilding as a quieter full-width
-// row), the four-step timeline on a drawn gold connector, the confidentiality
-// promise, calm fees, and the quiet disclaimer footnote.
+// Conversations hub: philosophy opening split with the chairs photograph (two
+// chairs facing each other: the brand's conversation image and the book-one
+// cover motif), the asymmetric three-paths band (same idiom as Home: two
+// prominent PetalCards, Rebuilding as a quieter full-width row), the four-step
+// timeline on a drawn gold connector, the confidentiality promise, calm fees,
+// and the quiet disclaimer footnote.
 
 export default function ConversationsPage() {
   const pillarNames = pillars.map((p) => p.name.toLowerCase());
@@ -27,30 +30,55 @@ export default function ConversationsPage() {
 
   return (
     <>
-      {/* 1 · Philosophy opening */}
+      {/* 1 · Philosophy opening: text beside the chairs photograph in a
+          duotone-lite frame (full color, a whisper of scrim, gold hairline) */}
       <section
         aria-labelledby="conversations-hub-title"
         className="mx-auto max-w-7xl px-5 pb-20 pt-24 sm:pb-24 sm:pt-32 lg:px-8"
       >
-        <div className="flex max-w-3xl flex-col gap-6">
-          <Reveal>
-            <Eyebrow>Harmony conversations</Eyebrow>
-          </Reveal>
-          <Reveal>
-            <h1 id="conversations-hub-title" className="text-display-xl text-balance">
-              A safe place to say it out loud
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="text-lede max-w-[58ch]">
-              Sixty unhurried minutes with Dr. Laiyemo. Private, practical, and rooted in the five
-              pillars every healthy relationship stands on.
-            </p>
-          </Reveal>
-          <Reveal>
-            <p className="text-body max-w-[58ch] text-ink-muted">
-              {`${pillarLine.charAt(0).toUpperCase()}${pillarLine.slice(1)}: whatever brings you, the conversation tends the whole garden.`}
-            </p>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center">
+          <div className="flex max-w-3xl flex-col gap-6 lg:col-span-6">
+            <Reveal>
+              <Eyebrow>Harmony conversations</Eyebrow>
+            </Reveal>
+            <Reveal>
+              <h1 id="conversations-hub-title" className="text-display-xl text-balance">
+                A safe place to say it out loud
+              </h1>
+            </Reveal>
+            <Reveal>
+              <p className="text-lede max-w-[58ch]">
+                Sixty unhurried minutes with Dr. Laiyemo. Private, practical, and rooted in the five
+                pillars every healthy relationship stands on.
+              </p>
+            </Reveal>
+            <Reveal>
+              <p className="text-body max-w-[58ch] text-ink-muted">
+                {`${pillarLine.charAt(0).toUpperCase()}${pillarLine.slice(1)}: whatever brings you, the conversation tends the whole garden.`}
+              </p>
+            </Reveal>
+          </div>
+          <Reveal className="lg:col-span-5 lg:col-start-8">
+            <div
+              className="relative aspect-[4/3] overflow-hidden rounded-[2rem] ring-1 ring-[color-mix(in_srgb,var(--gold)_45%,transparent)]"
+              style={{ boxShadow: "0 18px 50px var(--shadow-tint)" }}
+            >
+              <Image
+                src="/images/photos/chairs.jpg"
+                alt="Two wicker chairs facing each other in a private garden at golden hour"
+                fill
+                sizes="(max-width: 1023px) 92vw, 34vw"
+                className="object-cover"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to top, rgba(11, 21, 18, 0.26) 0%, rgba(11, 21, 18, 0) 45%)",
+                }}
+              />
+            </div>
           </Reveal>
         </div>
       </section>

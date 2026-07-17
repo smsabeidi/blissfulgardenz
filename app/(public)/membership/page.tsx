@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { CoupleSeatBand } from "@/components/membership/couple-seat";
 import { VisitorRow, TierGrid } from "@/components/membership/tiers";
 import { FaqList } from "@/components/membership/faq";
@@ -33,44 +34,83 @@ const faqJsonLd = JSON.stringify({
   })),
 }).replace(/</g, "\\u003c");
 
+// The threshold photograph, near-full color like the conversations chairs
+// (the golden light through the gate IS the point), with a quiet depth floor
+// and the gold hairline ring. Decorative, so alt="".
+function GatePhoto({ className, sizes }: { className: string; sizes: string }) {
+  return (
+    <div className={`relative overflow-hidden ring-1 ring-gold/45 ${className}`}>
+      <Image
+        src="/images/photos/gate-path.jpg"
+        alt=""
+        fill
+        sizes={sizes}
+        className="object-cover"
+      />
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={{
+          background: "linear-gradient(to top, rgba(11,21,18,0.30) 0%, transparent 40%)",
+        }}
+      />
+    </div>
+  );
+}
+
 export default function MembershipPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: faqJsonLd }} />
 
-      {/* 1 · Emotional opening */}
+      {/* 1 · Emotional opening: editorial split. The open gate onto the sunlit
+          path is the threshold metaphor: membership as stepping through.
+          Desktop: tall duotone frame right; below lg it becomes a 16:9 band. */}
       <section
         aria-labelledby="membership-title"
         className="mx-auto max-w-7xl px-5 pb-24 pt-40 sm:pb-28 sm:pt-48 lg:px-8"
       >
-        <div className="flex max-w-5xl flex-col items-start gap-7">
-          <Reveal>
-            <Eyebrow>The Inner Garden</Eyebrow>
-          </Reveal>
-          <Reveal>
-            <h1 id="membership-title" className="text-display-xl text-balance">
-              A garden grows best when it is tended weekly.
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="text-lede max-w-[60ch]">
-              The Inner Garden is the membership: the film library, guides and workbooks, a
-              monthly live gathering, and warm rates on private conversations.
-            </p>
-          </Reveal>
-          <HorizonDraw className="max-w-48" />
-          <Reveal>
-            <div className="flex flex-wrap items-center gap-6">
-              <BloomButton href="#founding">{ctaLabels.foundingList}</BloomButton>
-              <Link
-                href="/membership/gift"
-                className="text-[15px] font-medium text-gold-text underline-offset-4 hover:underline"
-              >
-                Or give it as a wedding gift
-              </Link>
-            </div>
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-center lg:gap-8">
+          <div className="flex flex-col items-start gap-7 lg:col-span-7">
+            <Reveal>
+              <Eyebrow>The Inner Garden</Eyebrow>
+            </Reveal>
+            <Reveal>
+              <h1 id="membership-title" className="text-display-xl text-balance">
+                A garden grows best when it is tended weekly.
+              </h1>
+            </Reveal>
+            <Reveal>
+              <p className="text-lede max-w-[60ch]">
+                The Inner Garden is the membership: the film library, guides and workbooks, a
+                monthly live gathering, and warm rates on private conversations.
+              </p>
+            </Reveal>
+            <HorizonDraw className="max-w-48" />
+            <Reveal>
+              <div className="flex flex-wrap items-center gap-6">
+                <BloomButton href="#founding">{ctaLabels.foundingList}</BloomButton>
+                <Link
+                  href="/membership/gift"
+                  className="text-[15px] font-medium text-gold-text underline-offset-4 hover:underline"
+                >
+                  Or give it as a wedding gift
+                </Link>
+              </div>
+            </Reveal>
+          </div>
+
+          <Reveal className="hidden lg:col-span-4 lg:col-start-9 lg:block">
+            <GatePhoto
+              className="aspect-[3/4] rounded-[2rem]"
+              sizes="(min-width: 1024px) 400px, 92vw"
+            />
           </Reveal>
         </div>
+
+        <Reveal className="mt-12 lg:hidden">
+          <GatePhoto className="aspect-video rounded-3xl" sizes="(max-width: 1023px) 92vw, 680px" />
+        </Reveal>
       </section>
 
       {/* 2 · Couple Seat: the emotional frame, above the pricing (D25) */}

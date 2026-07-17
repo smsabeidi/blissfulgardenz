@@ -3,12 +3,15 @@ import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
 import { ctaLabels } from "@/content/site";
 import type { Offering } from "@/content/offerings";
 import { DisclaimerNote } from "./disclaimer-note";
+import { ConversationPhotoBand } from "./photo-band";
 
 // Shared offering page, rendered entirely from the Offering object.
+// Premarital and Marital open on a slim photographic band: the chairs
+// photograph in a deep duotone with the page title over the scrim.
 // The quiet flag (the Rebuilding path, design rulings D11/D12) switches to an
-// extra-muted art direction: bg-raised canvas, softer display type, more
-// whitespace, the confidentiality promise adjacent to the CTA, and no
-// stories or testimonials anywhere.
+// extra-muted, imagery-free art direction: bg-raised canvas, softer display
+// type, more whitespace, the confidentiality promise adjacent to the CTA, and
+// no stories, testimonials, or photographs anywhere.
 
 function DrawnCheck() {
   return (
@@ -34,33 +37,49 @@ export function OfferingPage({ offering }: { offering: Offering }) {
 
   return (
     <div className={quiet ? "bg-raised" : undefined}>
-      {/* 1 · Opening */}
-      <section
-        aria-labelledby="offering-title"
-        className={`mx-auto max-w-7xl px-5 lg:px-8 ${
-          quiet ? "pb-12 pt-28 sm:pb-16 sm:pt-40" : "pb-10 pt-24 sm:pb-12 sm:pt-32"
-        }`}
-      >
-        <div className={`flex max-w-3xl flex-col ${quiet ? "gap-7" : "gap-6"}`}>
-          <Reveal>
-            <p className="flex items-center gap-3 text-[15px] font-medium text-gold-text">
-              <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-gold" />
-              {audienceLine}
-            </p>
-          </Reveal>
-          <Reveal>
-            <h1
-              id="offering-title"
-              className={`${quiet ? "text-display" : "text-display-xl"} text-balance`}
-            >
-              {offering.title}
-            </h1>
-          </Reveal>
-          <Reveal>
-            <p className="text-lede max-w-[58ch]">{offering.lede}</p>
-          </Reveal>
-        </div>
-      </section>
+      {/* 1 · Opening: photographic band for the two open paths, plain and
+          undecorated for the quiet one */}
+      {quiet ? (
+        <section
+          aria-labelledby="offering-title"
+          className="mx-auto max-w-7xl px-5 pb-12 pt-28 sm:pb-16 sm:pt-40 lg:px-8"
+        >
+          <div className="flex max-w-3xl flex-col gap-7">
+            <Reveal>
+              <p className="flex items-center gap-3 text-[15px] font-medium text-gold-text">
+                <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-gold" />
+                {audienceLine}
+              </p>
+            </Reveal>
+            <Reveal>
+              <h1 id="offering-title" className="text-display text-balance">
+                {offering.title}
+              </h1>
+            </Reveal>
+            <Reveal>
+              <p className="text-lede max-w-[58ch]">{offering.lede}</p>
+            </Reveal>
+          </div>
+        </section>
+      ) : (
+        <section aria-labelledby="offering-title">
+          <ConversationPhotoBand
+            titleId="offering-title"
+            title={offering.title}
+            kicker={
+              <p className="flex items-center gap-3 text-[15px] font-medium text-[#E3C25B]">
+                <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-[#D8B23A]" />
+                {audienceLine}
+              </p>
+            }
+          />
+          <div className="mx-auto max-w-7xl px-5 pb-2 pt-10 sm:pt-14 lg:px-8">
+            <Reveal>
+              <p className="text-lede max-w-[58ch]">{offering.lede}</p>
+            </Reveal>
+          </div>
+        </section>
+      )}
 
       {/* 2 · What we talk about + format line */}
       <section aria-labelledby="topics-title" className={`mx-auto max-w-7xl px-5 lg:px-8 ${sectionPad}`}>

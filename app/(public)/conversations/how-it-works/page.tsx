@@ -3,6 +3,7 @@ import { BloomButton } from "@/components/garden/buttons";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow } from "@/components/garden/primitives";
 import { DisclaimerNote } from "@/components/conversations/disclaimer-note";
+import { ConversationPhotoBand } from "@/components/conversations/photo-band";
 import { conversationSteps, consultationPricing } from "@/content/offerings";
 import { ctaLabels } from "@/content/site";
 
@@ -27,20 +28,14 @@ const stepNotes = [
 export default function HowItWorksPage() {
   return (
     <>
-      {/* 1 · Opening */}
-      <section
-        aria-labelledby="how-title"
-        className="mx-auto max-w-7xl px-5 pb-16 pt-24 sm:pb-20 sm:pt-32 lg:px-8"
-      >
-        <div className="flex max-w-3xl flex-col gap-6">
-          <Reveal>
-            <Eyebrow>How it works</Eyebrow>
-          </Reveal>
-          <Reveal>
-            <h1 id="how-title" className="text-display-xl text-balance">
-              Four steps, taken gently
-            </h1>
-          </Reveal>
+      {/* 1 · Opening: the chairs band, title over the duotone */}
+      <section aria-labelledby="how-title">
+        <ConversationPhotoBand
+          titleId="how-title"
+          title="Four steps, taken gently"
+          kicker={<Eyebrow tone="dark">How it works</Eyebrow>}
+        />
+        <div className="mx-auto max-w-7xl px-5 pb-16 pt-10 sm:pb-20 sm:pt-14 lg:px-8">
           <Reveal>
             <p className="text-lede max-w-[58ch]">
               From a first note to a follow-up made for you. Here is the whole path, with nothing
