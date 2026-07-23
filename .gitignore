@@ -40,3 +40,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# AI/dev tooling and local working notes (not part of the product)
+/.claude/
+/.agents/
+/.mcp.json
+/skills-lock.json
+/DESIGN.md

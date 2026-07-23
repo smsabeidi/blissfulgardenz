@@ -7,48 +7,63 @@
 /* set pre-paint by the inline bootstrap in app/layout.tsx.            */
 /* ------------------------------------------------------------------ */
 
+/* THE LIVING GARDEN — green palette (v5, supersedes the Golden Hour plum).
+   Restores the PRD-contractual greens (garden-deep #0F2E22, ivory-mist,
+   horizon-gold), gold reserved as the single accent. Every pairing below is
+   WCAG AA verified. Deep-green shadows are tinted to the brand hue, never
+   black. Interactive surfaces + primary buttons are garden-deep with ivory
+   ink; the gold accent carries the Horizon Line and small links only.
+   --brand-ink / --brand-ink-muted are the ivory pair for permanently dark
+   green grounds (hero, footer, membership) and are theme-invariant. */
 :root {
-  --canvas: #f1e7df;
-  --surface: #f8f1ea;
-  --surface-raised: #eadcd1;
-  --ink: #4a3733;
-  --ink-muted: #8a7268;
-  --brand: #3a2a2d;
-  --gold: #e3b04b;
-  --gold-text: #82601f;
-  --sage: #c9a99b;
-  --terracotta: #c06b44;
-  --hairline: rgba(74, 55, 51, 0.16);
-  --shadow-tint: rgba(74, 55, 51, 0.12);
-  --btn-bg: #3a2a2d;
-  --btn-ink: #f6ebdd;
-  --error: #b0442c;
-  --success: #6b7f4f;
-  --focus-ring: #82601f;
-  --hero-sky: linear-gradient(to bottom, #4a3136 0%, #5c3d3c 40%, #8a5a48 78%, #c98a54 100%);
-  --sun: radial-gradient(circle at 50% 38%, #fdf6d8 0%, #f8e8b0 42%, #f0d086 72%, #e3b04b 100%);
+  --canvas: #f7f4ec;
+  --surface: #fffdf6;
+  --surface-raised: #fbf7ec;
+  --ink: #1e2b24;
+  --ink-muted: #56675c;
+  --brand: #0f2e22;
+  --gold: #c9a227;
+  --gold-text: #7a5f1b;
+  --sage: #9db4a0;
+  --terracotta: #b85c38;
+  --hairline: rgba(15, 46, 34, 0.16);
+  --shadow-tint: rgba(15, 46, 34, 0.12);
+  --btn-bg: #0f2e22;
+  --btn-ink: #f7f4ec;
+  --error: #a4432d;
+  --success: #2e5d3e;
+  --focus-ring: #7a5f1b;
+  /* Ivory pair for dark-green grounds (theme-invariant). */
+  --brand-ink: #f3f1e6;
+  --brand-ink-muted: #b7c3b6;
+  --brand-deep: #0b1f16;
+  --hero-sky: linear-gradient(to bottom, #0b1512 0%, #12261c 46%, #2c3e24 78%, #6e7b3a 100%);
+  --sun: radial-gradient(circle at 50% 38%, #fbf4d4 0%, #f2e2a0 44%, #dcbf6a 74%, #c9a227 100%);
 }
 
 [data-theme="dusk"] {
-  --canvas: #2a1e21;
-  --surface: #332529;
-  --surface-raised: #3c2c30;
-  --ink: #f0e4d8;
-  --ink-muted: #b39a8d;
-  --brand: #3f2e32;
-  --gold: #efc66b;
-  --gold-text: #efc66b;
-  --sage: #9a7a6f;
-  --terracotta: #d98b5f;
-  --hairline: rgba(240, 228, 216, 0.15);
+  --canvas: #0b1512;
+  --surface: #10201a;
+  --surface-raised: #152922;
+  --ink: #e9e4d6;
+  --ink-muted: #a7b5a9;
+  --brand: #16382b;
+  --gold: #d8b23a;
+  --gold-text: #e3c25b;
+  --sage: #7e9483;
+  --terracotta: #d08a66;
+  --hairline: rgba(233, 228, 214, 0.16);
   --shadow-tint: rgba(0, 0, 0, 0.45);
-  --btn-bg: #efc66b;
-  --btn-ink: #2a1e21;
+  --btn-bg: #d8b23a;
+  --btn-ink: #0b1512;
   --error: #e58a6c;
-  --success: #b5c49b;
-  --focus-ring: #efc66b;
-  --hero-sky: linear-gradient(to bottom, #241a1d 0%, #2e2124 45%, #45302f 80%, #5c3d38 100%);
-  --sun: radial-gradient(circle at 50% 38%, #f9edc4 0%, #f2dc9c 45%, #e6bd6a 75%, #cf9a45 100%);
+  --success: #8fbf9a;
+  --focus-ring: #e3c25b;
+  --brand-ink: #e9e4d6;
+  --brand-ink-muted: #a7b5a9;
+  --brand-deep: #08120d;
+  --hero-sky: linear-gradient(to bottom, #08120d 0%, #0e1f16 48%, #1d2e1f 80%, #46512c 100%);
+  --sun: radial-gradient(circle at 50% 38%, #f6efc9 0%, #e9d493 45%, #d3b45f 75%, #b8992f 100%);
 }
 
 @theme inline {
@@ -67,6 +82,9 @@
   --color-btn-ink: var(--btn-ink);
   --color-error: var(--error);
   --color-success: var(--success);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-ink-muted: var(--brand-ink-muted);
+  --color-brand-deep: var(--brand-deep);
 
   --font-display: var(--font-fraunces), "Georgia", serif;
   --font-sans: var(--font-inter-tight), "Helvetica Neue", sans-serif;
@@ -107,7 +125,9 @@
 .text-lede {
   font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem);
   line-height: 1.6;
-  font-weight: 300;
+  /* Instrument Sans variable serves wght 400-700; a 300 here silently
+     rendered as 400 anyway. Softness comes from color, not fake weight. */
+  font-weight: 400;
   color: var(--ink-muted);
 }
 .text-body {
@@ -151,15 +171,38 @@ body {
   transition: background-color 600ms var(--ease-garden), color 600ms var(--ease-garden);
 }
 
+/* Dawn/Dusk crossfade: while the toggle briefly sets data-theme-anim, every
+   themed surface (cards, hairlines, buttons, header tint) rides the same
+   600ms curve as <body> instead of snapping. The attribute lives ~650ms, so
+   hover transitions are unaffected outside that window. */
+html[data-theme-anim] *,
+html[data-theme-anim] *::before,
+html[data-theme-anim] *::after {
+  transition:
+    background-color 600ms var(--ease-garden),
+    border-color 600ms var(--ease-garden),
+    color 600ms var(--ease-garden),
+    fill 600ms var(--ease-garden),
+    stroke 600ms var(--ease-garden) !important;
+}
+
 ::selection {
   background: var(--gold);
-  color: #2a1e21;
+  color: #0b1512;
 }
 
 :focus-visible {
+  /* The outline follows the element's own border-radius; forcing a radius here
+     would square off every pill on keyboard focus (unlayered CSS beats
+     Tailwind's @layer utilities). */
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
-  border-radius: 4px;
+}
+
+/* Permanently dark grounds (footer, hero film, brand sections) keep a gold
+   focus ring in both themes: the dawn ring #7a5f1b reads too dark there. */
+[data-ground="dark"] {
+  --focus-ring: #e3c25b;
 }
 
 /* Paper grain: fixed, pointer-events-none, 3%. */
@@ -171,6 +214,49 @@ body {
   pointer-events: none;
   opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+/* The Garden Film hero: heavier local film stock than the page grain, and a
+   slow Ken Burns drift that keeps the seed frame alive until the encoded
+   film replaces it. Both collapse under reduced motion (global block below). */
+.hero-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='hn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23hn)' opacity='0.6'/%3E%3C/svg%3E");
+}
+
+@keyframes hero-drift {
+  from { transform: scale(1.02) translate3d(0, 0, 0); }
+  to { transform: scale(1.09) translate3d(-1.2%, -0.8%, 0); }
+}
+.hero-drift {
+  /* Running CSS animations self-promote to the compositor; a standing
+     will-change hint on a viewport-sized layer just pins GPU memory. */
+  animation: hero-drift 38s ease-in-out infinite alternate;
+}
+
+/* Hero entrance runs in pure CSS so the copy can never be stranded invisible
+   by a stalled JS ticker (background tab, bfcache restore). GSAP handles only
+   the scroll scrub. Reduced motion: the global block below collapses both to
+   their final states. */
+@keyframes hero-settle {
+  from { transform: scale(1.08); }
+  to { transform: scale(1); }
+}
+.hero-settle {
+  animation: hero-settle 2.4s var(--ease-garden) both;
+}
+
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(26px); filter: blur(10px); }
+  to { opacity: 1; transform: translateY(0); filter: blur(0px); }
+}
+.hero-rise {
+  animation: hero-rise 0.9s var(--ease-garden) both;
+  animation-delay: calc(0.45s + var(--rise-i, 0) * 0.12s);
 }
 
 /* Hairline rules in the Horizon Line family. */
@@ -188,7 +274,7 @@ body {
   top: -100%;
   z-index: 100;
   background: var(--brand);
-  color: #f6ebdd;
+  color: #f3f1e6;
   padding: 0.75rem 1.25rem;
   border-radius: 999px;
 }
@@ -199,16 +285,6 @@ body {
 /* ------------------------------------------------------------------ */
 /* Motion primitives (transform/opacity only)                          */
 /* ------------------------------------------------------------------ */
-
-@keyframes bloom-petals {
-  from { transform: scale(0.2); opacity: 0; }
-  to { transform: scale(1); opacity: 0.35; }
-}
-
-@keyframes draw-rule {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
 
 @keyframes rise-fade {
   from { opacity: 0; transform: translateY(24px); }
@@ -228,12 +304,79 @@ body {
   animation: success-bloom 500ms var(--ease-garden) both;
 }
 
+/* Full-screen menu entrance: a quiet 250ms fade under the item stagger. */
+@keyframes menu-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-menu-in {
+  animation: menu-in 250ms var(--ease-garden) both;
+}
+
+/* ------------------------------------------------------------------ */
+/* Route transitions (template.tsx remounts per navigation).           */
+/* The Horizon Line's transition role: a gold sweep draws across the   */
+/* top while the arriving page rises out of soft focus. Pure CSS, so   */
+/* a stalled ticker can never strand a route invisible.                */
+/* ------------------------------------------------------------------ */
+
+@keyframes route-enter {
+  from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
+  to { opacity: 1; transform: none; filter: blur(0px); }
+}
+.route-enter {
+  animation: route-enter 420ms var(--ease-garden) both;
+}
+
+@keyframes route-sweep {
+  0% { transform: scaleX(0); opacity: 1; }
+  70% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+.route-sweep {
+  position: fixed;
+  inset: 0 0 auto 0;
+  height: 2px;
+  z-index: 55;
+  pointer-events: none;
+  transform-origin: left;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--gold) 25%, transparent),
+    var(--gold) 45%,
+    color-mix(in srgb, var(--gold) 55%, transparent)
+  );
+  animation: route-sweep 700ms var(--ease-garden) both;
+}
+
+/* Hero motto: each phrase rises out of its own mask, one beat apart.  */
+.hero-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.12em;
+  margin-bottom: -0.12em;
+}
+@keyframes hero-word {
+  from { transform: translateY(112%); }
+  to { transform: translateY(0); }
+}
+.hero-word {
+  display: inline-block;
+  animation: hero-word 950ms var(--ease-garden) both;
+  animation-delay: calc(0.4s + var(--word-i, 0) * 0.13s);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    /* Delays must collapse too: .hero-rise staggers up to ~0.8s of delay,
+       which would strand fill-mode:both content at opacity 0 for that long. */
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
   }
   .horizon-rule { transform: scaleX(1) !important; }
 }
@@ -270,6 +413,6 @@ body {
   --nav-accent: var(--gold-text);
 }
 body[data-darkhero="1"] .site-header[data-compressed="0"] {
-  color: #f5ebdd;
-  --nav-accent: #efc66b;
+  color: #f3f1e6;
+  --nav-accent: #e3c25b;
 }

@@ -7,7 +7,7 @@ export function DisclaimerNote({ crisis = false }: { crisis?: boolean }) {
   return (
     <aside
       aria-label="A note on what harmony conversations are"
-      className="rounded-3xl border border-hairline px-7 py-6"
+      className="rounded-2xl border border-hairline px-7 py-6"
     >
       <p className="text-[14px] leading-relaxed text-ink-muted">{disclaimer.short}</p>
       {crisis ? (

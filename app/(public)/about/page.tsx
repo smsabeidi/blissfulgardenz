@@ -53,7 +53,7 @@ export default function AboutPage() {
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, rgba(37,26,29,0.78) 0%, rgba(37,26,29,0.30) 42%, rgba(37,26,29,0) 70%)",
+                "linear-gradient(to top, rgba(11, 31, 22,0.78) 0%, rgba(11, 31, 22,0.30) 42%, rgba(11, 31, 22,0) 70%)",
             }}
           />
           <div className="absolute inset-x-0 bottom-0">
@@ -81,12 +81,10 @@ export default function AboutPage() {
         aria-labelledby="path-title"
         className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8"
       >
-        <Reveal>
-          <SectionHeading
-            title={<span id="path-title">The path to this garden</span>}
-            lede="Four seasons of one life's work, each preparing the ground for the next."
-          />
-        </Reveal>
+        <SectionHeading
+          title={<span id="path-title">The path to this garden</span>}
+          lede="Four seasons of one life's work, each preparing the ground for the next."
+        />
         <div className="mt-16 sm:mt-20">
           <StoryPath />
         </div>
@@ -98,12 +96,10 @@ export default function AboutPage() {
           <HorizonDraw className="mb-14" />
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
             <div className="lg:col-span-5">
-              <Reveal>
-                <SectionHeading
-                  title={<span id="values-title">What the garden believes</span>}
-                  lede="Three commitments, kept in every season."
-                />
-              </Reveal>
+              <SectionHeading
+                title={<span id="values-title">What the garden believes</span>}
+                lede="Three commitments, kept in every season."
+              />
             </div>
             <div className="divide-y divide-hairline lg:col-span-6 lg:col-start-7">
               {values.map((value, i) => (
@@ -135,18 +131,18 @@ export default function AboutPage() {
           className="absolute inset-0"
           style={{
             background:
-              "linear-gradient(to bottom, rgba(37,26,29,0.50) 0%, rgba(37,26,29,0.66) 55%, rgba(37,26,29,0.82) 100%)",
+              "linear-gradient(to bottom, rgba(11, 31, 22,0.50) 0%, rgba(11, 31, 22,0.66) 55%, rgba(11, 31, 22,0.82) 100%)",
           }}
         />
         <div className="relative mx-auto max-w-7xl px-5 py-24 sm:py-36 lg:px-8">
-          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center text-[#F3E9DE]">
+          <div className="mx-auto flex max-w-3xl flex-col items-center gap-8 text-center text-brand-ink">
             <Reveal>
               <h2 id="walk-title" className="text-display text-balance">
                 Walk with us.
               </h2>
             </Reveal>
             <Reveal>
-              <p className="text-lede max-w-xl text-balance !text-white/75">
+              <p className="text-lede max-w-xl text-balance !text-brand-ink-muted">
                 Begin as a member of the Inner Garden, or begin with one unhurried conversation.
               </p>
             </Reveal>
@@ -157,15 +153,15 @@ export default function AboutPage() {
                 </BloomButton>
                 <QuietButton
                   href="/conversations/how-it-works"
-                  className="!border-white/25 !text-[#F3E9DE] hover:!bg-white/10"
+                  className="!border-white/25 !text-brand-ink hover:!bg-white/10"
                 >
                   {ctaLabels.bookConversation}
                 </QuietButton>
               </div>
             </Reveal>
             <Reveal className="w-full">
-              <div className="mt-4 rounded-2xl border border-white/15 bg-[#251A1D]/30 px-6 py-5 text-left">
-                <p className="text-[14px] leading-relaxed text-white/70">{disclaimer.short}</p>
+              <div className="mt-4 rounded-2xl border border-white/15 bg-[#0f2e22]/30 px-6 py-5 text-left">
+                <p className="text-[14px] leading-relaxed text-brand-ink-muted">{disclaimer.short}</p>
               </div>
             </Reveal>
           </div>

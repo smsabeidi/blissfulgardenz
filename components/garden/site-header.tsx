@@ -3,31 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CaretDown, List, X } from "@phosphor-icons/react/dist/ssr";
+import { CaretDown, DotsThree, X } from "@phosphor-icons/react/dist/ssr";
 import { nav, brand } from "@/content/site";
 import { ThemeToggle } from "./theme-toggle";
 
-// Header spec (DESIGN.md): ≤72px, single line at desktop, compresses to a
-// frosted bar after 80px of scroll. About and Conversations open flyout panels
-// on hover and focus; Esc closes. Below lg the nav folds into a full-screen
-// botanical menu with staggered reveal, focus trap, and scroll lock.
+// Header spec (DESIGN.md v4, reference: unseen.co): ≤72px, single line at
+// desktop, compresses to a frosted bar after 80px of scroll. Left: lowercase
+// two-tone wordmark. Right: quiet links, theme toggle, membership pill, and
+// a round dots button that opens the full-screen menu at every breakpoint.
 
 function InterimLockup() {
   return (
-    <Link href="/" className="group flex items-center gap-2.5" aria-label={`${brand.name}, home`}>
-      {/* Interim brand glyph: a sun rising over the horizon line. A simple
-          geometric mark; the real wordmark is a client input (PRD §21). */}
-      <svg aria-hidden viewBox="0 0 32 32" className="h-8 w-8">
-        <defs>
-          <clipPath id="bg-horizon-clip">
-            <rect x="0" y="0" width="32" height="17" />
-          </clipPath>
-        </defs>
-        <circle cx="16" cy="17" r="7.5" fill="var(--gold)" clipPath="url(#bg-horizon-clip)" />
-        <rect x="3" y="17" width="26" height="1.4" rx="0.7" fill="currentColor" opacity="0.85" />
-      </svg>
-      <span className="font-[family-name:var(--font-display)] text-[1.15rem] font-medium tracking-tight">
-        Blissful Gardenz
+    <Link href="/" className="group flex items-baseline gap-1.5" aria-label={`${brand.name}, home`}>
+      {/* Interim lockup, unseen.co two-tone: quiet grotesque + didone italic.
+          The real mark remains a client input (PRD §21). */}
+      <span className="text-[1.2rem] font-medium lowercase tracking-[-0.01em]">blissful</span>
+      <span className="font-[family-name:var(--font-display)] text-[1.3rem] font-[440] lowercase italic tracking-[-0.02em]">
+        gardenz
       </span>
     </Link>
   );
@@ -70,7 +62,7 @@ function Flyout({
         {item.label}
         <span
           aria-hidden
-          className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-gold transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-gold transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
           }`}
         />
@@ -96,14 +88,16 @@ function Flyout({
         />
         <span
           aria-hidden
-          className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-gold transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          className={`absolute -bottom-0.5 left-0 h-px w-full origin-left bg-gold transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
             active ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
           }`}
         />
       </Link>
+      {/* Flyout pops from its trigger: origin-top scale + rise reads as a
+          physical unfold rather than a fade-in-place */}
       <div
-        className={`absolute left-1/2 top-full z-50 min-w-52 -translate-x-1/2 pt-3 transition-all duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          open ? "visible translate-y-0 opacity-100" : "invisible translate-y-1 opacity-0"
+        className={`absolute left-1/2 top-full z-50 min-w-52 origin-top -translate-x-1/2 pt-3 transition-[opacity,transform,visibility] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          open ? "visible translate-y-0 scale-100 opacity-100" : "invisible translate-y-1 scale-[0.97] opacity-0"
         }`}
       >
         <div
@@ -129,9 +123,14 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
 
-  // Scroll lock + focus trap while open.
+  // Scroll lock + focus trap while open. The lock compensates for the
+  // scrollbar it removes so the page never shifts sideways (classic
+  // scrollbars; overlay scrollbars measure 0).
   useEffect(() => {
     const previous = document.body.style.overflow;
+    const previousPad = document.body.style.paddingRight;
+    const scrollbar = window.innerWidth - document.documentElement.clientWidth;
+    if (scrollbar > 0) document.body.style.paddingRight = `${scrollbar}px`;
     document.body.style.overflow = "hidden";
     const el = ref.current;
     const focusables = el?.querySelectorAll<HTMLElement>("a, button");
@@ -154,6 +153,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
     document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previous;
+      document.body.style.paddingRight = previousPad;
       document.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
@@ -163,23 +163,26 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
   return (
     <div
       ref={ref}
-      className="fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-brand text-[#F3E9DE] lg:hidden"
+      className="animate-menu-in fixed inset-0 z-[70] flex flex-col overflow-y-auto bg-brand text-brand-ink"
       role="dialog"
       aria-modal="true"
       aria-label="Site menu"
     >
-      <div className="flex h-16 items-center justify-between px-5">
-        <span className="font-[family-name:var(--font-display)] text-lg">Blissful Gardenz</span>
+      <div className="flex h-16 items-center justify-between px-5 lg:px-8">
+        <span className="flex items-baseline gap-1.5">
+          <span className="text-lg font-medium lowercase">blissful</span>
+          <span className="font-[family-name:var(--font-display)] text-xl lowercase italic">gardenz</span>
+        </span>
         <button
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20 transition-colors duration-300 hover:bg-white/10"
         >
           <X size={18} weight="light" />
         </button>
       </div>
-      <nav className="flex flex-1 flex-col gap-1 px-6 pb-12 pt-6">
+      <nav className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-1 px-6 pb-12 pt-6">
         {nav.primary.map((item) => (
           <div key={item.href} className="border-b border-white/10 pb-4 pt-3">
             <Link
@@ -200,7 +203,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
                     href={child.href}
                     onClick={onClose}
                     style={{ animationDelay: `${itemIndex++ * 60}ms` }}
-                    className={`animate-rise text-[15px] text-white/75 ${
+                    className={`animate-rise text-[15px] text-brand-ink-muted ${
                       pathname === child.href ? "text-gold" : ""
                     }`}
                   >
@@ -215,11 +218,11 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
           href={nav.membership.href}
           onClick={onClose}
           style={{ animationDelay: `${itemIndex++ * 60}ms` }}
-          className="animate-rise mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gold px-7 text-[15px] font-medium text-[#251A1D]"
+          className="animate-rise mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gold px-7 text-[15px] font-medium text-[#0f2e22]"
         >
           {nav.membership.label}
         </Link>
-        <p className="mt-10 text-sm text-white/50">{brand.motto}</p>
+        <p className="mt-10 text-sm text-brand-ink-muted/70">{brand.motto}</p>
       </nav>
     </div>
   );
@@ -228,6 +231,7 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
 export function SiteHeader() {
   const [compressed, setCompressed] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -247,45 +251,61 @@ export function SiteHeader() {
     };
   }, []);
 
-  const close = useCallback(() => setMenuOpen(false), []);
+  // Closing hands keyboard focus back to the trigger (dialog pattern).
+  const close = useCallback(() => {
+    setMenuOpen(false);
+    menuButton.current?.focus();
+  }, []);
 
   return (
     <header className="site-header fixed inset-x-0 top-0 z-50" data-compressed={compressed ? "1" : "0"}>
-      {/* The blur lives on this inner bar, never on <header> itself: a
-          backdrop-filter ancestor would become the containing block for the
-          fixed full-screen mobile menu and squash it into the bar. */}
+      {/* On scroll the bar detaches from the top edge and becomes a floating
+          glass island (frosted, ringed, softly shadowed). The blur lives on
+          this inner bar, never on <header> itself: a backdrop-filter ancestor
+          would become the containing block for the fixed full-screen menu and
+          squash it into the bar. */}
       <div
-        className={`transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
-          compressed
-            ? "border-b border-hairline bg-[color-mix(in_srgb,var(--canvas)_82%,transparent)] backdrop-blur-xl"
-            : "bg-transparent"
+        className={`transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          compressed ? "px-3 pt-3 lg:px-6 lg:pt-4" : "px-0 pt-0"
         }`}
       >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-6 px-5 lg:px-8">
-        <InterimLockup />
-        <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
-          {nav.primary.map((item) => (
-            <Flyout key={item.href} item={item} active={pathname.startsWith(item.href)} />
-          ))}
-        </nav>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <Link
-            href={nav.membership.href}
-            className="hidden h-10 items-center rounded-full bg-gold px-5 text-[14px] font-medium text-[#251A1D] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] motion-reduce:transition-none sm:inline-flex"
-          >
-            {nav.membership.label}
-          </Link>
-          <button
-            type="button"
-            onClick={() => setMenuOpen(true)}
-            aria-label="Open menu"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-hairline lg:hidden"
-          >
-            <List size={18} weight="light" />
-          </button>
+        <div
+          className={`mx-auto flex h-16 items-center justify-between gap-6 transition-[max-width,background-color,border-color,box-shadow,border-radius,padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+            compressed
+              ? "max-w-5xl rounded-full border border-[color-mix(in_srgb,var(--ink)_12%,transparent)] bg-[color-mix(in_srgb,var(--canvas)_80%,transparent)] px-5 shadow-[0_16px_50px_-12px_var(--shadow-tint),inset_0_1px_0_color-mix(in_srgb,white_55%,transparent)] backdrop-blur-xl lg:px-6"
+              : "max-w-7xl rounded-none border border-transparent px-5 shadow-none lg:px-8"
+          }`}
+        >
+          <InterimLockup />
+          <nav aria-label="Primary" className="hidden items-center gap-7 lg:flex">
+            {nav.primary.map((item) => (
+              <Flyout key={item.href} item={item} active={pathname.startsWith(item.href)} />
+            ))}
+          </nav>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            <Link
+              href={nav.membership.href}
+              className="hidden h-11 items-center rounded-full bg-gold px-5 text-[14px] font-medium text-[#0f2e22] shadow-[0_6px_18px_-6px_color-mix(in_srgb,var(--gold)_60%,transparent)] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] active:duration-75 motion-reduce:transition-none sm:inline-flex"
+            >
+              {nav.membership.label}
+            </Link>
+            {/* The unseen.co dots button: the full menu, at every breakpoint.
+                current/10 hover keeps the fill legible in both header color
+                regimes (ink over canvas, ivory over the dark hero film). */}
+            <button
+              ref={menuButton}
+              type="button"
+              onClick={() => setMenuOpen(true)}
+              aria-label="Open menu"
+              aria-haspopup="dialog"
+              aria-expanded={menuOpen}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-current/25 transition-[background-color,transform] duration-300 hover:bg-current/10 active:scale-[0.94] active:duration-75 motion-reduce:transition-none"
+            >
+              <DotsThree size={22} weight="bold" />
+            </button>
+          </div>
         </div>
-      </div>
       </div>
       {menuOpen ? <MobileMenu onClose={close} /> : null}
     </header>

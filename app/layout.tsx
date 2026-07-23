@@ -14,6 +14,9 @@ const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
+  // Serve the optical-size axis: at wordmark scale the didone gets the
+  // high-contrast display cut instead of the text cut.
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -49,8 +52,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F6EDE4" },
-    { media: "(prefers-color-scheme: dark)", color: "#251A1D" },
+    { media: "(prefers-color-scheme: light)", color: "#F7F4EC" },
+    { media: "(prefers-color-scheme: dark)", color: "#0B1512" },
   ],
 };
 
@@ -69,10 +72,19 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="dawn"
+      // Next 16 no longer overrides scroll-behavior:smooth during navigation
+      // unless asked; without this, every route change smooth-scrolls to top.
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${display.variable} ${sans.variable} ${longform.variable} h-full`}
     >
       <body className="grain flex min-h-full flex-col">
+        {/* Reveal styles are SSR'd inline (opacity 0, masks, clips) and lifted
+            by the motion runtime. Without JS nothing would ever lift them, so
+            no-JS visitors get everything visible, unanimated. */}
+        <noscript>
+          <style>{`main *{opacity:1 !important;transform:none !important;filter:none !important;clip-path:none !important;}`}</style>
+        </noscript>
         <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
         {children}
       </body>

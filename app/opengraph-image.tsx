@@ -57,7 +57,7 @@ export default function OpenGraphImage() {
             gap: 10,
           }}
         >
-          <div style={{ fontSize: 64, color: "#3A2A2D", fontWeight: 600, display: "flex" }}>
+          <div style={{ fontSize: 64, color: "#0f2e22", fontWeight: 600, display: "flex" }}>
             Blissful Gardenz
           </div>
           <div style={{ fontSize: 30, color: "#56675C", fontStyle: "italic", display: "flex" }}>

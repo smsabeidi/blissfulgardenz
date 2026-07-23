@@ -10,7 +10,7 @@ function PetalGlyph() {
     <svg
       aria-hidden
       viewBox="0 0 48 48"
-      className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-35 motion-reduce:transition-none"
+      className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 scale-0 opacity-0 transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-100 group-hover:opacity-35 motion-reduce:transition-none"
     >
       <g fill="currentColor">
         <ellipse cx="24" cy="12" rx="6" ry="10" />
@@ -60,10 +60,12 @@ export function BloomButton({
   tone = "auto",
 }: ButtonProps) {
   const palette =
-    tone === "gold" ? "bg-[#E3B04B] text-[#251A1D]" : "bg-btn text-btn-ink";
+    tone === "gold" ? "bg-[#c9a227] text-[#0f2e22]" : "bg-btn text-btn-ink";
+  // active:duration-75: the press must land faster than the hover glide,
+  // or the button feels like it ignores the click.
   const classes = `group relative inline-flex h-12 items-center justify-center gap-3 whitespace-nowrap rounded-full ${palette} pl-7 ${
     arrow ? "pr-3" : "pr-7"
-  } text-[15px] font-medium tracking-[0.01em] transition-transform duration-300 active:scale-[0.98] motion-reduce:transition-none ${className}`;
+  } text-[15px] font-medium tracking-[0.01em] transition-transform duration-300 active:scale-[0.98] active:duration-75 motion-reduce:transition-none ${className}`;
 
   const inner = (
     <>
@@ -93,8 +95,15 @@ export function BloomButton({
   );
 }
 
-export function QuietButton({ href, children, external, className = "" }: ButtonProps) {
-  const classes = `group relative inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full border border-hairline px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] motion-reduce:transition-none ${className}`;
+export function QuietButton({
+  href,
+  children,
+  external,
+  className = "",
+  type = "button",
+  disabled,
+}: ButtonProps) {
+  const classes = `group relative inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full border border-hairline px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none ${className}`;
   const inner = (
     <span className="relative">
       {children}
@@ -116,7 +125,7 @@ export function QuietButton({ href, children, external, className = "" }: Button
     );
   }
   return (
-    <button type="button" className={classes}>
+    <button type={type} disabled={disabled} className={classes}>
       {inner}
     </button>
   );

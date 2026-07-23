@@ -23,6 +23,7 @@ export function PillarBand() {
     const ctx = gsap.context(() => {
       if (reduce) {
         gsap.set("[data-pillar-line]", { scaleX: 1, scaleY: 1 });
+        gsap.set("[data-pillar-line-v]", { scaleY: 1 });
         gsap.set("[data-pillar]", { opacity: 1, y: 0, scale: 1 });
         return;
       }
@@ -30,11 +31,19 @@ export function PillarBand() {
         defaults: { ease: "power3.out" },
         scrollTrigger: { trigger: root.current, start: "top 65%", once: true },
       });
+      // Horizontal strand draws left to right; the mobile strand draws top
+      // to bottom. Only the visible one shows, both are cheap transforms.
       tl.fromTo("[data-pillar-line]", { scaleX: 0, scaleY: 1 }, { scaleX: 1, duration: 1.1, ease: "power2.inOut" });
+      tl.fromTo(
+        "[data-pillar-line-v]",
+        { scaleY: 0, transformOrigin: "top center" },
+        { scaleY: 1, duration: 1.1, ease: "power2.inOut" },
+        "<"
+      );
       tl.fromTo(
         "[data-pillar]",
         { opacity: 0, y: 14, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.14 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.5, stagger: 0.09 },
         "-=0.7"
       );
     }, root);
@@ -79,7 +88,7 @@ export function PillarBand() {
 
       {/* Mobile: vertical line-walk */}
       <ol className="relative flex flex-col gap-10 pl-8 md:hidden">
-        <span aria-hidden className="absolute bottom-2 left-[5px] top-2 w-px bg-gold opacity-70" />
+        <span data-pillar-line-v aria-hidden className="absolute bottom-2 left-[5px] top-2 w-px bg-gold opacity-70" />
         {pillars.map((pillar) => (
           <li key={pillar.name} data-pillar className="relative">
             <span

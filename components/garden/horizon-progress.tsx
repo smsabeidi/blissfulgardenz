@@ -8,7 +8,9 @@ import { motion, useScroll, useSpring } from "motion/react";
 // visible (fixed-chrome exclusion rule) via body[data-joinbar].
 export function HorizonProgress() {
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 28, mass: 0.4 });
+  // Damping 20 over critical (~15) keeps the line settled but responsive;
+  // the previous 28 left it trailing fast scrolls by a beat.
+  const scaleX = useSpring(scrollYProgress, { stiffness: 140, damping: 20, mass: 0.4 });
 
   return (
     <motion.div

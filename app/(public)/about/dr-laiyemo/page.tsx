@@ -125,12 +125,10 @@ export default function DrLaiyemoPage() {
         className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8"
       >
         <HorizonDraw className="mb-14" />
-        <Reveal>
-          <SectionHeading
-            title={<span id="credentials-title">A life in medicine</span>}
-            lede="The formal record behind a familiar voice."
-          />
-        </Reveal>
+        <SectionHeading
+          title={<span id="credentials-title">A life in medicine</span>}
+          lede="The formal record behind a familiar voice."
+        />
         <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <RevealItem index={0} className="lg:col-span-5">
             <PetalCard className="h-full" innerClassName="flex h-full flex-col gap-4">

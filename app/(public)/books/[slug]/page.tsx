@@ -126,12 +126,10 @@ export default async function BookDetailPage({ params }: { params: Params }) {
       {/* 2 · Formats (FR-04) + audiobook sample */}
       <section aria-labelledby="formats-title" className="bg-raised">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-28 lg:px-8">
-          <Reveal>
-            <SectionHeading
-              title={<span id="formats-title">Bring this book home</span>}
-              lede="Choose the format that suits your evenings. Every link below opens the retailer in a new tab."
-            />
-          </Reveal>
+          <SectionHeading
+            title={<span id="formats-title">Bring this book home</span>}
+            lede="Choose the format that suits your evenings. Every link below opens the retailer in a new tab."
+          />
           <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12">
             <Reveal className="lg:col-span-7">
               <FormatLinks book={book} />

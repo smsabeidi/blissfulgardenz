@@ -101,12 +101,10 @@ export default async function WatchDetailPage({ params }: PageProps) {
       <section aria-labelledby="related-title" className="bg-raised">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
           <HorizonDraw className="mb-14" />
-          <Reveal>
-            <SectionHeading
-              title={<span id="related-title">More from the first season</span>}
-              lede="Three more films from the season, each tending its own corner of the garden."
-            />
-          </Reveal>
+          <SectionHeading
+            title={<span id="related-title">More from the first season</span>}
+            lede="Three more films from the season, each tending its own corner of the garden."
+          />
           <div className="mt-12 grid grid-cols-1 gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-12">
             {related.map((v, i) => (
               <RevealItem

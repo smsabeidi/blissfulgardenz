@@ -1,18 +1,23 @@
 import type { ReactNode } from "react";
+import { MaskRise } from "./motion-reveals";
+import { Reveal } from "./reveal";
 
 // Eyebrow: rationed to max 1 per 3 sections (DESIGN.md). The gold dash is part
 // of the anatomy. tone="dark" is for sections with a permanently dark surface
 // (bg-brand), where the theme-following gold-text would fail contrast in dawn.
 export function Eyebrow({ children, tone = "auto" }: { children: ReactNode; tone?: "auto" | "dark" }) {
   return (
-    <p className={`text-meta flex items-center gap-3 ${tone === "dark" ? "text-[#EFC66B]" : "text-gold-text"}`}>
-      <span aria-hidden className={`inline-block h-px w-6 ${tone === "dark" ? "bg-[#E3B04B]" : "bg-gold"}`} />
+    <p className={`text-meta flex items-center gap-3 ${tone === "dark" ? "text-[#e3c25b]" : "text-gold-text"}`}>
+      <span aria-hidden className={`inline-block h-px w-6 ${tone === "dark" ? "bg-[#c9a227]" : "bg-gold"}`} />
       {children}
     </p>
   );
 }
 
 // SectionHeading: stacked vertically (split-header pattern is banned).
+// Owns its entrance choreography: the display title rises out of a mask
+// while eyebrow and lede fade up around it. Callers must NOT wrap this in
+// another Reveal (double entrances read as jitter).
 export function SectionHeading({
   eyebrow,
   title,
@@ -28,9 +33,19 @@ export function SectionHeading({
 }) {
   return (
     <div className={`flex flex-col gap-4 ${align === "center" ? "items-center text-center" : "items-start"}`}>
-      {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
-      <Tag className="text-display max-w-4xl text-balance">{title}</Tag>
-      {lede ? <p className="text-lede max-w-[65ch]">{lede}</p> : null}
+      {eyebrow ? (
+        <Reveal>
+          <Eyebrow>{eyebrow}</Eyebrow>
+        </Reveal>
+      ) : null}
+      <Tag className="text-display max-w-4xl text-balance">
+        <MaskRise delay={eyebrow ? 0.1 : 0}>{title}</MaskRise>
+      </Tag>
+      {lede ? (
+        <Reveal delay={eyebrow ? 0.22 : 0.14}>
+          <p className="text-lede max-w-[65ch]">{lede}</p>
+        </Reveal>
+      ) : null}
     </div>
   );
 }

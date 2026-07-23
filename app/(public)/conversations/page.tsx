@@ -75,7 +75,7 @@ export default function ConversationsPage() {
                 className="absolute inset-0"
                 style={{
                   background:
-                    "linear-gradient(to top, rgba(37, 26, 29, 0.26) 0%, rgba(37, 26, 29, 0) 45%)",
+                    "linear-gradient(to top, rgba(11, 31, 22, 0.26) 0%, rgba(11, 31, 22, 0) 45%)",
                 }}
               />
             </div>
@@ -86,12 +86,10 @@ export default function ConversationsPage() {
       {/* 2 · Three paths: the asymmetric band (never three equal cards) */}
       <section aria-labelledby="paths-title" className="bg-raised">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
-          <Reveal>
-            <SectionHeading
-              title={<span id="paths-title">Three paths into the garden</span>}
-              lede="Choose the season that sounds like yours. Every path is private, and every path starts the same gentle way."
-            />
-          </Reveal>
+          <SectionHeading
+            title={<span id="paths-title">Three paths into the garden</span>}
+            lede="Choose the season that sounds like yours. Every path is private, and every path starts the same gentle way."
+          />
           <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
             {prominent.map((offering, i) => (
               <RevealItem key={offering.slug} index={i} className="lg:col-span-6">
@@ -168,7 +166,7 @@ export default function ConversationsPage() {
       </section>
 
       {/* 4 · Confidentiality promise */}
-      <section aria-labelledby="confidence-title" className="bg-brand text-[#F3E9DE]">
+      <section aria-labelledby="confidence-title" className="bg-brand text-brand-ink">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:items-start">
             <div className="flex flex-col gap-5 lg:col-span-5">
@@ -183,13 +181,13 @@ export default function ConversationsPage() {
             </div>
             <div className="flex flex-col gap-6 lg:col-span-6 lg:col-start-7">
               <Reveal>
-                <p className="text-lede !text-white/75">
+                <p className="text-lede !text-brand-ink-muted">
                   Your intake is read only by Dr. Laiyemo, and what you share in the hour stays
                   between you.
                 </p>
               </Reveal>
               <Reveal>
-                <p className="text-body max-w-[56ch] !text-white/60">
+                <p className="text-body max-w-[56ch] !text-brand-ink-muted/80">
                   Come together or alone. Many people begin alone, especially in strained seasons,
                   and are welcome exactly as they are.
                 </p>

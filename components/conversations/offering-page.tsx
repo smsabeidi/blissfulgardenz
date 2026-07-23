@@ -52,7 +52,7 @@ export function OfferingPage({ offering }: { offering: Offering }) {
               </p>
             </Reveal>
             <Reveal>
-              <h1 id="offering-title" className="text-display text-balance">
+              <h1 id="offering-title" className="text-display-xl text-balance">
                 {offering.title}
               </h1>
             </Reveal>
@@ -67,8 +67,8 @@ export function OfferingPage({ offering }: { offering: Offering }) {
             titleId="offering-title"
             title={offering.title}
             kicker={
-              <p className="flex items-center gap-3 text-[15px] font-medium text-[#EFC66B]">
-                <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-[#E3B04B]" />
+              <p className="flex items-center gap-3 text-[15px] font-medium text-[#e3c25b]">
+                <span aria-hidden className="inline-block h-px w-6 shrink-0 bg-[#c9a227]" />
                 {audienceLine}
               </p>
             }
@@ -121,7 +121,7 @@ export function OfferingPage({ offering }: { offering: Offering }) {
       <section aria-labelledby="outcomes-title" className={`mx-auto max-w-7xl px-5 lg:px-8 ${sectionPad}`}>
         <div
           className={
-            quiet ? undefined : "rounded-[2rem] bg-brand px-7 py-12 text-[#F3E9DE] sm:px-12 sm:py-16"
+            quiet ? undefined : "rounded-[2rem] bg-brand px-7 py-12 text-brand-ink sm:px-12 sm:py-16"
           }
         >
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
@@ -132,7 +132,7 @@ export function OfferingPage({ offering }: { offering: Offering }) {
                 </h2>
               </Reveal>
               <Reveal>
-                <p className={`text-body max-w-[40ch] ${quiet ? "text-ink-muted" : "!text-white/65"}`}>
+                <p className={`text-body max-w-[40ch] ${quiet ? "text-ink-muted" : "!text-brand-ink-muted"}`}>
                   {quiet
                     ? "Small, real, and yours to keep."
                     : "Not homework, not a lecture: three things you can hold."}
@@ -146,9 +146,9 @@ export function OfferingPage({ offering }: { offering: Offering }) {
                     <div className="flex items-start gap-5 py-7">
                       <span
                         aria-hidden
-                        className={`mt-[0.85em] h-px w-6 shrink-0 ${quiet ? "bg-gold" : "bg-[#E3B04B]"}`}
+                        className={`mt-[0.85em] h-px w-6 shrink-0 ${quiet ? "bg-gold" : "bg-[#c9a227]"}`}
                       />
-                      <span className={`text-lede ${quiet ? "!text-ink" : "!text-white/85"}`}>
+                      <span className={`text-lede ${quiet ? "!text-ink" : "!text-brand-ink-muted"}`}>
                         {outcome}
                       </span>
                     </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { joinFoundingList } from "@/app/actions";
 import { track } from "@/lib/track";
 
@@ -21,16 +21,21 @@ export function NewsletterForm({
 }) {
   const [result, formAction, isPending] = useActionState(joinFoundingList, null);
 
+  // Analytics fire once per success, as an effect: calling track() in the
+  // render body would re-fire on every parent re-render.
+  useEffect(() => {
+    if (result?.status === "ok") track("founding_list_signup", { context });
+  }, [result, context]);
+
   if (result?.status === "ok") {
-    track("founding_list_signup", { context });
     return (
       <div className="animate-success-bloom flex items-start gap-3" role="status">
         <svg aria-hidden viewBox="0 0 24 24" className="mt-1 h-5 w-5 text-success" fill="none" stroke="currentColor" strokeWidth="1.5">
           <path d="M4 13c2.5 1.5 4 4 4.5 6C10 14 14 8.5 20 5.5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <div>
-          <p className={`text-[15px] font-medium ${tone === "dark" ? "text-[#F3E9DE]" : "text-ink"}`}>{successTitle}</p>
-          <p className={`text-[14px] ${tone === "dark" ? "text-white/60" : "text-ink-muted"}`}>{successBody}</p>
+          <p className={`text-[15px] font-medium ${tone === "dark" ? "text-brand-ink" : "text-ink"}`}>{successTitle}</p>
+          <p className={`text-[14px] ${tone === "dark" ? "text-brand-ink-muted/80" : "text-ink-muted"}`}>{successBody}</p>
         </div>
       </div>
     );
@@ -44,7 +49,7 @@ export function NewsletterForm({
       <input type="hidden" name="context" value={context} />
       <label
         htmlFor={`email-${context}`}
-        className={`text-[13px] font-medium ${tone === "dark" ? "text-white/70" : "text-ink-muted"}`}
+        className={`text-[13px] font-medium ${tone === "dark" ? "text-brand-ink-muted" : "text-ink-muted"}`}
       >
         Email address
       </label>
@@ -58,15 +63,15 @@ export function NewsletterForm({
           placeholder="you@example.com"
           aria-invalid={invalid || undefined}
           aria-describedby={invalid ? `email-error-${context}` : undefined}
-          className={`h-12 flex-1 rounded-xl border bg-surface px-4 text-[15px] text-ink outline-none transition-shadow placeholder:text-ink-muted/70 focus:ring-2 focus:ring-[var(--focus-ring)] ${
+          className={`h-12 flex-1 rounded-xl border bg-surface px-4 text-[15px] text-ink outline-none transition-shadow placeholder:text-ink-muted focus:ring-2 focus:ring-[var(--focus-ring)] ${
             invalid ? "border-error" : "border-hairline"
           }`}
         />
         <button
           type="submit"
           disabled={isPending}
-          className={`group inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[15px] font-medium transition-transform duration-300 active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none ${
-            tone === "dark" ? "bg-[#E3B04B] text-[#251A1D]" : "bg-btn text-btn-ink"
+          className={`group inline-flex h-12 shrink-0 items-center justify-center whitespace-nowrap rounded-full px-6 text-[15px] font-medium transition-transform duration-300 active:scale-[0.98] active:duration-75 disabled:opacity-60 motion-reduce:transition-none ${
+            tone === "dark" ? "bg-[#c9a227] text-[#0f2e22]" : "bg-btn text-btn-ink"
           }`}
         >
           {isPending ? "Planting..." : buttonLabel}

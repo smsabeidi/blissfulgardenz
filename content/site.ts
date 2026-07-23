@@ -33,7 +33,6 @@ export type NavItem = {
 export const nav: {
   primary: NavItem[];
   membership: { label: string; href: string };
-  signIn: { label: string; href: string };
 } = {
   primary: [
     {
@@ -59,7 +58,6 @@ export const nav: {
     { label: "Journal", href: "/journal" },
   ],
   membership: { label: "The Inner Garden", href: "/membership" },
-  signIn: { label: "Sign in", href: "/membership#founding" },
 };
 
 export const footer = {

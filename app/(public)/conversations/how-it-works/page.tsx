@@ -128,7 +128,7 @@ export default function HowItWorksPage() {
               "radial-gradient(ellipse 90% 60% at 50% 100%, color-mix(in srgb, var(--gold) 22%, transparent) 0%, transparent 70%)",
           }}
         />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-7 px-5 py-24 text-center text-[#F3E9DE] sm:py-32">
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-7 px-5 py-24 text-center text-brand-ink sm:py-32">
           <HorizonDraw className="max-w-56 !opacity-60" />
           <Reveal>
             <h2 id="begin-title" className="text-display text-balance">
@@ -136,7 +136,7 @@ export default function HowItWorksPage() {
             </h2>
           </Reveal>
           <Reveal>
-            <p className="text-lede max-w-xl !text-white/70">
+            <p className="text-lede max-w-xl !text-brand-ink-muted">
               Online booking opens with the platform launch. Today, the path begins with a short
               note through the contact page.
             </p>
@@ -144,13 +144,13 @@ export default function HowItWorksPage() {
           <Reveal>
             <BloomButton
               href="/contact?topic=conversation"
-              className="!bg-[#E3B04B] !text-[#251A1D]"
+              className="!bg-[#c9a227] !text-[#0f2e22]"
             >
               {ctaLabels.bookConversation}
             </BloomButton>
           </Reveal>
           <Reveal>
-            <p className="text-[13px] text-white/45">
+            <p className="text-[13px] text-brand-ink-muted/60">
               Share only what you are comfortable sharing.
             </p>
           </Reveal>

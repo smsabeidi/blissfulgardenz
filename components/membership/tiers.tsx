@@ -101,7 +101,7 @@ export function VisitorRow() {
     <Reveal>
       <div className="flex flex-col gap-4 rounded-[2rem] border border-hairline px-7 py-6 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-baseline gap-3">
-          <p className="text-display-sm">{visitorTier.name}</p>
+          <h3 className="text-display-sm">{visitorTier.name}</h3>
           <p className="text-[15px] text-ink-muted">{visitorTier.price}</p>
         </div>
         <ul className="flex flex-col gap-1.5 text-[15px] text-ink-muted sm:flex-row sm:flex-wrap sm:gap-x-6">
@@ -129,7 +129,7 @@ export function TierGrid() {
             className="flex h-full flex-col rounded-[2rem] bg-brand p-1.5 ring-1 ring-gold/60 lg:scale-[1.02]"
             style={{ boxShadow: "0 18px 50px var(--shadow-tint)" }}
           >
-            <p className="py-2.5 text-center text-meta text-[#EFC66B]">Recommended</p>
+            <p className="py-2.5 text-center text-meta text-[#e3c25b]">Recommended</p>
             <div
               className="flex-1 rounded-[calc(2rem-6px)] bg-surface p-8"
               style={{

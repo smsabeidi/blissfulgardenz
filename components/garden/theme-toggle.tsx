@@ -1,20 +1,35 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Dawn/Dusk toggle: sun and moon morph inside one glyph; the choice persists
 // when storage is available and quietly stays session-only when it is not
-// (Safari private mode). Manual choice beats system preference.
+// (Safari private mode). Manual choice beats system preference. While the
+// theme flips, data-theme-anim on <html> lets every themed surface crossfade
+// on the same 600ms curve as <body> (globals.css).
 export function ThemeToggle({ className = "" }: { className?: string }) {
   const [theme, setTheme] = useState<"dawn" | "dusk">("dawn");
+  const animTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const current = document.documentElement.getAttribute("data-theme");
     if (current === "dusk" || current === "dawn") setTheme(current);
+    return () => {
+      if (animTimer.current) clearTimeout(animTimer.current);
+      document.documentElement.removeAttribute("data-theme-anim");
+    };
   }, []);
 
   const toggle = useCallback(() => {
     const next = theme === "dawn" ? "dusk" : "dawn";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!reduce) {
+      document.documentElement.setAttribute("data-theme-anim", "1");
+      if (animTimer.current) clearTimeout(animTimer.current);
+      animTimer.current = setTimeout(() => {
+        document.documentElement.removeAttribute("data-theme-anim");
+      }, 650);
+    }
     document.documentElement.setAttribute("data-theme", next);
     setTheme(next);
     try {
@@ -32,9 +47,9 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={toggle}
       aria-pressed={isDusk}
       aria-label={isDusk ? "Switch to dawn mode" : "Switch to dusk mode"}
-      className={`relative flex h-10 w-10 items-center justify-center rounded-full border border-current/25 text-current transition-colors duration-300 hover:bg-raised ${className}`}
+      className={`relative flex h-11 w-11 items-center justify-center rounded-full border border-current/25 text-current transition-[background-color,transform] duration-300 hover:bg-current/10 active:scale-[0.94] active:duration-75 motion-reduce:transition-none ${className}`}
     >
-      <svg viewBox="0 0 24 24" className="h-4.5 w-4.5" fill="none" stroke="currentColor" strokeWidth="1.5">
+      <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.5">
         {/* Sun core / moon body */}
         <circle
           cx="12"

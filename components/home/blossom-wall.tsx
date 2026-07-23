@@ -45,7 +45,10 @@ export function BlossomWall() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      <p className="text-meta text-sage">{storiesLabel}</p>
+      {/* Disclosure label per ruling D21; gold-text instead of the spec'd
+          sage because sage measures 1.8:1 on canvas and this line is a
+          required disclosure, not decoration. */}
+      <p className="text-meta text-gold-text">{storiesLabel}</p>
 
       {/* Quote stage */}
       <div className="relative min-h-[9.5rem] sm:min-h-[8rem]" aria-live="polite">
@@ -53,7 +56,7 @@ export function BlossomWall() {
           <blockquote
             key={story.name}
             aria-hidden={active !== i}
-            className={`absolute inset-0 font-[family-name:var(--font-display)] text-[1.7rem] italic leading-[1.3] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-[2.1rem] ${
+            className={`absolute inset-0 font-[family-name:var(--font-display)] text-[1.7rem] italic leading-[1.3] transition-[opacity,transform,filter] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] sm:text-[2.1rem] ${
               active === i
                 ? "translate-y-0 opacity-100 blur-0"
                 : "pointer-events-none translate-y-3 opacity-0 blur-sm"
@@ -74,9 +77,9 @@ export function BlossomWall() {
               onClick={() => select(i)}
               aria-label={`Story from ${story.name}`}
               aria-pressed={active === i}
-              className={`relative flex h-11 w-11 items-center justify-center rounded-full font-[family-name:var(--font-display)] text-sm ring-2 ring-[var(--canvas)] transition-all duration-300 ${
+              className={`relative flex h-11 w-11 select-none items-center justify-center rounded-full font-[family-name:var(--font-display)] text-sm ring-2 ring-[var(--canvas)] transition-[transform,background-color,color] duration-300 ${
                 active === i
-                  ? "z-10 scale-110 bg-brand text-[#F3E9DE]"
+                  ? "z-10 scale-110 bg-brand text-brand-ink"
                   : "bg-[color-mix(in_srgb,var(--sage)_26%,transparent)] text-ink hover:scale-105"
               }`}
             >
@@ -90,7 +93,7 @@ export function BlossomWall() {
             <div
               key={story.name}
               aria-hidden={active !== i}
-              className={`absolute inset-0 flex flex-col justify-center transition-all duration-400 ${
+              className={`absolute inset-0 flex flex-col justify-center transition-[opacity,transform] duration-400 ${
                 active === i ? "translate-x-0 opacity-100" : "pointer-events-none -translate-x-2 opacity-0"
               }`}
             >

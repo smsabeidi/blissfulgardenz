@@ -13,7 +13,7 @@ export function DisclaimerNote({
   return (
     <aside
       aria-label="About the nature of harmony conversations"
-      className={`rounded-3xl border border-hairline px-7 py-6 ${className}`}
+      className={`rounded-2xl border border-hairline px-7 py-6 ${className}`}
     >
       <p className="text-[14px] leading-relaxed text-ink-muted">{disclaimer.short}</p>
       {crisis ? (
