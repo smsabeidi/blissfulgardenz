@@ -47,3 +47,5 @@ next-env.d.ts
 /.mcp.json
 /skills-lock.json
 /DESIGN.md
+/CLAUDE.md
+/AGENTS.md
