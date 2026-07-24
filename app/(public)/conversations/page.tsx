@@ -48,13 +48,14 @@ export default function ConversationsPage() {
             </Reveal>
             <Reveal>
               <p className="text-lede max-w-[58ch]">
-                Sixty unhurried minutes with Dr. Laiyemo. Private, practical, and rooted in the five
-                pillars every healthy relationship stands on.
+                Sixty unhurried minutes with Dr. Laiyemo, whether you arrive as a couple or on your
+                own. Private, practical, and rooted in the five pillars every healthy relationship
+                stands on.
               </p>
             </Reveal>
             <Reveal>
               <p className="text-body max-w-[58ch] text-ink-muted">
-                {`${pillarLine.charAt(0).toUpperCase()}${pillarLine.slice(1)}: whatever brings you, the conversation tends the whole garden.`}
+                {`${pillarLine.charAt(0).toUpperCase()}${pillarLine.slice(1)}. Single, dating, engaged, married, separated, divorced, or widowed: whatever brings you, the conversation tends the whole garden.`}
               </p>
             </Reveal>
           </div>

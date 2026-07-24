@@ -190,7 +190,7 @@ export function HeroScroll({
           <div data-hero-motto>
             {/* Each phrase rises out of its own mask, one beat apart (pure CSS,
                 so a stalled ticker can never strand it). */}
-            <h1 className="font-[family-name:var(--font-display)] text-balance text-[clamp(3rem,9.5vw,8.75rem)] font-[440] leading-[0.98] tracking-[-0.04em] text-[#f5f3ea] [text-shadow:0_2px_40px_rgba(11,31,22,0.5)]">
+            <h1 className="font-[family-name:var(--font-display)] text-balance text-[clamp(3rem,9.5vw,8.75rem)] font-[500] leading-[1.02] tracking-[-0.02em] text-[#f5f3ea] [text-shadow:0_2px_40px_rgba(11,31,22,0.5)]">
               <span className="hero-mask">
                 <span className="hero-word" style={{ "--word-i": 0 } as React.CSSProperties}>
                   Harmony
@@ -198,7 +198,7 @@ export function HeroScroll({
               </span>{" "}
               <span className="hero-mask">
                 <span className="hero-word" style={{ "--word-i": 1 } as React.CSSProperties}>
-                  <em className="font-[420] italic text-[#e4ce7f]">on the</em>
+                  <em className="font-[480] italic text-[#e4ce7f]">on the</em>
                 </span>
               </span>{" "}
               <span className="hero-mask">

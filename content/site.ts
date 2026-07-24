@@ -17,7 +17,8 @@ export const brand = {
       "Board-certified physician with over thirty-five years in medicine",
       "Two decades of family-harmony advocacy",
       "Author of the Three Guys Talking trilogy",
-      "Associate Professor of Medicine, Howard University College of Medicine",
+      // Employer is deliberately never named anywhere on this site.
+      "Academic physician and medical educator",
     ],
     portrait: "/images/dr-laiyemo-portrait.jpg",
     amazonAuthorUrl: "https://www.amazon.com/Adeyinka-Laiyemo/e/B0H68QFKDH",

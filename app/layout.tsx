@@ -1,22 +1,21 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Instrument_Sans, Newsreader } from "next/font/google";
+import { EB_Garamond, Instrument_Sans, Newsreader } from "next/font/google";
 import { brand } from "@/content/site";
 import "./globals.css";
 
-// Golden Hour type system (reference-driven: Solare / Saol Display at
-// casadisolare.com and unseen.co). Bodoni Moda is the closest open face to
-// that monumental high-contrast serif (variable weight + optical size + true
-// italics); Instrument Sans stands in for Neue Montreal as the quiet
-// grotesque. Variables keep their historic names so tokens and components
-// pick the swap up without edits.
-const display = Bodoni_Moda({
+// Three voices: a classical serif for display, a quiet grotesque for UI, and
+// a warm serif for long-form reading. The CSS variable names are historic, so
+// swapping a family here propagates through the tokens without touching
+// components.
+// Display face: EB Garamond. A didone (Bodoni) looked elegant but its hairline
+// strokes thin out to near-invisibility at wordmark sizes, which read as poor
+// legibility. Garamond is an old-style serif: even stroke weight, sturdy at
+// every size, true italics, and classical rather than fashionable.
+const display = EB_Garamond({
   variable: "--font-fraunces",
   subsets: ["latin"],
   weight: "variable",
   style: ["normal", "italic"],
-  // Serve the optical-size axis: at wordmark scale the didone gets the
-  // high-contrast display cut instead of the text cut.
-  axes: ["opsz"],
   display: "swap",
 });
 

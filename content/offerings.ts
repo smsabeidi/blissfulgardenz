@@ -47,7 +47,8 @@ export const offerings: Offering[] = [
     slug: "premarital",
     label: "Premarital",
     title: "Begin as you mean to grow",
-    audience: "Engaged and newly married couples building their foundation",
+    audience:
+      "Anyone preparing for marriage, whether single and thinking ahead, dating with intention, engaged, or newly wed",
     lede: "Before the vows, the conversations. A shared framework for the life you are planting together.",
     topics: [
       "Expectations each of you is quietly carrying",
@@ -85,7 +86,8 @@ export const offerings: Offering[] = [
     slug: "postmarital",
     label: "Rebuilding",
     title: "Begin privately. Begin gently.",
-    audience: "Anyone in a strained season, arriving together or alone",
+    audience:
+      "Anyone in a hard or changed season, whether separated, divorced, widowed, or simply unsure, arriving together or alone",
     lede: "Some seasons are hard to say out loud. You may come alone, and you may come exactly as you are.",
     topics: [
       "Finding words for what has been silent",

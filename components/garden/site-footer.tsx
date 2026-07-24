@@ -72,7 +72,7 @@ export function SiteFooter() {
           />
           <p
             aria-hidden
-            className="relative select-none whitespace-nowrap pb-[0.14em] text-center font-[family-name:var(--font-display)] text-[clamp(2.75rem,10vw,9rem)] font-[440] lowercase leading-[1.05] tracking-[-0.04em] text-brand-ink"
+            className="relative select-none whitespace-nowrap pb-[0.14em] text-center font-[family-name:var(--font-display)] text-[clamp(2.75rem,10vw,9rem)] font-[500] lowercase leading-[1.08] tracking-[-0.02em] text-brand-ink"
           >
             <MaskRise amount={0.4}>
               blissful <em className="italic text-[#e4ce7f]">gardenz</em>

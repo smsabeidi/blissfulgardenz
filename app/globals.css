@@ -101,26 +101,29 @@
 /* Type scale (7 steps). Use these classes, never ad-hoc sizes.        */
 /* ------------------------------------------------------------------ */
 
+/* Display scale, tuned for an old-style serif: didones need tight tracking to
+   look composed, but Garamond needs room to breathe and a touch more weight to
+   hold presence. Slightly looser leading buys real readability at these sizes. */
 .text-display-xl {
   font-family: var(--font-display);
   font-size: clamp(3.2rem, 1rem + 6.5vw, 7rem);
-  line-height: 0.96;
-  letter-spacing: -0.04em;
-  font-weight: 460;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 500;
 }
 .text-display {
   font-family: var(--font-display);
   font-size: clamp(2.3rem, 1.1rem + 3.6vw, 3.9rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  font-weight: 460;
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  font-weight: 520;
 }
 .text-display-sm {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 1.2rem + 1vw, 1.9rem);
-  line-height: 1.12;
-  letter-spacing: -0.015em;
-  font-weight: 470;
+  line-height: 1.18;
+  letter-spacing: -0.005em;
+  font-weight: 540;
 }
 .text-lede {
   font-size: clamp(1.125rem, 1rem + 0.4vw, 1.3125rem);
@@ -350,12 +353,14 @@ html[data-theme-anim] *::after {
 }
 
 /* Hero motto: each phrase rises out of its own mask, one beat apart.  */
+/* Garamond's descenders run deeper than a didone's: the mask needs the extra
+   clearance or the y in "Harmony" clips against the overflow edge. */
 .hero-mask {
   display: inline-block;
   overflow: hidden;
   vertical-align: bottom;
-  padding-bottom: 0.12em;
-  margin-bottom: -0.12em;
+  padding-bottom: 0.2em;
+  margin-bottom: -0.2em;
 }
 @keyframes hero-word {
   from { transform: translateY(112%); }

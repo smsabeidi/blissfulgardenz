@@ -15,10 +15,10 @@ import { ThemeToggle } from "./theme-toggle";
 function InterimLockup() {
   return (
     <Link href="/" className="group flex items-baseline gap-1.5" aria-label={`${brand.name}, home`}>
-      {/* Interim lockup, unseen.co two-tone: quiet grotesque + didone italic.
+      {/* Interim lockup, two-tone: quiet grotesque + serif italic.
           The real mark remains a client input (PRD §21). */}
       <span className="text-[1.2rem] font-medium lowercase tracking-[-0.01em]">blissful</span>
-      <span className="font-[family-name:var(--font-display)] text-[1.3rem] font-[440] lowercase italic tracking-[-0.02em]">
+      <span className="font-[family-name:var(--font-display)] text-[1.3rem] font-[520] lowercase italic tracking-[-0.01em]">
         gardenz
       </span>
     </Link>

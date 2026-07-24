@@ -9,7 +9,7 @@ import { books, series } from "@/content/books";
 export const metadata: Metadata = {
   title: "Dr. Adeyinka Laiyemo",
   description:
-    "Meet the founder of Blissful Gardenz: gastroenterologist, Associate Professor of Medicine at Howard University, and author of the Three Guys Talking trilogy.",
+    "Meet the founder of Blissful Gardenz: gastroenterologist, medical educator, and author of the Three Guys Talking trilogy.",
 };
 
 // The founder page: portrait + warm biography, credentials as engraved plaque
@@ -132,10 +132,10 @@ export default function DrLaiyemoPage() {
         <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
           <RevealItem index={0} className="lg:col-span-5">
             <PetalCard className="h-full" innerClassName="flex h-full flex-col gap-4">
-              <p className="text-meta text-gold-text">Present appointment</p>
-              <h3 className="text-display-sm text-balance">Associate Professor of Medicine</h3>
+              <p className="text-meta text-gold-text">In medicine</p>
+              <h3 className="text-display-sm text-balance">Physician and medical educator</h3>
               <p className="text-body text-ink-muted">
-                Howard University College of Medicine, where he has taught since 2010.
+                A teacher of medical students and resident physicians since 2010.
               </p>
               <div aria-hidden className="mt-auto h-px w-full bg-hairline" />
               <p className="text-[15px] text-ink-muted">

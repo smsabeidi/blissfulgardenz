@@ -35,7 +35,7 @@ export function MaskRise({
     return <span className={`block ${className}`}>{children}</span>;
   }
   return (
-    <span ref={ref} className={`block overflow-hidden pb-[0.14em] -mb-[0.14em] ${className}`}>
+    <span ref={ref} className={`block overflow-hidden pb-[0.2em] -mb-[0.2em] ${className}`}>
       <motion.span
         className="block"
         initial={{ y: "112%" }}

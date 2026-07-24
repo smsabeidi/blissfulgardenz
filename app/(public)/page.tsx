@@ -123,7 +123,7 @@ export default function HomePage() {
           <SectionHeading
             eyebrow="Harmony conversations"
             title={<span id="conversations-title">Private conversations for every season</span>}
-            lede="Sixty unhurried minutes with Dr. Laiyemo, wherever your marriage is standing."
+            lede="Sixty unhurried minutes with Dr. Laiyemo. Come as a couple or on your own, in whatever season you are in."
           />
           <div className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-12">
             {offerings.map((offering, i) => (
@@ -234,7 +234,7 @@ export default function HomePage() {
         videoSrc={bandFilm}
         title={
           <>
-            Stay for the <em className="font-[420] italic text-[#e4ce7f]">golden hour</em>.
+            Stay for the <em className="font-[480] italic text-[#e4ce7f]">golden hour</em>.
           </>
         }
         meta="The garden after six"
