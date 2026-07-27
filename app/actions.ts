@@ -1,12 +1,27 @@
 "use server";
 
-// Phase-1 form stubs with their final signatures (CEO review S10-3): schema-
-// validated input, discriminated Result, body-swap wiring at the platform phase.
+import { createHash, randomBytes } from "node:crypto";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { sendFoundingConfirm, sendContactNotification } from "@/lib/email";
+import { env } from "@/lib/env";
+
+// SUPERSEDES the phase-1 "persist nothing" ruling (design review D11, PRD §12.3).
 //
-// PRIVACY RULING (design review D11, PRD §12.3): these actions never log or
-// persist message bodies, names, or emails. Receipt metadata only. Submissions
-// are acknowledged honestly as "received for the founding period" and the
-// wiring status is documented in the handoff notes.
+// That ruling was correct for a brochure site with no accounts, and it became
+// harmful the moment the forms went live: an address was validated, a warm
+// success state was shown, and the address was thrown away. Real people asked to
+// be told when the Garden opened and were silently dropped, and the monthly
+// letter promised on the same screen had no list to send to.
+//
+// The replacement principle is narrower than "log nothing" and stronger than
+// "store everything": STORE THE MINIMUM NEEDED TO KEEP THE PROMISE THAT WAS MADE
+// ON THE SCREEN, AND NOTHING ELSE.
+//   - Founding list: the address is the promise, so it is stored, with double
+//     opt-in and a consent timestamp. It is still never written to a log line.
+//   - Contact: the promise is "a person will read this", so the message is
+//     emailed to the team and never persisted to the database at all.
+// If a dependency is unconfigured we return failed. A false success is the one
+// outcome this file exists to prevent.
 
 export type FormResult =
   | { status: "ok" }
@@ -19,7 +34,7 @@ export async function joinFoundingList(
   _prev: FormResult | null,
   formData: FormData
 ): Promise<FormResult> {
-  const email = String(formData.get("email") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const context = String(formData.get("context") ?? "general").slice(0, 40);
 
   if (!email || !EMAIL_RE.test(email) || email.length > 254) {
@@ -29,8 +44,40 @@ export async function joinFoundingList(
     };
   }
 
-  // Receipt metadata only. Never the address itself.
-  console.info(`[founding-list] received context=${context} at=${new Date().toISOString()}`);
+  const admin = createAdminClient();
+  if (!admin) {
+    console.error("[founding-list] Supabase is not configured; the address was NOT stored.");
+    return { status: "failed" };
+  }
+
+  const token = randomBytes(32).toString("hex");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+
+  // Upsert, so a second signup from the same person is not an error and does not
+  // disclose that the address is already known.
+  const { error } = await admin.from("founding_list").upsert(
+    {
+      email,
+      source: context,
+      confirm_token_hash: tokenHash,
+    },
+    { onConflict: "email" }
+  );
+
+  if (error) {
+    console.error(`[founding-list] write failed: ${error.message}`);
+    return { status: "failed" };
+  }
+
+  const confirmUrl = `${env.siteUrl()}/api/founding/confirm?token=${token}&email=${encodeURIComponent(email)}`;
+  const sent = await sendFoundingConfirm({ to: email, confirmUrl });
+
+  // The row exists either way, so the list is never lost. But if the
+  // confirmation could not go out, the person will never see it arrive, and
+  // saying "check your email" would be a lie.
+  if (!sent) return { status: "failed" };
+
+  console.info(`[founding-list] stored + confirmation sent, source=${context}`);
   return { status: "ok" };
 }
 
@@ -49,13 +96,26 @@ export async function sendContactMessage(
     errors.email = "That address does not look complete. One more look?";
   if (!message) errors.message = "The message box is still empty.";
   if (message.length > 4000)
-    errors.message = "That is a little long for this box. A shorter note is perfect; there is room for everything else in the conversation itself.";
+    errors.message =
+      "That is a little long for this box. A shorter note is perfect; there is room for everything else in the conversation itself.";
 
   if (Object.keys(errors).length > 0) {
     return { status: "invalid", errors };
   }
 
-  // Receipt metadata only (topic + timestamp). Never the body, name, or email.
-  console.info(`[contact] received topic=${topic} at=${new Date().toISOString()}`);
+  // Delivered to a human, never written to the database. Someone describing a
+  // marriage in difficulty did not consent to a permanent record of it.
+  const delivered = await sendContactNotification({
+    topic,
+    body: `From: ${name} <${email}>\n\n${message}`,
+    replyTo: email,
+  });
+
+  if (!delivered) {
+    console.error("[contact] delivery failed; the sender was told honestly.");
+    return { status: "failed" };
+  }
+
+  console.info(`[contact] delivered topic=${topic}`);
   return { status: "ok" };
 }

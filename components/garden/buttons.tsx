@@ -44,6 +44,8 @@ type ButtonProps = {
   className?: string;
   type?: "button" | "submit";
   disabled?: boolean;
+  /** Only ever passed from a Client Component (checkout, sign-out, and similar). */
+  onClick?: () => void;
   /** "gold" is for permanently dark surfaces (bg-brand sections), where the
    *  theme-following dawn button (deep green) would vanish into the ground. */
   tone?: "auto" | "gold";
@@ -57,6 +59,7 @@ export function BloomButton({
   className = "",
   type = "button",
   disabled,
+  onClick,
   tone = "auto",
 }: ButtonProps) {
   const palette =
@@ -89,7 +92,7 @@ export function BloomButton({
     );
   }
   return (
-    <button type={type} disabled={disabled} className={`${classes} disabled:opacity-60`}>
+    <button type={type} disabled={disabled} onClick={onClick} className={`${classes} disabled:opacity-60`}>
       {inner}
     </button>
   );
@@ -102,6 +105,7 @@ export function QuietButton({
   className = "",
   type = "button",
   disabled,
+  onClick,
 }: ButtonProps) {
   const classes = `group relative inline-flex h-12 items-center justify-center whitespace-nowrap rounded-full border border-hairline px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none ${className}`;
   const inner = (
@@ -125,7 +129,7 @@ export function QuietButton({
     );
   }
   return (
-    <button type={type} disabled={disabled} className={classes}>
+    <button type={type} disabled={disabled} onClick={onClick} className={classes}>
       {inner}
     </button>
   );
