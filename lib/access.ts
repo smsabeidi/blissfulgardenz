@@ -1,5 +1,6 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
+import { isDemo, DEMO_ACCESS } from "@/lib/demo";
 import { NO_ACCESS, type Access, type Tier, type EntitlementStatus, type SeatRole } from "@/lib/db/types";
 
 // The one place that answers "is this person a paid member right now".
@@ -10,6 +11,10 @@ import { NO_ACCESS, type Access, type Tier, type EntitlementStatus, type SeatRol
 // request with React cache(), so a member who just paid is a member instantly
 // and an entitlement migration can never break sign-in.
 export const getAccess = cache(async (): Promise<Access> => {
+  // Demo mode short-circuits to a fully entitled member so the experience can be
+  // shown before Supabase exists. Off unless NEXT_PUBLIC_DEMO_MODE === "1".
+  if (isDemo()) return DEMO_ACCESS;
+
   const supabase = await createClient();
   if (!supabase) return NO_ACCESS;
 

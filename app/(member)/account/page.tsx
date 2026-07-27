@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getAccess } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
+import { isDemo, DEMO_MEMBERSHIP, DEMO_SEATS } from "@/lib/demo";
 import { MemberSection } from "@/components/member/section";
 import { AccountClient } from "./account-client";
 import { SeatPanel } from "@/components/member/seat-panel";
@@ -38,20 +39,35 @@ export default async function AccountPage() {
       .maybeSingle(),
   ]);
 
-  const { data: membership } = access.membershipId
-    ? await supabase
-        .from("memberships")
-        .select("tier, status, current_period_end, cancel_at_period_end, seat_limit, billing_owner_id")
-        .eq("id", access.membershipId)
-        .maybeSingle()
-    : { data: null };
+  // Demo mode fills the household from fixtures so the account surface can be
+  // shown before the database exists. Nothing is written.
+  const { data: membership } = isDemo()
+    ? {
+        data: {
+          tier: "bloom" as const,
+          status: "active" as const,
+          current_period_end: DEMO_MEMBERSHIP.currentPeriodEnd,
+          cancel_at_period_end: false,
+          seat_limit: 2,
+          billing_owner_id: access.userId,
+        },
+      }
+    : access.membershipId
+      ? await supabase
+          .from("memberships")
+          .select("tier, status, current_period_end, cancel_at_period_end, seat_limit, billing_owner_id")
+          .eq("id", access.membershipId)
+          .maybeSingle()
+      : { data: null };
 
-  const { data: seatRows } = access.membershipId
-    ? await supabase
-        .from("membership_seats")
-        .select("id, role, status, invited_email, user_id, joined_at")
-        .eq("membership_id", access.membershipId)
-    : { data: null };
+  const { data: seatRows } = isDemo()
+    ? { data: DEMO_SEATS }
+    : access.membershipId
+      ? await supabase
+          .from("membership_seats")
+          .select("id, role, status, invited_email, user_id, joined_at")
+          .eq("membership_id", access.membershipId)
+      : { data: null };
 
   // Resolve partner display names without exposing profile rows to the other
   // seat: RLS keeps profiles self-only, so names come from the seat owner's own

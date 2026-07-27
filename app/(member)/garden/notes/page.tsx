@@ -6,6 +6,7 @@ import { getAccess } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import type { Note } from "@/lib/db/types";
 import { NotesClient } from "./notes-client";
+import { isDemo, DEMO_NOTES } from "@/lib/demo";
 
 // Notes: the quietest room in the Garden, and the one that keeps people coming
 // back. Everything private is read here, on the server, with the member's own
@@ -77,6 +78,12 @@ export default async function NotesPage({
     );
   }
 
+  // Demo mode serves fixtures through the SAME render below, so what is shown is
+  // the real page rather than a lookalike. Nothing here is persisted.
+  if (isDemo()) {
+    return <NotesView notes={DEMO_NOTES} scope={scope} />;
+  }
+
   const supabase = await createClient();
   if (!supabase) {
     return (
@@ -110,6 +117,17 @@ export default async function NotesPage({
 
   const notes = (data ?? []) as Note[];
 
+  return <NotesView notes={notes} scope={scope} />;
+}
+
+// One render, two data sources. Keeps the demo honest: it is the real page.
+function NotesView({
+  notes,
+  scope,
+}: {
+  notes: Note[];
+  scope: { type: ContextType; ref: string | null };
+}) {
   return (
     <Shell>
       <header className="flex flex-col gap-4">
