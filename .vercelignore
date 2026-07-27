@@ -1,0 +1,21 @@
+# Never upload local environment files.
+#
+# This matters more than it looks: Next.js reads .env.local during a production
+# build too, so if a local file rode along with `vercel deploy`, a development
+# switch could take effect in production. NEXT_PUBLIC_DEMO_MODE is exactly such
+# a switch, and it opens the member area to everyone with seeded data.
+# Production gets its values from the Vercel project settings, and nowhere else.
+.env
+.env.*
+!.env.example
+
+# Local tooling and notes that are not part of the deployed app.
+.claude/
+.agents/
+.mcp.json
+skills-lock.json
+DESIGN.md
+
+# Never ship the local build cache; Vercel builds fresh.
+.next/
+node_modules/
