@@ -34,6 +34,12 @@ const UNAVAILABLE = "The gate is closed just now. Please try again shortly.";
 
 /** Only ever navigate to a path on this site. Mirrors the guard on the server
  *  so a tampered query string cannot bounce someone off to another host. */
+// Google is the only sign-in path until the Supabase email template is changed
+// to emit {{ .Token }}. Shipping the code field before that would send people a
+// magic link when the form is asking them for six digits, which reads as broken.
+// Set NEXT_PUBLIC_AUTH_EMAIL_ENABLED=1 to turn the email path back on.
+const EMAIL_SIGN_IN_ENABLED = process.env.NEXT_PUBLIC_AUTH_EMAIL_ENABLED === "1";
+
 function safePath(value: string): string {
   if (!value.startsWith("/") || value.startsWith("//")) return "/garden";
   return value;
@@ -366,6 +372,14 @@ export function EnterForm({ next }: { next: string }) {
         {busy === "google" ? "Taking you to Google..." : "Continue with Google"}
       </button>
 
+      {!EMAIL_SIGN_IN_ENABLED ? (
+        <p className="text-[13px] leading-relaxed text-ink-muted">
+          Signing in with Google keeps it to one tap, and there is no password to remember.
+        </p>
+      ) : null}
+
+      {EMAIL_SIGN_IN_ENABLED ? (
+        <>
       <div className="flex items-center gap-4">
         <span aria-hidden className="h-px flex-1 bg-hairline" />
         <span className="text-meta text-ink-muted">or</span>
@@ -410,6 +424,8 @@ export function EnterForm({ next }: { next: string }) {
           {busy === "send" ? "Sending your code..." : "Email me a code"}
         </BloomButton>
       </form>
+        </>
+      ) : null}
     </div>
   );
 }
