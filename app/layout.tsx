@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { AuthLanding } from "@/components/garden/auth-landing";
 import { EB_Garamond, Instrument_Sans, Newsreader } from "next/font/google";
 import { brand } from "@/content/site";
 import "./globals.css";
@@ -84,6 +85,10 @@ export default function RootLayout({
       className={`${display.variable} ${sans.variable} ${longform.variable} h-full`}
     >
       <body className="grain flex min-h-full flex-col">
+        {/* Completes a sign-in that Supabase's redirect fallback dropped on the
+            wrong page. Renders nothing and imports nothing unless a credential
+            is actually present in the URL. */}
+        <AuthLanding />
         {/* Reveal styles are SSR'd inline (opacity 0, masks, clips) and lifted
             by the motion runtime. Without JS nothing would ever lift them, so
             no-JS visitors get everything visible, unanimated. */}
