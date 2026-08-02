@@ -222,6 +222,14 @@ function MobileMenu({ onClose }: { onClose: () => void }) {
         >
           {nav.membership.label}
         </Link>
+        <Link
+          href="/enter?next=/garden"
+          onClick={onClose}
+          style={{ animationDelay: `${itemIndex++ * 60}ms` }}
+          className="animate-rise mt-4 inline-flex min-h-11 items-center text-[15px] text-brand-ink-muted underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current motion-reduce:transition-none"
+        >
+          Already a member? Sign in
+        </Link>
         <p className="mt-10 text-sm text-brand-ink-muted/70">{brand.motto}</p>
       </nav>
     </div>
@@ -284,6 +292,16 @@ export function SiteHeader() {
           </nav>
           <div className="flex items-center gap-3">
             <ThemeToggle />
+            {/* The returning-member door. The gold pill sells a membership;
+                someone who already bought one needs a way in that is not a
+                sales page. Static link, so the header stays statically
+                rendered: /enter forwards anyone already signed in. */}
+            <Link
+              href="/enter?next=/garden"
+              className="hidden h-11 items-center px-1 text-[14px] font-medium underline decoration-transparent underline-offset-4 transition-colors duration-300 hover:decoration-current motion-reduce:transition-none sm:inline-flex"
+            >
+              Sign in
+            </Link>
             <Link
               href={nav.membership.href}
               className="hidden h-11 items-center rounded-full bg-gold px-5 text-[14px] font-medium text-[#0f2e22] shadow-[0_6px_18px_-6px_color-mix(in_srgb,var(--gold)_60%,transparent)] transition-transform duration-300 hover:scale-[1.03] active:scale-[0.98] active:duration-75 motion-reduce:transition-none sm:inline-flex"

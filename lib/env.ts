@@ -19,6 +19,17 @@ export const env = {
   priceBloomAnnual: () => opt("STRIPE_PRICE_BLOOM_ANNUAL"),
   priceBloomFounding: () =>
     opt("STRIPE_PRICE_BLOOM_FOUNDING_ANNUAL") ?? opt("STRIPE_PRICE_BLOOM_ANNUAL"),
+  /**
+   * Stripe Tax, off unless explicitly switched on.
+   *
+   * Stripe refuses to create a Checkout Session with automatic_tax enabled
+   * until the account has a head office address, so leaving it hard-coded on
+   * meant every single "Join" press failed with a 502 and nobody could pay.
+   * It is a flag rather than a deletion because turning tax collection back on
+   * should be one env var, not a code change: set STRIPE_AUTOMATIC_TAX=1 the
+   * moment the origin address is configured in the Stripe dashboard.
+   */
+  stripeAutomaticTax: () => opt("STRIPE_AUTOMATIC_TAX") === "1",
 
   resendKey: () => opt("RESEND_API_KEY"),
   fromTransactional: () =>

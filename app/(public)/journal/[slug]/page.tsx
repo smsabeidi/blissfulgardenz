@@ -135,7 +135,7 @@ export default async function ArticlePage({
             <p className="text-display-sm">The Inner Garden opens soon.</p>
             <p className="text-[15px] text-ink-muted">Founding members read everything first.</p>
           </div>
-          <QuietButton href="/membership#founding" className="shrink-0">
+          <QuietButton href="/membership#join" className="shrink-0">
             {ctaLabels.foundingList}
           </QuietButton>
         </div>

@@ -5,6 +5,7 @@ import { getAccess } from "@/lib/access";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { absoluteUrl, getStripe, priceIdFor, PLAN_KEYS } from "@/lib/stripe";
+import { env } from "@/lib/env";
 
 // Node runtime: the Stripe SDK's default client and this project's Supabase
 // server client both assume it.
@@ -99,8 +100,12 @@ export async function POST(request: Request) {
     cancel_url: absoluteUrl("/membership"),
     client_reference_id: access.userId,
     allow_promotion_codes: true,
-    automatic_tax: { enabled: true },
-    // Automatic tax needs somewhere to calculate from.
+    // Off until STRIPE_AUTOMATIC_TAX=1. Stripe rejects the whole session when
+    // automatic tax is on and the account has no head office address, so
+    // hard-coding it true turned every join attempt into a 502.
+    automatic_tax: { enabled: env.stripeAutomaticTax() },
+    // Collected either way: it is what tax will be calculated from the moment
+    // that flag is switched on, and it is useful on the receipt regardless.
     billing_address_collection: "required",
     metadata: { user_id: access.userId, plan },
     // This metadata is load-bearing, not decoration. Invoice and subscription

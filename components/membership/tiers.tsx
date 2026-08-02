@@ -1,4 +1,4 @@
-import { tiers, visitorTier, type Tier } from "@/content/offerings";
+import { tiers, type Tier } from "@/content/offerings";
 import { ctaLabels } from "@/content/site";
 import { BloomButton, QuietButton } from "@/components/garden/buttons";
 import { PetalCard } from "@/components/garden/primitives";
@@ -84,36 +84,15 @@ function TierBody({ tier }: { tier: Tier }) {
         {tier.conversationBenefit}
       </p>
       {tier.featured ? (
-        <BloomButton href="#founding" className="self-start">
-          {ctaLabels.foundingList}
+        <BloomButton href={tier.cta?.href ?? "#join"} className="self-start">
+          {tier.cta?.label ?? ctaLabels.join}
         </BloomButton>
       ) : (
-        <QuietButton href="#founding" className="self-start">
-          {ctaLabels.foundingList}
+        <QuietButton href={tier.cta?.href ?? "#join"} className="self-start">
+          {tier.cta?.label ?? ctaLabels.join}
         </QuietButton>
       )}
     </div>
-  );
-}
-
-export function VisitorRow() {
-  return (
-    <Reveal>
-      <div className="flex flex-col gap-4 rounded-[2rem] border border-hairline px-7 py-6 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex items-baseline gap-3">
-          <h3 className="text-display-sm">{visitorTier.name}</h3>
-          <p className="text-[15px] text-ink-muted">{visitorTier.price}</p>
-        </div>
-        <ul className="flex flex-col gap-1.5 text-[15px] text-ink-muted sm:flex-row sm:flex-wrap sm:gap-x-6">
-          {visitorTier.includes.map((item) => (
-            <li key={item} className="flex items-center gap-2">
-              <span aria-hidden className="inline-block h-px w-3 bg-gold" />
-              {item}
-            </li>
-          ))}
-        </ul>
-      </div>
-    </Reveal>
   );
 }
 

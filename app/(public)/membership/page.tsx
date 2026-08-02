@@ -1,13 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { CoupleSeatBand } from "@/components/membership/couple-seat";
-import { VisitorRow, TierGrid } from "@/components/membership/tiers";
+import { TierGrid } from "@/components/membership/tiers";
 import { FaqList } from "@/components/membership/faq";
 import { JoinBar } from "@/components/membership/join-bar";
 import { DisclaimerNote } from "@/components/membership/disclaimer-note";
-import { BlossomWall } from "@/components/home/blossom-wall";
-import { FoundingBloom } from "@/components/home/founding-bloom";
+import { JoinPanel } from "@/components/membership/join-panel";
 import { Reveal, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow, SectionHeading } from "@/components/garden/primitives";
 import { BloomButton } from "@/components/garden/buttons";
@@ -18,11 +16,12 @@ import { faq } from "@/content/library";
 export const metadata: Metadata = {
   title: "The Inner Garden Membership",
   description:
-    "Membership for couples and individuals: the film library, guides and workbooks, a live monthly gathering, and the Couple Seat. Two logins, one price. Founding list open.",
+    "Membership for individuals and families: exclusive videos not on YouTube, guides and workbooks, a free monthly webinar, and warmer rates on private harmony conversations.",
 };
 
 // /membership: the conversion page of phase 1. No Stripe this phase; every
-// join CTA is the founding list, scrolling to #founding (rulings D7/D8).
+// join CTA scrolls to the JoinPanel at #join, which decides between
+// checkout, sign-in, and "enter the garden" from the session.
 
 const faqJsonLd = JSON.stringify({
   "@context": "https://schema.org",
@@ -89,7 +88,7 @@ export default function MembershipPage() {
             <HorizonDraw className="max-w-48" />
             <Reveal>
               <div className="flex flex-wrap items-center gap-6">
-                <BloomButton href="#founding">{ctaLabels.foundingList}</BloomButton>
+                <BloomButton href="#join">{ctaLabels.join}</BloomButton>
                 <Link
                   href="/membership/gift"
                   className="text-[15px] font-medium text-gold-text underline-offset-4 hover:underline"
@@ -113,8 +112,7 @@ export default function MembershipPage() {
         </Reveal>
       </section>
 
-      {/* 2 · Couple Seat: the emotional frame, above the pricing (D25) */}
-      <CoupleSeatBand />
+      {/* 2 · Who a membership is for, above the pricing (D25) */}
 
       {/* 3 · Tiers */}
       <section
@@ -122,11 +120,10 @@ export default function MembershipPage() {
         className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8"
       >
         <SectionHeading
-          title={<span id="tiers-title">Choose how you will tend it.</span>}
-          lede="Both tiers include the Couple Seat. Founding members enter first when the Garden opens."
+          title={<span id="tiers-title">Membership is open to an individual or a family.</span>}
+          lede="For individuals, couples, and families with unique email addresses. Adults, eighteen and over."
         />
         <div className="mt-12 flex flex-col gap-6">
-          <VisitorRow />
           <TierGrid />
         </div>
         <Reveal>
@@ -167,10 +164,6 @@ export default function MembershipPage() {
         </div>
       </section>
 
-      {/* 5 · Member stories */}
-      <section aria-label="Member stories" className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
-        <BlossomWall />
-      </section>
 
       {/* 6 · FAQ */}
       <section
@@ -181,8 +174,8 @@ export default function MembershipPage() {
           <div className="lg:col-span-4">
             <div className="lg:sticky lg:top-28">
               <SectionHeading
-                title={<span id="faq-title">Questions, answered gently.</span>}
-                lede="Everything couples ask before they join."
+                title={<span id="faq-title">Frequently Asked Questions</span>}
+                lede="Everything asked before joining."
               />
             </div>
           </div>
@@ -194,7 +187,7 @@ export default function MembershipPage() {
 
       {/* 7 · The Founding Bloom (id="founding" is the join target, D7/D8) */}
       <div id="founding" className="scroll-mt-24">
-        <FoundingBloom context="membership" />
+        <JoinPanel />
       </div>
 
       {/* 8 · Quiet disclaimer at the foot */}

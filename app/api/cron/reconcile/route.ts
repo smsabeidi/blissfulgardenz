@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getStripe } from "@/lib/stripe";
 
@@ -14,13 +15,37 @@ export const dynamic = "force-dynamic";
 // re-derives access from Stripe, which is the system of record for money.
 //
 // Secured by CRON_SECRET. Vercel Cron sends it as a Bearer token.
+
+/**
+ * Constant-time bearer comparison.
+ *
+ * `!==` on a secret leaks its prefix through response timing, one byte at a
+ * time. The length is compared first and separately because timingSafeEqual
+ * throws on differing lengths; that leaks only the length, not the contents.
+ */
+function bearerMatches(header: string | null, secret: string): boolean {
+  if (!header) return false;
+  const expected = Buffer.from(`Bearer ${secret}`);
+  const received = Buffer.from(header);
+  if (expected.length !== received.length) return false;
+  return timingSafeEqual(expected, received);
+}
+
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (secret) {
-    const auth = request.headers.get("authorization");
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
-    }
+
+  // FAIL CLOSED. This check used to sit inside `if (secret)`, which meant that
+  // forgetting to configure CRON_SECRET did not disable the endpoint, it
+  // disabled the authentication on it: an unauthenticated caller could drive a
+  // service-role write path and one Stripe API call per membership, on demand.
+  // A missing secret is a misconfiguration, never a reason to skip the gate.
+  if (!secret) {
+    console.error("[cron:reconcile] refused: CRON_SECRET is not configured");
+    return NextResponse.json({ error: "not_configured" }, { status: 503 });
+  }
+
+  if (!bearerMatches(request.headers.get("authorization"), secret)) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   const admin = createAdminClient();

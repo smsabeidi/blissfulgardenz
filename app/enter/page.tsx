@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { platformReady } from "@/lib/env";
+import { getAccess } from "@/lib/access";
 import { brand } from "@/content/site";
 import { Eyebrow, EmptyState, PetalCard } from "@/components/garden/primitives";
 import { BloomButton } from "@/components/garden/buttons";
@@ -69,6 +71,15 @@ export default async function EnterPage({
   const next = safeNext(params.next);
   const errorKey = typeof params.error === "string" ? params.error : null;
   const errorMessage = errorKey ? (ERRORS[errorKey] ?? ERRORS.oauth) : null;
+
+  // Already signed in? Then this page is a dead end dressed as a door. Send
+  // them where they were going instead of asking a member to sign in twice.
+  // Only when there is no error to explain: a failed callback lands here with
+  // a stale session sometimes, and bouncing that away hides the reason.
+  if (!errorKey) {
+    const access = await getAccess();
+    if (access.signedIn) redirect(next);
+  }
 
   // No keys, no gate. The marketing site is unaffected and nobody is left
   // staring at a sign-in form that cannot possibly work.

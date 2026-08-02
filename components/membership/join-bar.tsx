@@ -72,7 +72,7 @@ export function JoinBar() {
               <span className="text-ink-muted">founding list open</span>
             </p>
             <div className="flex items-center gap-2">
-              <BloomButton href="#founding">{ctaLabels.foundingList}</BloomButton>
+              <BloomButton href="#join">{ctaLabels.join}</BloomButton>
               <button
                 type="button"
                 onClick={() => setDismissed(true)}
