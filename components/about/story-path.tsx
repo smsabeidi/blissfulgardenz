@@ -22,22 +22,22 @@ const milestones = [
   {
     era: "The medicine years",
     title: "A physician learns where harmony lives",
-    body: "More than thirty-five years in medicine kept teaching Dr. Laiyemo the same lesson. The wellbeing of a family shapes the wellbeing of everyone in it.",
+    body: "More than three decades in medicine kept teaching Dr. Laiyemo the same lesson. The wellbeing of a family shapes the wellbeing of everyone in it.",
   },
   {
     era: "The advocacy",
     title: "Two decades spent tending families",
-    body: "Long before this garden had a name, he was a quiet advocate for family harmony. Twenty years of listening, speaking, and sitting with couples.",
+    body: "Long before this garden had a name, he was a quiet advocate for family harmony. Over two decades of listening, speaking, and sitting with couples.",
   },
   {
     era: "The trilogy · 2017 to 2020",
     title: "Three guys start talking",
-    body: "Blissful Gardenz Inc published the Three Guys Talking trilogy: three friends, three marriages, one honest conversation carried across three books.",
+    body: "Blissful Gardenz Inc published the Three Guys Talking trilogy: three friends, marriages, honest conversations carried across three books.",
   },
   {
     era: "The garden",
     title: "A garden is planted",
-    body: "The conversations asked for a home of their own. Blissful Gardenz became that place: a garden kept for harmony conversations, open in every season.",
+    body: "The conversations asked for a home of their own. Blissful Gardenz became that place: a garden kept for harmony conversations, open in every season, growing and promoting enduring healthy relationships.",
   },
 ] as const;
 

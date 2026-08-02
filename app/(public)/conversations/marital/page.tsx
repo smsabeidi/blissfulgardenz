@@ -7,7 +7,7 @@ const offering = offerings.find((o) => o.slug === "marital")!;
 export const metadata: Metadata = {
   title: "Marital Conversations",
   description:
-    "A garden grows best when it is tended on purpose. Private 60-minute harmony conversations with Dr. Laiyemo for couples in every season of marriage.",
+    "A garden grows best when it is tended on purpose. Private 50-minute harmony sessions with Dr. Laiyemo for couples in every season of marriage.",
 };
 
 export default function MaritalPage() {

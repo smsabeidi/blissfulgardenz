@@ -27,7 +27,7 @@ export type Book = {
 
 export const series = {
   name: "Three Guys Talking",
-  tagline: "Three friends. Three marriages. One honest conversation.",
+  tagline: "Three friends. Their marriages. Honest conversations. Important life lessons.",
   description:
     "A seriocomic trilogy told through the eyes of three friends, Ray Marshall, Kamal Brown, and Adam Gray, as they navigate marriage, fatherhood, and second chances. Published by Blissful Gardenz Inc, the same garden this site grows from.",
   readingOrderNote:

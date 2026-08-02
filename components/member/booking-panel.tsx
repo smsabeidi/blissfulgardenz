@@ -34,7 +34,7 @@ const steps = [
   },
   {
     title: "We talk",
-    body: "Sixty minutes with Dr. Laiyemo, by video or in person, held in confidence.",
+    body: "Fifty minutes with Dr. Laiyemo, by video or audio, held in confidence.",
   },
 ] as const;
 
@@ -48,7 +48,7 @@ function PriceBlock({ pricing }: { pricing: ConversationPricing }) {
       </p>
       <p className="mt-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
         <span className="text-display-sm">{formatUsd(due)}</span>
-        <span className="text-body text-ink-muted">for sixty minutes</span>
+        <span className="text-body text-ink-muted">for fifty minutes</span>
       </p>
 
       {pricing.savingsNote ? (

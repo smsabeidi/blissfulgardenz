@@ -17,40 +17,34 @@ import type { Access } from "@/lib/db/types";
 /** Used when the price string in content/offerings cannot be parsed. */
 const STANDARD_FALLBACK_USD = 300;
 
-/** Used when the member discount cannot be parsed. Matches the Bloom tier copy. */
-const MEMBER_DISCOUNT_FALLBACK = 0.15;
+/** Used when the member rate cannot be parsed. Matches the Bloom tier copy. */
+const MEMBER_FALLBACK_USD = 49;
 
 // The prose in content/offerings is the copy the client approves, so it is the
 // source of truth for the number too. Parsing it keeps one price in the repo
 // instead of two that can disagree. A parse failure falls back rather than
 // throwing: a booking page that renders a slightly stale rate is recoverable,
 // a booking page that crashes is not.
-function parseStandardUsd(source: string): number {
+//
+// Both rates are read the same way, by one function, so the standard and the
+// member figure can never be parsed by subtly different rules. The member rate
+// is now stated outright rather than derived from a percentage: a derived rate
+// silently re-rounds whenever either input moves, and a member who was quoted
+// one number on the tier card should see that same number at the point of
+// booking.
+function parseUsd(source: string, fallback: number): number {
   const match = /\$\s*([\d,]+(?:\.\d+)?)/.exec(source);
-  if (!match || !match[1]) return STANDARD_FALLBACK_USD;
+  if (!match || !match[1]) return fallback;
   const value = Number(match[1].replace(/,/g, ""));
-  return Number.isFinite(value) && value > 0 ? value : STANDARD_FALLBACK_USD;
+  return Number.isFinite(value) && value > 0 ? value : fallback;
 }
 
-function parseMemberDiscount(source: string): number {
-  const match = /(\d{1,2}(?:\.\d+)?)\s*%/.exec(source);
-  if (!match || !match[1]) return MEMBER_DISCOUNT_FALLBACK;
-  const percent = Number(match[1]);
-  // A percentage outside this range is a typo in the copy, not an instruction
-  // to give the conversation away or to charge more than the standard rate.
-  if (!Number.isFinite(percent) || percent <= 0 || percent >= 100) {
-    return MEMBER_DISCOUNT_FALLBACK;
-  }
-  return percent / 100;
-}
-
-const STANDARD_USD = parseStandardUsd(consultationPricing.standard);
-const MEMBER_DISCOUNT = parseMemberDiscount(consultationPricing.memberNote);
+const STANDARD_USD = parseUsd(consultationPricing.standard, STANDARD_FALLBACK_USD);
 
 // Whole dollars, because that is how both the copy and Stripe express these
 // prices. Rounding here can only shift a display figure by cents, and never
 // the amount charged.
-const MEMBER_RATE_USD = Math.round(STANDARD_USD * (1 - MEMBER_DISCOUNT));
+const MEMBER_RATE_USD = Math.round(parseUsd(consultationPricing.member, MEMBER_FALLBACK_USD));
 
 export type ConversationPricing = {
   /** The published rate for one sixty minute conversation, in whole US dollars. */

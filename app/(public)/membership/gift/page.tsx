@@ -170,7 +170,7 @@ export default function GiftPage() {
             <div className="flex flex-col gap-2">
               <p className="text-display-sm">See what they will receive.</p>
               <p className="max-w-[52ch] text-[15px] text-ink-muted">
-                The full tour of the Inner Garden: tiers, the Couple Seat, and the library the two
+                The full tour of the Inner Garden: the memberships, the library, and the guides the two
                 of them will share.
               </p>
             </div>

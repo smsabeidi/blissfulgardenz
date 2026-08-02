@@ -104,51 +104,43 @@ export type Article = {
 
 export const articles: Article[] = [
   {
-    slug: "the-horizon-habit",
-    title: "The Horizon Habit",
+    slug: "the-ever-expanding-horizon",
+    title: "The Ever-expanding Horizon",
     pillar: "Emotional",
-    readMinutes: 6,
+    readMinutes: 3,
     featured: true,
     excerpt:
-      "Couples who last are not couples who never struggle. They are couples who keep a horizon: something ahead of them, chosen together.",
+      "Ask those who tied their nuptial knots over forty years ago, and selfish no longer exists as a word in their combined marital dictionary.",
     body: [
-      "Ask a couple in their fortieth year what kept them together and they will rarely mention grand gestures. They mention direction. A shared sense that the marriage was going somewhere, and that both of them had chosen the destination.",
-      "That is the horizon habit. It is the practice of lifting your eyes, together, past the laundry and the school run and the unread messages, toward something you are both walking to. A trip. A garden. A grandchild. A quieter year. The object matters less than the act of choosing it together.",
-      "In my years of sitting with couples, the ones in real trouble were rarely short on love. They were short on horizon. Each partner privately carried a future, and the futures had quietly stopped matching. Nobody had lied. They had simply stopped comparing notes.",
-      "So here is a small practice. Once a season, over an unhurried meal, each of you finishes this sentence: a year from now, I hope we are... Say it plainly. Listen without correcting. You are not negotiating yet; you are comparing horizons.",
-      "When the horizons match, name it and enjoy it; that is fuel. When they differ, be glad you found out at dinner and not in a crisis. Differences discovered early are conversations. Differences discovered late are verdicts.",
-      "Harmony is not the absence of weather. It is a horizon you keep walking toward, together, in all of it.",
+      "The newborn boy only cares about himself while nobody else matters in the new world the newborn girl suddenly finds herself in. Any desire or want is demanded with cries that are hard to ignore. Attention is craved the same way as food, water and oxygen. Ask married couples who have survived the first two years of marriage, and they will tell you they have had to look beyond themselves at least once. Ask those who have been married for twenty years, and they have stopped counting how many ways and how many times their preferences have taken the back seats even when they were in the drivers’ seats. Don’t bother asking those who tied their nuptial knots over forty years ago, selfish no longer exist as a word in their combined marital dictionary otherwise they would not have made it that far.",
+      "Indeed, looking beyond one’s nose and looking farther than any binoculars or telescope could enable one to achieve is what two hearts beating together as one achieve when marital bliss is the goal and togetherness is the vehicle for achieving their collective objective. Yes, those hearts reside in different chests, but their togetherness crosses physical bounds since their hearts can feel what their skin cannot.",
+      "So, keep your eyes wide open, enjoy the vast ever-expanding horizon that every day of a blissful marriage brings and let your hearts never stop saying…  “from the top and bottom of my heart, from the four chambers of my heart, from the left and the right side of my heart, and from my atria and my ventricles, I love you.”",
     ],
   },
   {
-    slug: "money-is-a-love-language-nobody-teaches",
-    title: "Money Is a Love Language Nobody Teaches",
+    slug: "money-is-the-route-to-undefined-destination",
+    title: "Money is the Route to Undefined Destination",
     pillar: "Financial",
-    readMinutes: 7,
+    readMinutes: 3,
     excerpt:
-      "We teach couples to talk about affection, family, even grief. Then we hand them a joint account and wish them luck.",
+      "Money is the only thing that stinks and we still want it. Yet money is not an end, but a tool to satisfy our needs and wants.",
     body: [
-      "Two people can love each other completely and still mean entirely different things by the word enough. One grew up where money was safety, and saving felt like breathing. The other grew up where money was joy, and spending on the people you love was the whole point of having it.",
-      "Neither is wrong. But put them in one household without a conversation, and each will quietly grade the other against a rulebook the other has never seen.",
-      "The finance conversation is not about budgets first. It is about biographies. Before you argue numbers, trade stories: what did money mean in the house you grew up in? Who worried about it? What did generosity look like? What did scarcity feel like?",
-      "Couples are often astonished by what they hear. The saver learns that the spender is not careless; the spender is loyal to a childhood where giving was love. The spender learns the saver is not joyless; the saver is protecting the family from a fear they inherited.",
-      "Only then do numbers become useful. Agree on the shared essentials, agree on a sum each of you may spend without explanation, and agree on when you will talk again. Fairness is not sameness; it is a rule you both helped write.",
-      "Money will always be a conversation in your marriage. The only question is whether you have it on purpose, in daylight, or by accident, in resentment.",
+      "It is often said that “money is the root of all evil” and “money is the route to all evil”. Yet, money is the only thing that stinks and we still want it. Money is putrid and we still hanker after it. I have never seen anybody who is allergic to money. Have you? However, money is not an end but a tool to achieve some objectives to satisfy our needs and wants. For most people, their philosophy of money changes with whether they have plenty of it or not. Unfortunately, some people are covetous of it and end up being slaves of it such that they remain poor despite having lots of it sitting in vaults in banks, big and small, near and far, known and hidden in secret codes that often die with the hoarder.",
+      "“Who wants to marry a poor man?” is a show that ladies don’t sign up for as contestants. Who wants to give a rose of love to a broke guy? Therefore, every man thinks that being handsome and rich fires the cupid arrow straight into the ventricles of pretty ladies regardless of their religiosity.",
+      "Yes, poverty can put love to test, but money cannot buy enduring happiness. Why do billionaires go to divorce courts? So, we come to the unnerving conclusion that money is good when used well, but happiness is the ultimate desire of every couple, and it is not for sale in any currency. So, I ask you my beloved, “how do you make money work for your happiness without negatively affecting your well-being?”",
     ],
   },
   {
-    slug: "the-first-year-is-a-greenhouse",
-    title: "The First Year Is a Greenhouse",
+    slug: "stumbling-out-of-the-gate",
+    title: "Stumbling Out of the Gate",
     pillar: "Social",
-    readMinutes: 5,
+    readMinutes: 3,
     excerpt:
-      "Newly married couples are often told the first year is the hardest. It is kinder, and truer, to say the first year is the most formative.",
+      "The uneven surface causing the trip and fall is often there before the “I do”, but was missed.",
     body: [
-      "A greenhouse is not where a plant lives forever. It is where a plant becomes strong enough to live anywhere. The first year of marriage does the same quiet work, and it deserves the same deliberate care.",
-      "In the first year you are writing the habits every later year will inherit. How you disagree. How you apologize. Whose family gets which holiday, and how that decision gets made. Whether hard topics are raised gently and early, or postponed until they raise themselves.",
-      "The couples who thrive are rarely the ones with no friction. They are the ones who treated the first year as tender ground: they protected time for each other, they asked for help without shame, and they made their agreements out loud instead of assuming them.",
-      "Three greenhouse habits, from years of watching them work. Keep one evening a week that belongs only to the two of you, and defend it cheerfully. Decide together how the two family trees will share you, before a holiday decides for you. And when something stings, say so within three days, kindly, while it is still small.",
-      "Tend the first year like a greenhouse and the roots go deep. Everything that blooms later, blooms from there.",
+      "The push of the button, the opening of the gates, the tug of the jockeys, the quick strides of hoofs, the cloud of exciting dust, and the anticipation of the finish line all leads to the claim of the roses. The triumphant horse gallops to the winner’s circle, the small-sized jockey on it becomes an immortal giant in the record books. Success is sweeter than honey indeed.",
+      "But what happens when the newlywed couple stumble out of their wedding gate? What should happen if the marital horse slows down at the one-mile mark? If his horse is limping when only two horses’  length to the finish line, can the jockey carry his horse? These are unsettling questions we never want to face.",
+      "The reality that working on marriage is a task rather than a sweet fantasy often starts within the first few months of exchanging wedding rings. The marriage contract and wedding vows lose their wow when unanticipated challenges creep up like weeds in a perfect lawn. However, the conversion from daydream to nightmare is not a twenty-four-hour ordeal. The uneven surface causing the trip and fall is often there before the “I do” but was missed. The marital counselor may touch on many factors to promote harmony, but what he would have handed the lovebirds remains tools that only they can use to build the future they desire. So, I ask you my beloved, “what is in your toolbox?”",
     ],
   },
 ];
@@ -160,70 +152,40 @@ export function getVideo(slug: string) {
   return firstSeason.find((v) => v.slug === slug);
 }
 
-// Illustrative member stories (PRD §21.4 requires client-supplied testimonials
-// with written permission; until then these are clearly labeled illustrative).
-export const illustrativeStories = [
-  {
-    name: "Adaeze & Chidi",
-    stage: "Married 14 years",
-    quote:
-      "We came in speaking past each other and left with one language between us.",
-  },
-  {
-    name: "Marcus & Renee",
-    stage: "Engaged",
-    quote: "Every couple gets premarital advice. We got a framework we still use.",
-  },
-  {
-    name: "Folake",
-    stage: "Came alone first",
-    quote: "I was heard before I was asked to change anything. That mattered.",
-  },
-  {
-    name: "Devon & Amara",
-    stage: "Married 6 years",
-    quote: "The finance conversation alone was worth the whole season.",
-  },
-  {
-    name: "Grace & Emeka",
-    stage: "Married 31 years",
-    quote: "Thirty years in, we learned something new about listening.",
-  },
-] as const;
 
-export const storiesLabel = "Member stories · illustrative until launch";
+export const faqLabel = "Frequently Asked Questions";
 
 export const faq = [
   {
     q: "What exactly is the Inner Garden?",
-    a: "A membership for couples and individuals: an exclusive video library, downloadable guides and workbooks, a live monthly gathering, and warm rates on private conversations with Dr. Laiyemo.",
+    a: "Membership for individuals and families, granting access to an exclusive video library with videos on sensitive topics not available on YouTube, downloadable guides and workbooks, a free live monthly gathering, and warmer rates on private harmony conversations with Dr. Laiyemo. The Inner Garden is for adults only, eighteen years and older.",
   },
   {
     q: "Can my spouse and I share one membership?",
-    a: "Yes. Every membership includes the Couple Seat: two logins, two private profiles, one price. The garden is for both of you.",
+    a: "Yes. The family membership can include up to four family members for one price. Each member will have a unique email address and login information. The garden is for all.",
   },
   {
     q: "What is a harmony conversation?",
-    a: "A private, unhurried 60-minute conversation with Dr. Laiyemo, educational and supportive in nature. It is not medical care, psychotherapy, or licensed counseling.",
+    a: "A private, unhurried 50-minute conversation with Dr. Laiyemo, educational and supportive in nature. It is not medical care, psychotherapy, or licensed counseling.",
   },
   {
     q: "I am not ready to bring my spouse. Can I come alone?",
-    a: "You can. Many people begin alone, especially in strained seasons. What you share stays between you and Dr. Laiyemo.",
+    a: "Yes, you can. Many people begin alone, especially in strained seasons. What you share stays between you and Dr. Laiyemo.",
   },
   {
-    q: "When does membership open?",
-    a: "The Garden opens soon. Founding-list members will be invited first, before the doors open publicly.",
+    q: "Is membership open now?",
+    a: "Yes. Membership is open and available to individuals and families.",
   },
   {
-    q: "Can I give a membership as a gift?",
-    a: "That is coming with launch: three, six, and twelve month gift memberships designed as wedding gifts. Join the founding list and you will be the first to know.",
+    q: "Can I give membership as a gift?",
+    a: "Yes. Please endeavour to give an annual family membership to your loved ones.",
   },
   {
     q: "What if it is not for us?",
-    a: "Membership will be cancel-anytime, with no dark patterns and no guilt. If the garden is not serving you, you close the gate behind you, friends.",
+    a: "You can cancel your membership at any time.",
   },
   {
     q: "Is this a substitute for professional help?",
-    a: "No. Harmony conversations are educational and supportive. If you are in crisis, please call or text 988 (US) any hour of any day.",
+    a: "No. Harmony conversations are educational and supportive services. If you or your loved one is having a crisis, please call or text 988 (USA) at any time for immediate help.",
   },
 ] as const;

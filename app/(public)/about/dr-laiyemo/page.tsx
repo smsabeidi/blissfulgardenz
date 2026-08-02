@@ -7,7 +7,7 @@ import { brand } from "@/content/site";
 import { books, series } from "@/content/books";
 
 export const metadata: Metadata = {
-  title: "Dr. Adeyinka Laiyemo",
+  title: "Dr. Adeyinka (Musodiq) Laiyemo",
   description:
     "Meet the founder of Blissful Gardenz: gastroenterologist, medical educator, and author of the Three Guys Talking trilogy.",
 };
@@ -96,13 +96,13 @@ export default function DrLaiyemoPage() {
             </Reveal>
             <Reveal>
               <p className="text-lede max-w-[56ch]">
-                Gastroenterologist, author, and advocate for family harmony.
+                Physician, author, religious leader, and an advocate for family harmony.
               </p>
             </Reveal>
             <Reveal>
               <div className="flex max-w-[58ch] flex-col gap-4">
                 <p className="text-body text-ink-muted">
-                  A board-certified physician with over thirty-five years in medicine, Dr. Laiyemo
+                  A board-certified physician with more than three decades in medicine, Dr. Laiyemo
                   has spent his career listening carefully to what people carry.
                 </p>
                 <p className="text-body text-ink-muted">
@@ -135,11 +135,12 @@ export default function DrLaiyemoPage() {
               <p className="text-meta text-gold-text">In medicine</p>
               <h3 className="text-display-sm text-balance">Physician and medical educator</h3>
               <p className="text-body text-ink-muted">
-                A teacher of medical students and resident physicians since 2010.
+                A physician, a teacher of medical students and postgraduate trainees, a
+                well-published scientific researcher, and community outreach expert.
               </p>
               <div aria-hidden className="mt-auto h-px w-full bg-hairline" />
               <p className="text-[15px] text-ink-muted">
-                Board-certified physician with over thirty-five years in medicine.
+                Board-certified physician with more than three decades in medicine.
               </p>
             </PetalCard>
           </RevealItem>

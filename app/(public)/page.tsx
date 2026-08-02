@@ -5,7 +5,6 @@ import Link from "next/link";
 import { HeroScroll } from "@/components/home/hero-scroll";
 import { PillarBand } from "@/components/home/pillar-band";
 import { TrilogyShelf } from "@/components/home/trilogy-shelf";
-import { BlossomWall } from "@/components/home/blossom-wall";
 import { FoundingBloom } from "@/components/home/founding-bloom";
 import { Reveal, RevealItem } from "@/components/garden/reveal";
 import { ImageUnveil, Magnetic, MaskRise } from "@/components/garden/motion-reveals";
@@ -82,13 +81,13 @@ export default function HomePage() {
             </Reveal>
             <h2 id="founder-title" className="text-display text-balance">
               <MaskRise delay={0.1}>
-                Thirty-five years of medicine taught me where healing really begins: at home.
+                More than three decades of medicine taught me where healing really begins: at home.
               </MaskRise>
             </h2>
             <Reveal delay={0.2}>
               <p className="text-lede max-w-[60ch]">
-                Dr. Adeyinka Laiyemo is a physician, an author, and for more than twenty years a
-                quiet advocate for family harmony. Blissful Gardenz is his life&rsquo;s work made
+                Dr. Adeyinka Laiyemo is a physician, an author, and for over two decades a quiet
+                advocate for family harmony. Blissful Gardenz is his life&rsquo;s work made
                 into a place: {brand.mission.toLowerCase()}.
               </p>
             </Reveal>
@@ -292,7 +291,7 @@ export default function HomePage() {
               <Reveal>
                 <p className="text-lede max-w-[56ch] !text-brand-ink-muted">
                   The full film library, guides and workbooks, a live gathering every month, and
-                  the Couple Seat: one membership, two logins, because this garden is for both of
+                  the family membership: up to four people, each with their own login, because this garden is for all of
                   you.
                 </p>
               </Reveal>
@@ -330,7 +329,7 @@ export default function HomePage() {
                       <span className="text-[15px] text-brand-ink-muted/80">{tier.price.monthly}/mo</span>
                     </div>
                   ))}
-                  <span className="text-[13px] text-brand-ink-muted/70">Couple Seat included in both</span>
+                  <span className="text-[13px] text-brand-ink-muted/70">Individual or family, up to four</span>
                 </div>
               </RevealItem>
             </div>
@@ -339,10 +338,6 @@ export default function HomePage() {
         </DepthField>
       </section>
 
-      {/* 8 · Blossom Wall */}
-      <section aria-label="Member stories" className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
-        <BlossomWall />
-      </section>
 
       {/* 9 · Journal: featured plus two */}
       <section aria-labelledby="journal-title" className="mx-auto max-w-7xl px-5 pb-24 sm:pb-32 lg:px-8">

@@ -56,7 +56,7 @@ export const offerings: Offering[] = [
       "How you will disagree, and how you will repair",
       "The first year, planned with open eyes",
     ],
-    format: "Private 60-minute conversations, scheduled around you",
+    format: "Private 50-minute sessions, scheduled around you",
     outcomes: [
       "A shared language for the hard topics",
       "Agreements made before the pressure arrives",
@@ -75,7 +75,7 @@ export const offerings: Offering[] = [
       "Finances, in-laws, and the weight of routine",
       "Finding each other again inside busy lives",
     ],
-    format: "Private 60-minute conversations, together or beginning alone",
+    format: "Private 50-minute sessions, together or beginning alone",
     outcomes: [
       "Old patterns named without shame",
       "Practical steps you both agreed to",
@@ -95,7 +95,7 @@ export const offerings: Offering[] = [
       "Steady first steps back toward harmony",
       "Hope that is honest about the work ahead",
     ],
-    format: "Private 60-minute conversations. Confidential, unhurried, one person or two",
+    format: "Private 50-minute sessions. Confidential, unhurried, one person or two",
     outcomes: [
       "A private space where nothing is judged",
       "A path back that you chose yourself",
@@ -116,7 +116,7 @@ export const conversationSteps = [
   },
   {
     title: "The conversation",
-    body: "Sixty minutes, unhurried and confidential, by video or in person.",
+    body: "Fifty minutes per session, unhurried and confidential, by video or audio, focused on you.",
   },
   {
     title: "Follow-up and resources",
@@ -132,56 +132,68 @@ export type Tier = {
   lede: string;
   includes: string[];
   conversationBenefit: string;
+  /**
+   * Where this tier's button goes when it cannot be bought yet.
+   *
+   * Family is priced and described, but `seat_role` is an enum of exactly
+   * ('owner','partner'), so the platform can provision two seats and not four.
+   * Selling it today would take money for something we cannot deliver, so the
+   * card asks instead of charging until the seat model supports a household.
+   */
+  cta?: { label: string; href: string };
 };
+
+// The conversation rates, written once and composed into every sentence below
+// that names them. The member figure is stated outright rather than derived
+// from the 10% discount: a derived rate re-rounds whenever either input moves,
+// and someone quoted a number on the tier card must see that same number at the
+// point of booking. If the discount changes, change MEMBER_RATE with it.
+const STANDARD_RATE = "$150";
+const MEMBER_RATE = "$135"; // the additional 10% Bloom members receive
+const FOUR_SESSION_RATE = "$500"; // four sessions, a $100 saving
+const SESSION_LENGTH = "50-minute";
 
 export const tiers: Tier[] = [
   {
     slug: "bloom",
-    name: "Bloom",
-    price: { monthly: "$39", annual: "$390", annualNote: "two months free" },
+    name: "Individual",
+    price: { monthly: "$5", annual: "$50", annualNote: "save 20%" },
     featured: true,
-    lede: "The full garden: the library, the vault, the gatherings, and a seat for your partner.",
+    lede: "The full garden: the library, the vault, the gatherings, and warmer rates on private conversations.",
     includes: [
-      "Full exclusive video library and series",
+      "Exclusive videos on sensitive topics, not available on YouTube",
+      "First to know when new videos by Dr. Laiyemo are published",
       "Resource Vault: guides, workbooks, and the companion guides to all three books",
-      "Monthly live Garden Gathering, with replays",
-      "The Couple Seat: a second login for your spouse or partner",
-      "Member rate on private conversations (15% off)",
+      "Free attendance at the monthly webinar hosted by Dr. Laiyemo",
+      "Seeds of Harmony, the monthly newsletter",
+      "An additional 10% off private harmony conversations",
+      "An additional 10% off annual convention participation",
     ],
-    conversationBenefit: "Member rate: $255 per 60-minute conversation",
+    conversationBenefit: `Member rate: ${MEMBER_RATE} per ${SESSION_LENGTH} conversation`,
   },
   {
-    slug: "evergreen",
-    name: "Evergreen",
-    price: { monthly: "$249", annual: "$2,490", annualNote: "two months free" },
-    lede: "Everything in Bloom, plus a standing conversation with Dr. Laiyemo every month.",
+    slug: "family",
+    name: "Family",
+    price: { monthly: "$10", annual: "$100", annualNote: "save 20%" },
+    lede: "Everything in the Individual membership, for up to four people under one price.",
     includes: [
-      "Everything in Bloom",
-      "One private 60-minute conversation included each month",
-      "Priority scheduling",
-      "A direct message line to the Blissful Gardenz team",
-      "An annual relationship check-up plan",
+      "Everything in the Individual membership",
+      "Up to four family members, each with their own email address and login",
+      "A private profile, progress, and notes for every member",
+      "One price, however many of you are tending it",
     ],
-    conversationBenefit: "One conversation each month, included",
+    conversationBenefit: `Member rate: ${MEMBER_RATE} per ${SESSION_LENGTH} conversation`,
+    cta: { label: "Ask about family membership", href: "/contact?topic=family" },
   },
 ];
 
-export const visitorTier = {
-  name: "Visitor",
-  price: "Free",
-  includes: [
-    "Seeds of Harmony, the monthly letter",
-    "The free library, with saved favorites",
-    "Three starter videos from the member library",
-  ],
-} as const;
-
-export const coupleSeat = {
-  title: "One membership. Two seats.",
-  body: "Blissful Gardenz is for couples, so a membership never asks two people to pay twice. Invite your partner by email: each of you keeps a private profile, your own progress, and your own notes, under one shared membership.",
-} as const;
+export const membershipNote =
+  "Blissful Gardenz is for individuals, couples, and families with unique email addresses. The Inner Garden is for adults, eighteen and over.";
 
 export const consultationPricing = {
-  standard: "$300 per 60-minute conversation",
-  memberNote: "Bloom members save 15%. Evergreen includes one conversation monthly.",
+  standard: `${STANDARD_RATE} per ${SESSION_LENGTH} session`,
+  // Parsed by lib/pricing.ts as the authoritative member figure for display.
+  member: `${MEMBER_RATE} per ${SESSION_LENGTH} session`,
+  packageNote: `${FOUR_SESSION_RATE} when you book four sessions, a saving of $100.`,
+  memberNote: `Members receive an additional 10% off, paying ${MEMBER_RATE} a session.`,
 } as const;

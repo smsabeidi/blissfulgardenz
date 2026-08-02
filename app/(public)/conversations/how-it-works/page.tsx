@@ -86,6 +86,9 @@ export default function HowItWorksPage() {
                 <p className="text-display-sm">{consultationPricing.standard}</p>
               </Reveal>
               <Reveal>
+                <p className="text-body text-ink-muted">{consultationPricing.packageNote}</p>
+              </Reveal>
+              <Reveal>
                 <p className="text-body text-ink-muted">{consultationPricing.memberNote}</p>
               </Reveal>
               <Reveal>

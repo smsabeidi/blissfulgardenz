@@ -10,11 +10,11 @@ export const brand = {
   description:
     "A garden of bliss for the people: a safe space for facilitated family harmony conversations, and resources that build enduring healthy relationships.",
   founder: {
-    name: "Dr. Adeyinka Laiyemo",
+    name: "Dr. Adeyinka (Musodiq) Laiyemo",
     coverName: "Adeyinka O. Laiyemo",
     // Client-provided claims (PRD §3) + publicly verified facts only.
     credentials: [
-      "Board-certified physician with over thirty-five years in medicine",
+      "Board-certified physician with more than three decades in medicine",
       "Two decades of family-harmony advocacy",
       "Author of the Three Guys Talking trilogy",
       // Employer is deliberately never named anywhere on this site.
@@ -105,6 +105,7 @@ export const footer = {
 // while delivering a mailing list.
 export const ctaLabels = {
   membership: "Explore Membership",
+  join: "Become a member",
   foundingList: "Join the founding list",
   meetFounder: "Meet Dr. Laiyemo",
   bookConversation: "Begin a conversation",
@@ -117,9 +118,9 @@ export const ctaLabels = {
 // REQUIRED framing: educational and supportive "harmony conversations".
 export const disclaimer = {
   short:
-    "Harmony conversations are educational and supportive in nature. They are not medical care, psychotherapy, or licensed counseling, and they are not an emergency service.",
+    "Harmony conversations are educational and supportive in nature. They are not medical care, psychotherapy, or licensed counseling, and they are not emergency services.",
   crisis:
-    "If you or someone you love is in crisis, please call or text 988 (US) to reach trained support, any hour of any day.",
+    "If you or someone you love is in crisis, please call or text 988 (USA) to reach trained support, any hour of any day.",
 } as const;
 
 // PRD §14 analytics event taxonomy. Wired as no-op stubs this phase.

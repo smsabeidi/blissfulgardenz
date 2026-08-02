@@ -51,3 +51,6 @@ next-env.d.ts
 /DESIGN.md
 /CLAUDE.md
 /AGENTS.md
+
+# Supabase CLI local link state (contains a pooler connection string).
+supabase/.temp/

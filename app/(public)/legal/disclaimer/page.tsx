@@ -55,7 +55,7 @@ export default function DisclaimerPage() {
         This site and its conversations are not an emergency service and are not monitored around
         the clock. If you or someone you love is in immediate danger, call 911 (US) or your local
         emergency number. If you are in crisis or need someone to talk to right now, call or text
-        988 (US) to reach trained support, any hour of any day.
+        988 (USA) to reach trained support, any hour of any day.
       </p>
 
       <LegalHeading>When to seek licensed help</LegalHeading>

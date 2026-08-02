@@ -12,7 +12,7 @@ import { ctaLabels } from "@/content/site";
 export const metadata: Metadata = {
   title: "Harmony Conversations",
   description:
-    "Private, unhurried 60-minute conversations with Dr. Laiyemo: premarital, marital, and rebuilding paths, rooted in the five pillars of a healthy relationship.",
+    "Private, unhurried 50-minute sessions with Dr. Laiyemo: premarital, marital, and rebuilding paths, rooted in the five pillars of a healthy relationship.",
 };
 
 // Conversations hub: philosophy opening split with the chairs photograph (two
@@ -208,6 +208,9 @@ export default function ConversationsPage() {
           </Reveal>
           <Reveal>
             <p className="text-display-sm text-balance">{consultationPricing.standard}</p>
+          </Reveal>
+          <Reveal>
+            <p className="text-[15px] text-ink-muted">{consultationPricing.packageNote}</p>
           </Reveal>
           <Reveal>
             <p className="text-[15px] text-ink-muted">{consultationPricing.memberNote}</p>

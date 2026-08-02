@@ -9,7 +9,7 @@ import { brand, ctaLabels, disclaimer } from "@/content/site";
 export const metadata: Metadata = {
   title: "Our Story",
   description:
-    "How thirty-five years of medicine, two decades of family-harmony advocacy, and the Three Guys Talking trilogy grew into Blissful Gardenz.",
+    "How more than three decades in medicine, over two decades of family-harmony advocacy, and the Three Guys Talking trilogy grew into Blissful Gardenz.",
 };
 
 // Our Story (PRD §7.2): a display-quote mission, the Story Path scroll journey,
@@ -18,16 +18,16 @@ export const metadata: Metadata = {
 
 const values = [
   {
-    name: "Harmony is tended, not found.",
-    line: "Strong marriages are grown on purpose, season after season, with tools worth keeping.",
+    name: "The tree of harmony",
+    line: "Strong, fruitful marriages are planted on purpose, on appropriate lands, with tools worth keeping.",
   },
   {
-    name: "Every season deserves dignity.",
-    line: "Engaged, long married, or rebuilding quietly: every couple is met with warmth and without judgment.",
+    name: "The tree of dignity",
+    line: "Whether contemplating, engaged, married, or rebuilding, every person deserves a welcoming warmth and tranquility.",
   },
   {
-    name: "The garden belongs to both of you.",
-    line: "Nothing here asks one partner to carry the work alone. Two seats, one horizon.",
+    name: "The tree of belonging",
+    line: "You are not alone in your journey to bliss.",
   },
 ] as const;
 
@@ -97,8 +97,8 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-12">
             <div className="lg:col-span-5">
               <SectionHeading
-                title={<span id="values-title">What the garden believes</span>}
-                lede="Three commitments, kept in every season."
+                title={<span id="values-title">What is planted in the garden</span>}
+                lede="Three evergreen trees of commitments, flourishing in every season."
               />
             </div>
             <div className="divide-y divide-hairline lg:col-span-6 lg:col-start-7">
