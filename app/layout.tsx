@@ -36,7 +36,9 @@ const longform = Newsreader({
 
 export const metadata: Metadata = {
   // Final production domain pending client DNS decision (PRD §21).
-  metadataBase: new URL("https://blissfulgardenz.com"),
+  // Drives every canonical and og:url. Must be the host actually served, or
+  // each one points at a 308 to www.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.blissfulgardenz.com"),
   title: {
     default: `${brand.name} · ${brand.motto.replace(/\.$/, "")}`,
     template: `%s · ${brand.name}`,

@@ -5,7 +5,10 @@ import { books } from "@/content/books";
 // Sitemap for all public routes, with dynamic slugs sourced from the content
 // layer so new books, films, or letters appear without touching this file.
 
-const BASE = "https://blissfulgardenz.com";
+// Canonical host comes from the same env var the rest of the app redirects to.
+// It was hard-coded to the apex, which 308s to www, so every URL submitted to
+// search engines was a redirect rather than the page itself.
+const BASE = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.blissfulgardenz.com").replace(/\/+$/, "");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -44,7 +47,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.7,
     })),
-    ...firstSeason.map((video) => ({
+    // Only films the public can actually open. generateStaticParams filters
+    // locked films out, so listing them here submitted three 404s to Google.
+    ...firstSeason.filter((video) => !video.locked).map((video) => ({
       url: `${BASE}/watch/${video.slug}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
