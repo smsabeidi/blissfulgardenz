@@ -1,11 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
-// Scoped to member routes ONLY. The marketing site must stay statically
+// Scoped to signed-in routes ONLY. The marketing site must stay statically
 // rendered and untouched: a matcher that swept every route would opt the whole
 // site into dynamic rendering and quietly undo its performance work.
+//
+// /admin is here so the desk requires a session before it renders anything at
+// all. It does NOT check staff-ness — that lives in the row-level policies on
+// every table the desk reads, so the answer cannot drift from what the database
+// will actually hand over.
 export const config = {
-  matcher: ["/garden/:path*", "/account/:path*"],
+  matcher: ["/garden/:path*", "/account/:path*", "/admin/:path*"],
 };
 
 export async function middleware(request: NextRequest) {
