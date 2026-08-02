@@ -119,3 +119,74 @@ export async function sendContactMessage(
   console.info(`[contact] delivered topic=${topic}`);
   return { status: "ok" };
 }
+
+// ── Conversation requests ────────────────────────────────────────────────────
+//
+// The same principle as above, applied to booking: the promise on the screen is
+// "we will write back and arrange a time", so what is stored is exactly what
+// keeping that promise needs — a name, a way to reply, which path, whether they
+// are coming alone, and when they are free.
+//
+// There is deliberately NO field for what they are going through. The contact
+// form's rule still holds: nobody describing a marriage in difficulty gets a
+// permanent row about it. This is a diary entry, not a case file.
+//
+// Written through the service role rather than a public insert policy, so the
+// table has exactly one door and validation happens before anything reaches it.
+
+const PATHS = ["premarital", "marital", "rebuilding", "unsure"] as const;
+const ATTENDING = ["together", "alone"] as const;
+
+export async function requestConversation(
+  _prev: FormResult | null,
+  formData: FormData
+): Promise<FormResult> {
+  const name = String(formData.get("name") ?? "").trim().slice(0, 120);
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const path = String(formData.get("path") ?? "unsure");
+  const attending = String(formData.get("attending") ?? "alone");
+  const availability = String(formData.get("availability") ?? "").trim().slice(0, 400);
+  const timezone = String(formData.get("timezone") ?? "").trim().slice(0, 80);
+
+  const errors: Record<string, string> = {};
+  if (!name) errors.name = "We would love to know what to call you.";
+  if (!email || !EMAIL_RE.test(email) || email.length > 254)
+    errors.email = "That address does not look complete. One more look?";
+  if (!(PATHS as readonly string[]).includes(path)) errors.path = "Please choose one.";
+  if (!(ATTENDING as readonly string[]).includes(attending))
+    errors.attending = "Please choose one.";
+  if (Object.keys(errors).length > 0) return { status: "invalid", errors };
+
+  const admin = createAdminClient();
+  if (!admin) {
+    // Never a warm success on a dropped request. This is the failure the whole
+    // file exists to prevent.
+    console.error("[conversation-request] Supabase unconfigured; the request was NOT stored.");
+    return { status: "failed" };
+  }
+
+  const { error } = await admin.from("conversation_requests").insert({
+    name,
+    email,
+    path,
+    attending,
+    availability: availability || null,
+    timezone: timezone || null,
+  });
+
+  if (error) {
+    console.error(`[conversation-request] write failed: ${error.message}`);
+    return { status: "failed" };
+  }
+
+  // Best effort only. The request is already safely stored, so a missing email
+  // provider must not turn a saved request into a reported failure.
+  void sendContactNotification({
+    topic: "conversation-request",
+    body: `New conversation request.\n\nName: ${name}\nEmail: ${email}\nPath: ${path}\nAttending: ${attending}\nAvailability: ${availability || "not given"}\nTime zone: ${timezone || "not given"}`,
+    replyTo: email,
+  });
+
+  console.info(`[conversation-request] stored path=${path}`);
+  return { status: "ok" };
+}

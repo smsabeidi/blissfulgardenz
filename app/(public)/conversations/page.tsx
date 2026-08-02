@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import { ConversationRequestForm } from "@/components/conversations/request-form";
 import { BloomButton } from "@/components/garden/buttons";
 import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow, SectionHeading, PetalCard } from "@/components/garden/primitives";
@@ -217,16 +218,37 @@ export default function ConversationsPage() {
           </Reveal>
           <Reveal>
             <div className="mt-4">
-              <BloomButton href="/conversations/how-it-works">
-                {ctaLabels.bookConversation}
-              </BloomButton>
+              <BloomButton href="#ask">{ctaLabels.bookConversation}</BloomButton>
             </div>
           </Reveal>
           <Reveal>
             <p className="text-[14px] text-ink-muted">
-              See the four steps and how booking works today.
+              Or see <Link href="/conversations/how-it-works">the four steps</Link> first.
             </p>
           </Reveal>
+        </div>
+      </section>
+
+      {/* 5b · Ask for a conversation */}
+      <section
+        id="ask"
+        aria-labelledby="ask-title"
+        className="mx-auto max-w-7xl scroll-mt-24 px-5 pb-24 sm:pb-32 lg:px-8"
+      >
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-5">
+            <Reveal>
+              <SectionHeading
+                title={<span id="ask-title">Ask for a conversation</span>}
+                lede="Tell us when you are free and Dr. Laiyemo will write back to arrange a time. Nothing is charged until you have agreed on one."
+              />
+            </Reveal>
+          </div>
+          <div className="lg:col-span-6 lg:col-start-7">
+            <Reveal>
+              <ConversationRequestForm />
+            </Reveal>
+          </div>
         </div>
       </section>
 

@@ -100,13 +100,13 @@ export function BookingPanel({ pricing, bookingUrl }: BookingPanelProps) {
             </div>
           ) : (
             <div>
-              <p className="text-display-sm">Scheduling opens shortly</p>
+              <p className="text-display-sm">Ask for a time</p>
               <p className="mt-3 max-w-[52ch] text-body text-ink-muted">
-                The scheduling page is not live yet. Write to us and we will arrange a time with you
-                by email in the meantime.
+                Live scheduling is not open yet. Tell us when you are free and Dr. Laiyemo will
+                write back to arrange a time. Nothing is charged until you have agreed on one.
               </p>
               <div className="mt-5">
-                <BloomButton href="/contact">Write to us</BloomButton>
+                <BloomButton href="/conversations#ask">Ask for a conversation</BloomButton>
               </div>
             </div>
           )}
