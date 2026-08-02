@@ -58,27 +58,40 @@ export function ImageUnveil({
   className?: string;
 }) {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  // Same deadlock MaskRise documents above, and for the same reason. This used
+  // to put whileInView on the element carrying the curtain, but that element is
+  // clipped to `inset(0 0 100% 0)` until the reveal fires: it paints nothing,
+  // the observer never sees 25% of it, the reveal never fires, and the
+  // photograph ships as an empty rectangle forever. The founder portrait was
+  // sitting invisible on the home page because of it.
+  //
+  // So the observer watches this OUTER wrapper, which is never clipped and
+  // keeps its full layout height (clip-path is paint-only), and the curtain
+  // lifts off `inView` instead of watching itself.
+  const inView = useInView(ref, { once: true, amount: 0.25 });
+
   if (reduce) {
     return <div className={className}>{children}</div>;
   }
   return (
-    <motion.div
-      className={className}
-      initial={{ clipPath: "inset(0 0 100% 0)" }}
-      whileInView={{ clipPath: "inset(0 0 0% 0)" }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 1.0, delay, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div ref={ref} className={className}>
       <motion.div
         className="h-full w-full"
-        initial={{ scale: 1.16 }}
-        whileInView={{ scale: 1 }}
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{ duration: 1.4, delay, ease: [0.22, 1, 0.36, 1] }}
+        initial={{ clipPath: "inset(0 0 100% 0)" }}
+        animate={inView ? { clipPath: "inset(0 0 0% 0)" } : { clipPath: "inset(0 0 100% 0)" }}
+        transition={{ duration: 1.0, delay, ease: [0.22, 1, 0.36, 1] }}
       >
-        {children}
+        <motion.div
+          className="h-full w-full"
+          initial={{ scale: 1.16 }}
+          animate={inView ? { scale: 1 } : { scale: 1.16 }}
+          transition={{ duration: 1.4, delay, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {children}
+        </motion.div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
