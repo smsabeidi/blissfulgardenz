@@ -1,0 +1,32 @@
+<!-- Sent to both the old and the new address when someone changes their email
+     (double_confirm_changes is on, so both have to agree). The site does not
+     offer a self-serve email change yet — /account still asks people to write
+     to us — but the template is here so that the day it does, the mail already
+     looks like the rest of the garden rather than a Supabase default. -->
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#F7F4EC;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F7F4EC;padding:32px 16px;">
+    <tr><td align="center">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#FFFDF6;border:1px solid rgba(15,46,34,0.14);border-radius:16px;padding:32px;">
+        <tr><td style="font-family:Georgia,'Times New Roman',serif;color:#0F2E22;font-size:20px;letter-spacing:-0.01em;padding-bottom:20px;">
+          blissful <em style="color:#C9A227;">gardenz</em>
+        </td></tr>
+        <tr><td style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1E2B24;font-size:16px;line-height:1.65;">
+          <p style="margin:0 0 16px;">A request was made to move this garden from {{ .Email }} to {{ .NewEmail }}.</p>
+          <p style="margin:0 0 24px;">
+            <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email_change&amp;next=%2Faccount"
+               style="display:inline-block;background:#0F2E22;color:#F7F4EC;text-decoration:none;padding:14px 26px;border-radius:999px;font-size:15px;font-weight:500;">Confirm the change</a>
+          </p>
+          <p style="margin:0 0 16px;color:#56675C;font-size:14px;">Both addresses have to confirm before anything moves, so you may see this twice.</p>
+          <p style="margin:0;color:#56675C;font-size:14px;">If the button does not work, paste this into your browser:<br>{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&amp;type=email_change&amp;next=%2Faccount</p>
+        </td></tr>
+      </table>
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;padding:16px 8px 0;">
+        <tr><td style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#56675C;font-size:12px;line-height:1.6;">
+          If you did not ask for this, ignore this message and write to us — nothing moves without both addresses agreeing.
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>

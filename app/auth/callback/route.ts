@@ -1,23 +1,16 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { safeNext } from "@/lib/auth";
 
-// Where Google sends people back. The browser client started a PKCE flow and
-// left the code verifier in a cookie; this trades the returned code for a
-// session and writes the auth cookies onto the redirect response.
+// Where Google and Apple send people back. The browser client started a PKCE
+// flow and left the code verifier in a cookie; this trades the returned code for
+// a session and writes the auth cookies onto the redirect response.
 //
 // Every exit from here is a redirect to a path on this origin. Nothing the
 // provider sends is ever reflected into a page: failures leave with a short
-// code that /enter turns into its own sentence.
-
-/** An open redirect on a sign-in callback is a phishing primitive: an attacker
- *  sends a real link to a real gate and collects whoever lands on the far side.
- *  Only same-site paths survive. "//evil.example" is protocol-relative, so it
- *  is absolute in disguise and gets the same treatment as https://. */
-function safeNext(value: string | null): string {
-  if (!value) return "/garden";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/garden";
-  return value;
-}
+// code that /enter turns into its own sentence. The same-site guard lives in
+// lib/auth.ts now, shared with /enter and /auth/confirm, so there is one
+// definition of "a path we will send someone to" rather than three.
 
 export async function GET(request: NextRequest) {
   // nextUrl is the URL Next resolved for this request, so redirects land on the
@@ -25,8 +18,18 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl;
   const back = (path: string) => NextResponse.redirect(new URL(path, url.origin));
 
-  // Google can decline before we ever see a code (consent refused, app config).
+  // A provider can decline before we ever see a code (consent refused, app
+  // config, or someone tapping "cancel" on Apple's sheet).
   if (url.searchParams.get("error")) return back("/enter?error=oauth");
+
+  // An emailed link that arrived here rather than at /auth/confirm — an older
+  // template, or a redirect allow-list that has not caught up. Hand it over
+  // intact rather than failing on it.
+  if (url.searchParams.get("token_hash")) {
+    const confirm = new URL("/auth/confirm", url.origin);
+    confirm.search = url.search;
+    return NextResponse.redirect(confirm);
+  }
 
   const code = url.searchParams.get("code");
   if (!code) return back("/enter?error=missing");

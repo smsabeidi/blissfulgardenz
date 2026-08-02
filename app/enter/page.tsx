@@ -1,18 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import type { ReactNode } from "react";
 import { platformReady } from "@/lib/env";
 import { getAccess } from "@/lib/access";
-import { brand } from "@/content/site";
+import { safeNext } from "@/lib/auth";
 import { Eyebrow, EmptyState, PetalCard } from "@/components/garden/primitives";
 import { BloomButton } from "@/components/garden/buttons";
+import { GateFrame } from "./frame";
 import { EnterForm } from "./enter-form";
 
-// The gate to The Inner Garden. It lives outside the (public) route group on
-// purpose: the marketing header carries five destinations and two flyouts, and
-// none of them belong in front of someone who is trying to get in. A wordmark
-// home, the way in, and two quiet doors out.
+// The gate to The Inner Garden. Three ways through it: Google, Apple, and an
+// email address with a password. The chrome lives in ./frame.tsx, shared with
+// the two pages of the reset flow.
 
 export const metadata: Metadata = {
   title: "Enter the garden",
@@ -22,45 +21,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-/** The gate only ever forwards to a path on this site. Anything absolute, or
- *  protocol-relative (which "//evil.example" is), becomes the garden door. */
-function safeNext(value: string | string[] | undefined): string {
-  if (typeof value !== "string") return "/garden";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/garden";
-  return value;
-}
-
-// The callback route speaks in short codes so nothing from the auth provider
-// is ever reflected back into the page.
+// The callback routes speak in short codes so nothing from the auth provider is
+// ever reflected back into the page.
 const ERRORS: Record<string, string> = {
   oauth: "That sign in did not finish. Please try once more.",
   missing: "That link came back without what we needed. Please sign in again below.",
-  exchange: "That link has already been used, or it has expired. A fresh code is below.",
+  exchange: "That link has already been used, or it has expired. Please ask for a fresh one.",
   unavailable: "The gate is closed just now. Please try again shortly.",
 };
-
-function Frame({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <div aria-hidden className="horizon-rule fixed inset-x-0 top-0 z-10" />
-      <header className="w-full px-5 py-6 lg:px-8">
-        <Link
-          href="/"
-          aria-label={`${brand.name}, home`}
-          className="group inline-flex min-h-11 items-baseline gap-1.5"
-        >
-          <span className="text-[1.2rem] font-medium lowercase tracking-[-0.01em]">blissful</span>
-          <span className="font-[family-name:var(--font-display)] text-[1.3rem] font-[520] lowercase italic tracking-[-0.01em]">
-            gardenz
-          </span>
-        </Link>
-      </header>
-      <main id="main" className="flex flex-1 items-center justify-center px-5 pb-20 pt-4 lg:px-8">
-        <div className="w-full max-w-[30rem]">{children}</div>
-      </main>
-    </>
-  );
-}
 
 export default async function EnterPage({
   searchParams,
@@ -85,23 +53,23 @@ export default async function EnterPage({
   // staring at a sign-in form that cannot possibly work.
   if (!platformReady()) {
     return (
-      <Frame>
+      <GateFrame>
         <EmptyState
           title="The garden is not open yet"
           body="The Inner Garden opens soon. Join the founding list and you will be among the first through the gate."
           action={<BloomButton href="/membership">Explore the membership</BloomButton>}
         />
-      </Frame>
+      </GateFrame>
     );
   }
 
   return (
-    <Frame>
+    <GateFrame>
       <div className="flex flex-col gap-4">
         <Eyebrow>The Inner Garden</Eyebrow>
         <h1 className="text-display text-balance">Enter the garden</h1>
         <p className="text-lede">
-          Your notes, films, and guides are where you left them. No password to remember.
+          Your notes, films, and guides are where you left them. Come in whichever way suits you.
         </p>
       </div>
 
@@ -137,6 +105,6 @@ export default async function EnterPage({
           </Link>
         </p>
       </div>
-    </Frame>
+    </GateFrame>
   );
 }

@@ -35,7 +35,12 @@ export function NewsletterForm({
         </svg>
         <div>
           <p className={`text-[15px] font-medium ${tone === "dark" ? "text-brand-ink" : "text-ink"}`}>{successTitle}</p>
-          <p className={`text-[14px] ${tone === "dark" ? "text-brand-ink-muted/80" : "text-ink-muted"}`}>{successBody}</p>
+          <p className={`text-[14px] ${tone === "dark" ? "text-brand-ink-muted/80" : "text-ink-muted"}`}>
+            {/* Only promise a letter when one can actually be sent. */}
+            {result.confirmationSent === false
+              ? "Your address is safely on the list. Nothing else is needed from you."
+              : successBody}
+          </p>
         </div>
       </div>
     );

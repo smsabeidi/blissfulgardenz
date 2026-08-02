@@ -1,0 +1,176 @@
+# The Supabase project, in git.
+#
+# Until now the auth configuration lived only in the dashboard, which meant the
+# answer to "which sign-in methods does this site have, and what are the rules"
+# was a click path rather than a file. This is that answer.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# HOW TO APPLY IT:  supabase config push
+#
+# READ THIS BEFORE YOU RUN IT. `config push` sends the WHOLE auth configuration,
+# and there is no `config pull` to read the remote state first. Anything absent
+# from this file reverts to the CLI's default — so the provider secrets below
+# MUST be present in your environment at push time, or the push will disable
+# sign-in methods that are currently live.
+#
+#   export $(grep -v '^#' .env.supabase | xargs)   # or however you prefer
+#   supabase config push
+#
+# The CLI prints a diff and asks before it writes. Read the diff. If it proposes
+# removing or changing Google, stop: something in your environment is missing.
+# ─────────────────────────────────────────────────────────────────────────────
+
+project_id = "blissgardenz"
+
+[api]
+enabled = true
+# Supabase project defaults. Stated rather than omitted, because `config push`
+# would otherwise send whatever the CLI considers default and we would only find
+# out afterwards.
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+
+# The base URL of the site, used to build the links inside auth emails.
+site_url = "env(NEXT_PUBLIC_SITE_URL)"
+
+# THE ALLOW-LIST, AND WHY IT MATTERS MORE THAN IT LOOKS.
+#
+# Supabase only honours a `redirect_to` that appears here. This list previously
+# contained the Site URL and nothing else, so every sign-in — Google included —
+# came back to the home page carrying its credential in the query string, and
+# `components/garden/auth-landing.tsx` had to be written to rescue it. Two real
+# accounts were created that never once reached the garden.
+#
+# Password reset and email confirmation links would land in exactly the same
+# place. These entries are the actual repair; the shim in the root layout stays
+# only as a net.
+additional_redirect_urls = [
+  "https://www.blissfulgardenz.com/auth/callback",
+  "https://www.blissfulgardenz.com/auth/confirm",
+  "https://blissfulgardenz.com/auth/callback",
+  "https://blissfulgardenz.com/auth/confirm",
+  "http://localhost:3000/auth/callback",
+  "http://localhost:3000/auth/confirm",
+]
+
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+# Anyone may open a garden. This matches what Google sign-in has always done.
+enable_signup = true
+enable_anonymous_sign_ins = false
+enable_manual_linking = false
+
+# Length over theatre. Forced symbols push people toward one memorised pattern
+# and a sticky note; ten characters of anything is the better trade, and it is
+# what current NIST guidance recommends.
+minimum_password_length = 10
+password_requirements = ""
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+
+# ⚠️ THIS MUST STAY TRUE. `supabase/migrations/0004_staff_allowlist.sql` grants
+# the admin desk to any address in `staff_allowlist`, and guards that grant with
+# `email_confirmed_at is not null`. That guard was written against a project
+# where Google was the only provider and had already verified the address.
+#
+# With passwords enabled and confirmations OFF, anyone who signs up as
+# admin@blissfulgardenz.com would be handed the desk. Confirmation is the only
+# thing standing between a typed address and a claimed identity.
+enable_confirmations = true
+
+# Left off deliberately. Turning this on makes updateUser({password}) require a
+# nonce fetched by a separate reauthentication *email*, which is a lot of
+# machinery for a small membership site. `app/actions/auth.ts` gets the same
+# protection more cheaply: it asks for the current password and verifies it
+# before changing anything. Worth revisiting if the garden ever holds more.
+secure_password_change = false
+
+# One email per minute per address. Enough to recover from a mistyped address,
+# slow enough that the reset form is not a free mailer.
+max_frequency = "60s"
+otp_length = 6
+otp_expiry = 3600
+
+# SMTP, WITHOUT WHICH NONE OF THIS WORKS.
+#
+# Supabase's built-in email service is a development convenience capped at a
+# couple of messages per hour for the entire project. Confirmations and password
+# resets are now on the critical path of signing in, so that cap would read to
+# members as "the site is broken". Resend already sends this site's transactional
+# mail and its domains are already verified, so auth mail goes the same way.
+[auth.email.smtp]
+enabled = true
+host = "smtp.resend.com"
+port = 465
+user = "resend"
+pass = "env(RESEND_API_KEY)"
+admin_email = "hello@mail.blissfulgardenz.com"
+sender_name = "Blissful Gardenz"
+
+# The templates, in git alongside everything else.
+#
+# Both point at /auth/confirm with a `token_hash`, NOT at the default
+# {{ .ConfirmationURL }}. Under PKCE the code verifier lives in the browser that
+# *asked* for the link, so a reset requested on a laptop and opened on a phone
+# would fail. A token_hash is verified server-side and works from any browser.
+[auth.email.template.confirmation]
+subject = "Confirm your email and open the garden"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Set a new password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new email address"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.rate_limit]
+# Raised from the default of 2/hour, which assumed the built-in mailer. With
+# Resend behind it the real constraint is abuse, not quota.
+email_sent = 30
+sms_sent = 30
+anonymous_users = 30
+token_refresh = 150
+sign_in_sign_ups = 30
+token_verifications = 30
+web3 = 30
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = false
+
+# ── Providers ────────────────────────────────────────────────────────────────
+# Secrets are never written here. `env(...)` is read from the environment at
+# push time and the literal string is what lives in git.
+
+[auth.external.google]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+skip_nonce_check = false
+
+# Apple. The code ships whether or not this is configured: the button on /enter
+# is behind NEXT_PUBLIC_AUTH_APPLE_ENABLED, so it simply does not appear until
+# there is something behind it.
+#
+# client_id is the Services ID from developer.apple.com (not the App ID, and not
+# the bundle identifier). `secret` is a JWT generated from the Sign in with Apple
+# .p8 key — Apple caps its lifetime at six months, so it needs a calendar
+# reminder or Apple sign-in stops working with no warning. See the README.
+[auth.external.apple]
+enabled = true
+client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
+# Apple will not hand back an email address for every account (Private Relay,
+# and accounts that decline to share). We require one: the whole membership is
+# keyed on it, from Stripe receipts to the second seat.
+email_optional = false

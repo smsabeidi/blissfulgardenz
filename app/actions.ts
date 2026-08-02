@@ -24,7 +24,9 @@ import { env } from "@/lib/env";
 // outcome this file exists to prevent.
 
 export type FormResult =
-  | { status: "ok" }
+  /** `confirmationSent: false` means the address is safely stored but no
+   *  confirmation email could go out, so the caller must not promise one. */
+  | { status: "ok"; confirmationSent?: boolean }
   | { status: "invalid"; errors: Record<string, string> }
   | { status: "failed" };
 
@@ -72,13 +74,19 @@ export async function joinFoundingList(
   const confirmUrl = `${env.siteUrl()}/api/founding/confirm?token=${token}&email=${encodeURIComponent(email)}`;
   const sent = await sendFoundingConfirm({ to: email, confirmUrl });
 
-  // The row exists either way, so the list is never lost. But if the
-  // confirmation could not go out, the person will never see it arrive, and
-  // saying "check your email" would be a lie.
-  if (!sent) return { status: "failed" };
-
-  console.info(`[founding-list] stored + confirmation sent, source=${context}`);
-  return { status: "ok" };
+  // The row exists either way, so the list is never lost.
+  //
+  // This used to return "failed" when the confirmation could not be sent, on
+  // the reasoning that promising an email we had not sent would be a lie. The
+  // reasoning was right and the outcome was wrong: with no mail provider
+  // configured, every subscriber was told the form had broken while their
+  // address sat safely on the list. Two real people signed up that way and
+  // still believe it failed.
+  //
+  // A stored address is a success. What changes is the sentence we say next,
+  // which is the caller's job — hence the flag rather than a failure.
+  console.info(`[founding-list] stored, source=${context}, confirmation sent=${sent}`);
+  return { status: "ok", confirmationSent: sent };
 }
 
 export async function sendContactMessage(

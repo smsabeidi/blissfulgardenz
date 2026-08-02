@@ -1,71 +1,43 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
 import { createBrowserSupabase } from "@/lib/supabase/browser";
 import { BloomButton } from "@/components/garden/buttons";
+import {
+  FieldError,
+  FormError,
+  fieldClasses,
+  labelClasses,
+  textActionClasses,
+} from "@/components/garden/fields";
+import { signIn, signUp, type AuthResult } from "@/app/actions/auth";
+import { friendly, messageOf, safeNext } from "@/lib/auth";
 
-// The gate. Two ways in, both of them passwordless.
+// The gate. Three ways in.
 //
-// WHY A TYPED 6 DIGIT CODE AND NOT A MAGIC LINK:
-// A magic link is a single-use token sitting in an inbox, and two very common
-// things consume it before the person ever does. Corporate link scanners
-// (Outlook Safe Links, Proofpoint, Mimecast) fetch every URL in a message the
-// moment it lands, which burns the token and hands the person an "already
-// used" error for a mail they have not even opened. And when the link does
-// survive, tapping it inside an in-app mail browser starts the session in a
-// webview the person cannot navigate out of, so they end up signed in
-// somewhere they will never return to and signed out in the browser they
-// actually use.
-// A typed code has neither failure. Scanners cannot type it, and it is entered
-// in the same browser that asked for it, so the session lands where the person
-// already is. It also survives someone forwarding the mail to their phone.
+// Google and Apple run in the browser: the PKCE verifier is written to a cookie
+// here and read back by /auth/callback, so the flow has to start client-side.
+// Email and password run as server actions instead — the password is read
+// straight out of FormData and never enters React state, and the form still
+// works if JavaScript does not.
 //
-// OPS NOTE: this depends on the Supabase magic link email template including
-// {{ .Token }}. Without that, the mail arrives with only a link and there is
-// nothing for anyone to type.
+// WHAT WAS HERE BEFORE, AND WHY IT IS GONE:
+// A typed 6-digit code, chosen because a magic link is a single-use token
+// sitting in an inbox and two common things consume it before the person does:
+// corporate link scanners, which burn the token on delivery, and in-app mail
+// browsers, which start the session in a webview nobody returns to. That
+// reasoning still holds — it is why the confirmation and reset links in
+// supabase/templates carry a token_hash verified server-side rather than a PKCE
+// code that only works in the browser that asked for it. But the code path
+// depended on a Supabase email template change that was never made, so it sat
+// switched off for months while people with no Google account had no way in at
+// all. A password has neither failure and needs no template.
 
-const RESEND_SECONDS = 30;
-
-const emailSchema = z.email();
+const APPLE_SIGN_IN_ENABLED = process.env.NEXT_PUBLIC_AUTH_APPLE_ENABLED === "1";
 
 const UNAVAILABLE = "The gate is closed just now. Please try again shortly.";
-
-/** Only ever navigate to a path on this site. Mirrors the guard on the server
- *  so a tampered query string cannot bounce someone off to another host. */
-// Google is the only sign-in path until the Supabase email template is changed
-// to emit {{ .Token }}. Shipping the code field before that would send people a
-// magic link when the form is asking them for six digits, which reads as broken.
-// Set NEXT_PUBLIC_AUTH_EMAIL_ENABLED=1 to turn the email path back on.
-const EMAIL_SIGN_IN_ENABLED = process.env.NEXT_PUBLIC_AUTH_EMAIL_ENABLED === "1";
-
-function safePath(value: string): string {
-  if (!value.startsWith("/") || value.startsWith("//")) return "/garden";
-  return value;
-}
-
-function messageOf(err: unknown): string {
-  return err instanceof Error ? err.message : "";
-}
-
-/** Supabase speaks in developer sentences. The garden does not. */
-function friendly(raw: string, fallback: string): string {
-  const m = raw.toLowerCase();
-  if (m.includes("expired") || m.includes("invalid") || m.includes("not found")) {
-    return "That code did not match, or it has already expired. Ask for a new one below.";
-  }
-  if (m.includes("security purposes") || m.includes("rate") || m.includes("too many")) {
-    return "That is a few tries in a row. Please wait a minute, then try again.";
-  }
-  if (m.includes("signups not allowed") || m.includes("not authorized")) {
-    return "We could not open a garden for that address. Please write to us and we will help.";
-  }
-  if (m.includes("fetch") || m.includes("network")) {
-    return "The connection dropped before that finished. Please try once more.";
-  }
-  return fallback;
-}
 
 function GoogleMark() {
   return (
@@ -90,36 +62,20 @@ function GoogleMark() {
   );
 }
 
-function FieldError({ id, children }: { id: string; children: string }) {
+/** currentColor, so the mark takes the button's ink in either theme. Apple's
+ *  guidelines allow the black or white logotype; this is the black one. */
+function AppleMark() {
   return (
-    <p id={id} className="flex items-start gap-1.5 text-[13px] leading-relaxed text-error">
-      <svg
-        aria-hidden
-        viewBox="0 0 16 16"
-        className="mt-0.5 h-3.5 w-3.5 shrink-0"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-      >
-        <circle cx="8" cy="8" r="6.5" />
-        <path d="M8 5v3.5M8 11h.01" strokeLinecap="round" />
-      </svg>
-      {children}
-    </p>
+    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
+      <path d="M16.36 12.78c.02 2.6 2.28 3.47 2.31 3.48-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.64 2.12-1.15.02-1.53-.68-2.85-.68-1.32 0-1.73.66-2.83.7-1.13.04-1.99-1.13-2.72-2.18-1.48-2.15-2.62-6.08-1.09-8.73.76-1.31 2.12-2.15 3.59-2.17 1.11-.02 2.16.75 2.84.75.68 0 1.95-.93 3.29-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.34zM14.2 4.7c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.55 1.31-.56.65-1.05 1.68-.92 2.68.97.07 1.96-.49 2.57-1.23z" />
+    </svg>
   );
 }
 
-const labelClasses = "text-[13px] font-medium text-ink-muted";
-const fieldBase =
-  "w-full rounded-xl border bg-surface px-4 text-ink outline-none transition-shadow placeholder:text-ink-muted/70 focus:ring-2 focus:ring-[var(--focus-ring)]";
+const providerButtonClasses =
+  "inline-flex h-12 w-full items-center justify-center gap-3 rounded-full border border-hairline bg-surface px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none";
 
-// Quiet text controls, sized to the 44px minimum target. They go soft rather
-// than disabled while unavailable: disabling the control a keyboard visitor is
-// standing on throws their focus to the top of the document.
-const textActionClasses =
-  "inline-flex min-h-11 items-center rounded-full px-1 text-[14px] font-medium text-gold-text underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current aria-disabled:cursor-default aria-disabled:text-ink-muted aria-disabled:no-underline motion-reduce:transition-none";
-
-type Busy = "google" | "send" | "resend" | "verify" | null;
+type Mode = "signin" | "signup";
 
 export function EnterForm({ next }: { next: string }) {
   const router = useRouter();
@@ -127,149 +83,77 @@ export function EnterForm({ next }: { next: string }) {
   // keys, which the page normally catches first. This is the second belt.
   const [supabase] = useState(() => createBrowserSupabase());
 
-  const [step, setStep] = useState<"email" | "code">("email");
-  const [email, setEmail] = useState("");
-  const [code, setCode] = useState("");
-  const [busy, setBusy] = useState<Busy>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [notice, setNotice] = useState<string | null>(null);
-  const [cooldown, setCooldown] = useState(0);
+  const [mode, setMode] = useState<Mode>("signin");
+  const [oauthBusy, setOauthBusy] = useState<"google" | "apple" | null>(null);
+  const [oauthError, setOauthError] = useState<string | null>(null);
+
+  const [signInState, signInAction, signingIn] = useActionState<AuthResult | null, FormData>(
+    signIn,
+    null
+  );
+  const [signUpState, signUpAction, signingUp] = useActionState<AuthResult | null, FormData>(
+    signUp,
+    null
+  );
+
+  const state = mode === "signin" ? signInState : signUpState;
+  const pending = signingIn || signingUp || oauthBusy !== null;
 
   const emailRef = useRef<HTMLInputElement>(null);
-  const codeRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
 
-  // Each tick schedules the next one, so the dependency is honestly `cooldown`
-  // and there is no stale-closure interval to reason about.
+  // Signing in is the only outcome that moves the page. replace, not push: the
+  // gate should not sit one back-press behind someone who is now inside.
   useEffect(() => {
-    if (cooldown <= 0) return;
-    const id = window.setTimeout(() => setCooldown(cooldown - 1), 1000);
-    return () => window.clearTimeout(id);
-  }, [cooldown]);
+    if (signInState?.status === "ok") {
+      router.replace(safeNext(next));
+      router.refresh();
+    }
+  }, [signInState, next, router]);
 
-  // Moving focus is right here: the person asked for a code and the field they
-  // need appeared in answer. The sent-to line sits above the input in the same
-  // live region, so it is announced first.
+  // Send focus to whatever went wrong, so the correction happens where the
+  // person already is rather than after a hunt back up the form.
   useEffect(() => {
-    if (step === "code") codeRef.current?.focus();
-  }, [step]);
+    if (state?.status !== "invalid") return;
+    if (state.errors.email) emailRef.current?.focus();
+    else if (state.errors.password) passwordRef.current?.focus();
+  }, [state]);
 
-  const pending = busy !== null;
-
-  function fail(ref: RefObject<HTMLInputElement | null>, message: string) {
-    setBusy(null);
-    setError(message);
-    ref.current?.focus();
-  }
-
-  async function handleGoogle() {
+  async function handleOAuth(provider: "google" | "apple") {
     if (!supabase) {
-      setError(UNAVAILABLE);
+      setOauthError(UNAVAILABLE);
       return;
     }
-    setBusy("google");
-    setError(null);
-    setNotice(null);
-    const fallback = "We could not reach Google just then. Please try once more.";
+    setOauthBusy(provider);
+    setOauthError(null);
+    const label = provider === "google" ? "Google" : "Apple";
+    const fallback = `We could not reach ${label} just then. Please try once more.`;
     try {
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
-        provider: "google",
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
-      if (oauthError) {
-        setBusy(null);
-        setError(friendly(oauthError.message, fallback));
+      if (error) {
+        setOauthBusy(null);
+        setOauthError(friendly(error.message, fallback));
         return;
       }
-      // Success means the browser is already leaving for Google. Staying busy
-      // keeps the buttons quiet through the handoff.
+      // Success means the browser is already leaving. Staying busy keeps the
+      // buttons quiet through the handoff.
     } catch (err) {
-      setBusy(null);
-      setError(friendly(messageOf(err), fallback));
+      setOauthBusy(null);
+      setOauthError(friendly(messageOf(err), fallback));
     }
   }
 
-  async function sendCode(address: string, mode: "send" | "resend") {
-    if (!supabase) {
-      setError(UNAVAILABLE);
-      return;
-    }
-    setBusy(mode);
-    setError(null);
-    setNotice(null);
-    const fallback = "We could not send that code. Please try once more.";
-    try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: address,
-        options: { shouldCreateUser: true },
-      });
-      if (otpError) {
-        fail(mode === "send" ? emailRef : codeRef, friendly(otpError.message, fallback));
-        return;
-      }
-      setBusy(null);
-      setStep("code");
-      setCooldown(RESEND_SECONDS);
-      if (mode === "resend") {
-        setCode("");
-        setNotice("A new code is on its way.");
-      }
-    } catch (err) {
-      fail(mode === "send" ? emailRef : codeRef, friendly(messageOf(err), fallback));
-    }
-  }
-
-  function handleEmailSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const address = email.trim().toLowerCase();
-    if (!emailSchema.safeParse(address).success || address.length > 254) {
-      fail(emailRef, "That address does not look complete. One more look?");
-      return;
-    }
-    setEmail(address);
-    void sendCode(address, "send");
-  }
-
-  async function handleCodeSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!supabase) {
-      setError(UNAVAILABLE);
-      return;
-    }
-    if (code.length !== 6) {
-      fail(codeRef, "The code is six digits. Please enter all six.");
-      return;
-    }
-    setBusy("verify");
-    setError(null);
-    setNotice(null);
-    const fallback = "That code did not work. Please try once more.";
-    try {
-      const { error: verifyError } = await supabase.auth.verifyOtp({
-        email,
-        token: code,
-        type: "email",
-      });
-      if (verifyError) {
-        fail(codeRef, friendly(verifyError.message, fallback));
-        return;
-      }
-      // replace, not push: the gate should not sit one back-press behind
-      // someone who is now inside. Stays busy through the navigation.
-      router.replace(safePath(next));
-      router.refresh();
-    } catch (err) {
-      fail(codeRef, friendly(messageOf(err), fallback));
-    }
-  }
-
-  function startOver() {
-    setStep("email");
-    setCode("");
-    setError(null);
-    setNotice(null);
-    setCooldown(0);
+  function switchTo(nextMode: Mode) {
+    setMode(nextMode);
+    setOauthError(null);
+    // The state of the form you are leaving is not an answer to the form you are
+    // arriving at, and useActionState has no reset. Remounting the fields by key
+    // is what clears it; see the `key` on the <form> below.
   }
 
   if (!supabase) {
@@ -281,112 +165,75 @@ export function EnterForm({ next }: { next: string }) {
     );
   }
 
-  if (step === "code") {
-    const resendBlocked = pending || cooldown > 0;
+  // Signed up, and the rest of it happens in an inbox.
+  if (signUpState?.status === "sent") {
     return (
-      <div className="flex flex-col gap-6">
-        <div role="status" aria-live="polite" className="flex flex-col gap-1">
-          <p className="text-[15px] leading-relaxed text-ink">
-            We sent a 6 digit code to <span className="font-medium">{email}</span>.
-          </p>
-          <p className="text-[14px] leading-relaxed text-ink-muted">
-            It can take a moment to arrive. Look in the spam folder if it is not there.
-          </p>
-          {notice ? <p className="text-[14px] text-gold-text">{notice}</p> : null}
-        </div>
-
-        <form onSubmit={handleCodeSubmit} noValidate className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="enter-code" className={labelClasses}>
-              Your 6 digit code
-            </label>
-            <input
-              ref={codeRef}
-              id="enter-code"
-              name="code"
-              type="text"
-              inputMode="numeric"
-              autoComplete="one-time-code"
-              maxLength={6}
-              value={code}
-              readOnly={pending}
-              onChange={(e) => {
-                setCode(e.target.value.replace(/\D/g, "").slice(0, 6));
-                if (error) setError(null);
-              }}
-              aria-invalid={error ? true : undefined}
-              aria-describedby={error ? "enter-code-error" : undefined}
-              className={`h-14 text-center text-[22px] tracking-[0.4em] [text-indent:0.4em] ${fieldBase} ${
-                error ? "border-error" : "border-hairline"
-              }`}
-            />
-            {error ? <FieldError id="enter-code-error">{error}</FieldError> : null}
-          </div>
-
-          <BloomButton type="submit" disabled={pending} className="w-full">
-            {busy === "verify" ? "Opening the gate..." : "Enter the garden"}
-          </BloomButton>
-        </form>
-
-        <div className="flex flex-wrap items-center gap-x-5 border-t border-hairline pt-3">
-          <button
-            type="button"
-            aria-disabled={resendBlocked}
-            onClick={() => {
-              if (resendBlocked) return;
-              void sendCode(email, "resend");
-            }}
-            className={textActionClasses}
-          >
-            {busy === "resend"
-              ? "Sending..."
-              : cooldown > 0
-                ? `Send a new code in ${cooldown}s`
-                : "Send a new code"}
-          </button>
-          <button
-            type="button"
-            aria-disabled={pending}
-            onClick={() => {
-              if (pending) return;
-              startOver();
-            }}
-            className={textActionClasses}
-          >
-            Use a different email
+      <div role="status" aria-live="polite" className="flex flex-col gap-4">
+        <h2 className="text-[17px] font-medium text-ink">Look in your inbox</h2>
+        <p className="text-[15px] leading-relaxed text-ink">
+          We sent a note to <span className="font-medium">{signUpState.email}</span>. Open it, and
+          the gate is yours.
+        </p>
+        <p className="text-[14px] leading-relaxed text-ink-muted">
+          It can take a moment to arrive, and it sometimes lands in spam. The link is good for an
+          hour.
+        </p>
+        <div className="border-t border-hairline pt-3">
+          <button type="button" onClick={() => switchTo("signin")} className={textActionClasses}>
+            Back to signing in
           </button>
         </div>
       </div>
     );
   }
 
+  const errors = state?.status === "invalid" ? state.errors : {};
+  const formMessage =
+    oauthError ?? (state?.status === "failed" ? state.message : null);
+
   return (
     <div className="flex flex-col gap-6">
-      <button
-        type="button"
-        onClick={() => void handleGoogle()}
-        disabled={pending}
-        className="inline-flex h-12 w-full items-center justify-center gap-3 rounded-full border border-hairline bg-surface px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none"
-      >
-        <GoogleMark />
-        {busy === "google" ? "Taking you to Google..." : "Continue with Google"}
-      </button>
+      <div className="flex flex-col gap-3">
+        <button
+          type="button"
+          onClick={() => void handleOAuth("google")}
+          disabled={pending}
+          className={providerButtonClasses}
+        >
+          <GoogleMark />
+          {oauthBusy === "google" ? "Taking you to Google..." : "Continue with Google"}
+        </button>
 
-      {!EMAIL_SIGN_IN_ENABLED ? (
-        <p className="text-[13px] leading-relaxed text-ink-muted">
-          Signing in with Google keeps it to one tap, and there is no password to remember.
-        </p>
-      ) : null}
+        {APPLE_SIGN_IN_ENABLED ? (
+          <button
+            type="button"
+            onClick={() => void handleOAuth("apple")}
+            disabled={pending}
+            className={providerButtonClasses}
+          >
+            <AppleMark />
+            {oauthBusy === "apple" ? "Taking you to Apple..." : "Continue with Apple"}
+          </button>
+        ) : null}
+      </div>
 
-      {EMAIL_SIGN_IN_ENABLED ? (
-        <>
       <div className="flex items-center gap-4">
         <span aria-hidden className="h-px flex-1 bg-hairline" />
         <span className="text-meta text-ink-muted">or</span>
         <span aria-hidden className="h-px flex-1 bg-hairline" />
       </div>
 
-      <form onSubmit={handleEmailSubmit} noValidate className="flex flex-col gap-5">
+      {formMessage ? <FormError>{formMessage}</FormError> : null}
+
+      <form
+        // Remounts on every switch, which is how the fields and the previous
+        // result are cleared. Cheaper and less error-prone than mirroring the
+        // action state into local state so it can be reset.
+        key={mode}
+        action={mode === "signin" ? signInAction : signUpAction}
+        noValidate
+        className="flex flex-col gap-5"
+      >
         <div className="flex flex-col gap-2">
           <label htmlFor="enter-email" className={labelClasses}>
             Email address
@@ -400,32 +247,75 @@ export function EnterForm({ next }: { next: string }) {
             autoComplete="email"
             autoCapitalize="none"
             spellCheck={false}
-            value={email}
-            readOnly={pending}
-            onChange={(e) => {
-              setEmail(e.target.value);
-              if (error) setError(null);
-            }}
             placeholder="you@example.com"
-            aria-invalid={error ? true : undefined}
-            aria-describedby={error ? "enter-email-error" : "enter-email-hint"}
-            className={`h-12 text-[15px] ${fieldBase} ${error ? "border-error" : "border-hairline"}`}
+            aria-invalid={errors.email ? true : undefined}
+            aria-describedby={errors.email ? "enter-email-error" : undefined}
+            className={fieldClasses(Boolean(errors.email))}
           />
-          {error ? (
-            <FieldError id="enter-email-error">{error}</FieldError>
-          ) : (
-            <p id="enter-email-hint" className="text-[13px] leading-relaxed text-ink-muted">
-              We will email you a 6 digit code. There is no password to remember.
+          {errors.email ? <FieldError id="enter-email-error">{errors.email}</FieldError> : null}
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <label htmlFor="enter-password" className={labelClasses}>
+            Password
+          </label>
+          <input
+            ref={passwordRef}
+            id="enter-password"
+            name="password"
+            type="password"
+            // The browser is told which of the two this is, so a password
+            // manager offers to fill on one and to save on the other.
+            autoComplete={mode === "signin" ? "current-password" : "new-password"}
+            aria-invalid={errors.password ? true : undefined}
+            aria-describedby={
+              errors.password
+                ? "enter-password-error"
+                : mode === "signup"
+                  ? "enter-password-hint"
+                  : undefined
+            }
+            className={fieldClasses(Boolean(errors.password))}
+          />
+          {errors.password ? (
+            <FieldError id="enter-password-error">{errors.password}</FieldError>
+          ) : mode === "signup" ? (
+            <p id="enter-password-hint" className="text-[13px] leading-relaxed text-ink-muted">
+              Ten characters or more. Length is what matters, so a phrase you will remember beats
+              anything with symbols in it.
             </p>
-          )}
+          ) : null}
         </div>
 
         <BloomButton type="submit" disabled={pending} className="w-full">
-          {busy === "send" ? "Sending your code..." : "Email me a code"}
+          {mode === "signin"
+            ? signingIn
+              ? "Opening the gate..."
+              : "Enter the garden"
+            : signingUp
+              ? "Opening your garden..."
+              : "Create my garden"}
         </BloomButton>
       </form>
-        </>
-      ) : null}
+
+      <div className="flex flex-wrap items-center gap-x-5 border-t border-hairline pt-3">
+        <button
+          type="button"
+          aria-disabled={pending}
+          onClick={() => {
+            if (pending) return;
+            switchTo(mode === "signin" ? "signup" : "signin");
+          }}
+          className={textActionClasses}
+        >
+          {mode === "signin" ? "Create an account" : "I already have a garden"}
+        </button>
+        {mode === "signin" ? (
+          <Link href="/enter/reset" className={textActionClasses}>
+            Forgot your password?
+          </Link>
+        ) : null}
+      </div>
     </div>
   );
 }
