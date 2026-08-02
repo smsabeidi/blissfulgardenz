@@ -60,7 +60,8 @@ export function AccountClient({
         <span className="text-[13px] font-medium text-ink-muted">Your email</span>
         <p className="text-body">{email}</p>
         <p className="text-[13px] text-ink-muted">
-          This is how you sign in. To change it, write to us and we will move it safely.
+          This is the address every way in shares. To change it, write to us and we will move it
+          safely.
         </p>
       </div>
 

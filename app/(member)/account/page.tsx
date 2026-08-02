@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isDemo, DEMO_MEMBERSHIP, DEMO_SEATS } from "@/lib/demo";
 import { MemberSection } from "@/components/member/section";
 import { AccountClient } from "./account-client";
+import { SecurityClient } from "./security-client";
 import { SeatPanel } from "@/components/member/seat-panel";
 import { ManageBillingButton } from "@/components/member/manage-billing";
 
@@ -97,6 +98,18 @@ export default async function AccountPage() {
           product={prefs.product !== false}
         />
       </MemberSection>
+
+      {/* Only with a real session behind it. In demo mode there is no auth user,
+          and a security panel that cannot tell you how you signed in is worse
+          than no panel at all. */}
+      {userRes?.user ? (
+        <MemberSection title="Sign-in and security" width="reading">
+          <SecurityClient
+            providers={(userRes.user.identities ?? []).map((i) => i.provider)}
+            email={userRes.user.email ?? ""}
+          />
+        </MemberSection>
+      ) : null}
 
       <MemberSection title="Your membership" width="reading">
         {membership ? (

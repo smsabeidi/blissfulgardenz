@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { safeNext } from "@/lib/auth";
 
 // Finishes a sign-in that landed on the wrong page.
 //
@@ -33,6 +34,16 @@ export function AuthLanding() {
 
   useEffect(() => {
     const url = new URL(window.location.href);
+    // An emailed confirmation or reset link that landed here instead of at
+    // /auth/confirm. Nothing to do in the browser: the token is verified
+    // server-side, so hand the whole query string over and let the route do it.
+    // A full navigation rather than router.push, because the destination sets
+    // cookies on its redirect response.
+    if (url.searchParams.get("token_hash")) {
+      window.location.replace(`/auth/confirm${url.search}`);
+      return;
+    }
+
     const code = url.searchParams.get("code");
     const hash = new URLSearchParams(window.location.hash.replace(/^#/, ""));
     const accessToken = hash.get("access_token");
@@ -67,10 +78,8 @@ export function AuthLanding() {
 
       // Only ever a path on this site: a `next` arriving in a URL is attacker
       // controlled, and a sign-in that can be pointed at another host is a
-      // phishing primitive.
-      const requested = url.searchParams.get("next") ?? "";
-      const next =
-        requested.startsWith("/") && !requested.startsWith("//") ? requested : "/garden";
+      // phishing primitive. Same guard as the two callback routes, from one place.
+      const next = safeNext(url.searchParams.get("next"));
 
       // Strip the credential out of the address bar before navigating, so it is
       // not left in history or handed to the next page as a referrer.
