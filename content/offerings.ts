@@ -143,13 +143,19 @@ export type Tier = {
   cta?: { label: string; href: string };
 };
 
-// The conversation rates, written once and composed into every sentence below
-// that names them. The member figure is stated outright rather than derived
-// from the 10% discount: a derived rate re-rounds whenever either input moves,
-// and someone quoted a number on the tier card must see that same number at the
-// point of booking. If the discount changes, change MEMBER_RATE with it.
+// The conversation rate, written once and composed into every sentence below
+// that names it.
+//
+// There is ONE published session price: $150. The member's additional 10% is a
+// benefit applied when they book, not a second price on the page. Publishing
+// $135 beside $150 meant the site quoted two different numbers for the same
+// hour and invited the question of which one is real.
+//
+// MEMBER_RATE deliberately equals STANDARD_RATE: lib/pricing.ts treats a member
+// figure that is not below standard as "no separate rate" and shows the single
+// price, so nothing downstream needs to know this changed.
 const STANDARD_RATE = "$150";
-const MEMBER_RATE = "$135"; // the additional 10% Bloom members receive
+const MEMBER_RATE = "$150";
 const FOUR_SESSION_RATE = "$500"; // four sessions, a $100 saving
 const SESSION_LENGTH = "50-minute";
 
@@ -169,7 +175,7 @@ export const tiers: Tier[] = [
       "An additional 10% off private harmony conversations",
       "An additional 10% off annual convention participation",
     ],
-    conversationBenefit: `Member rate: ${MEMBER_RATE} per ${SESSION_LENGTH} conversation`,
+    conversationBenefit: "An additional 10% off private harmony conversations",
   },
   {
     slug: "family",
@@ -182,7 +188,7 @@ export const tiers: Tier[] = [
       "A private profile, progress, and notes for every member",
       "One price, however many of you are tending it",
     ],
-    conversationBenefit: `Member rate: ${MEMBER_RATE} per ${SESSION_LENGTH} conversation`,
+    conversationBenefit: "An additional 10% off private harmony conversations",
     cta: { label: "Ask about family membership", href: "/contact?topic=family" },
   },
 ];
@@ -205,5 +211,5 @@ export const consultationPricing = {
   // Parsed by lib/pricing.ts as the authoritative member figure for display.
   member: `${MEMBER_RATE} per ${SESSION_LENGTH} session`,
   packageNote: `${FOUR_SESSION_RATE} when you book four sessions, a saving of $100.`,
-  memberNote: `Members receive an additional 10% off, paying ${MEMBER_RATE} a session.`,
+  memberNote: "Members receive an additional 10% off, applied when you book.",
 } as const;

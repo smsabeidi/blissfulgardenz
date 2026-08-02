@@ -76,7 +76,7 @@ export default function MembershipPage() {
             </Reveal>
             <Reveal>
               <h1 id="membership-title" className="text-display-xl text-balance">
-                A garden grows best when it is tended weekly.
+                A garden grows best when it is tended.
               </h1>
             </Reveal>
             <Reveal>
