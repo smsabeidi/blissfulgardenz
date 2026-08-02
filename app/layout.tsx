@@ -35,7 +35,6 @@ const longform = Newsreader({
 });
 
 export const metadata: Metadata = {
-  // Final production domain pending client DNS decision (PRD §21).
   // Drives every canonical and og:url. Must be the host actually served, or
   // each one points at a 308 to www.
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.blissfulgardenz.com"),
@@ -44,6 +43,11 @@ export const metadata: Metadata = {
     template: `%s · ${brand.name}`,
   },
   description: brand.description,
+  // Self-referencing canonical on every route. "./" resolves against
+  // metadataBase, so each page declares its own URL as the canonical one.
+  // Without this the site published no canonical at all, which leaves Google
+  // to guess between apex, www, and any query-string variant of a page.
+  alternates: { canonical: "./" },
   openGraph: {
     siteName: brand.name,
     type: "website",

@@ -25,6 +25,49 @@ import { articles } from "@/content/library";
 // distinct layout families, one pinned-feeling moment (the shelf), one centered
 // section at a time, eyebrows rationed to three across ten sections.
 
+// Organization and WebSite, on the home page only.
+//
+// Book and journal pages already publish schema; the home page published none,
+// which is the one page a search engine uses to work out what the brand IS.
+// Without it Blissful Gardenz is a string on a page rather than an entity.
+//
+// Deliberately no postal address. The only address on file is the Stripe tax
+// head office, which is very likely a home address, and structured data is
+// permanent, machine-read, and republished by aggregators.
+const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.blissfulgardenz.com";
+
+const orgJsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": `${SITE}/#organization`,
+      name: brand.name,
+      legalName: brand.legalName,
+      url: SITE,
+      description: brand.description,
+      slogan: brand.motto,
+      logo: `${SITE}/opengraph-image`,
+      founder: {
+        "@type": "Person",
+        name: brand.founder.name,
+        jobTitle: "Physician, author, and advocate for family harmony",
+        image: `${SITE}${brand.founder.portrait}`,
+        sameAs: [brand.founder.amazonAuthorUrl],
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${SITE}/#website`,
+      url: SITE,
+      name: brand.name,
+      description: brand.description,
+      publisher: { "@id": `${SITE}/#organization` },
+      inLanguage: "en-US",
+    },
+  ],
+}).replace(/</g, "\\u003c");
+
 export default function HomePage() {
   const featured = articles.find((a) => a.featured) ?? articles[0];
   const rest = articles.filter((a) => a.slug !== featured.slug).slice(0, 2);
@@ -48,6 +91,7 @@ export default function HomePage() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: orgJsonLd }} />
       {/* 1 · The Garden Film hero: pinned, scroll-scrubbed cinematic flight */}
       <HeroScroll videoSrc={videoSrc} videoSrcMobile={videoSrcMobile} />
 
