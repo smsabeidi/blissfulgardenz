@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAccess } from "@/lib/access";
 import { billingReady } from "@/lib/env";
-import { membershipNote } from "@/content/offerings";
+import { membershipNote, openingNote } from "@/content/offerings";
 import { BloomButton, QuietButton } from "@/components/garden/buttons";
 import { JoinButtons } from "@/components/membership/join-buttons";
 
@@ -41,6 +41,11 @@ export async function JoinPanel() {
                 ? "You are holding a seat. Everything inside is yours whenever you want it."
                 : "Gain exclusive access and membership discounts. Cancel any time."}
             </p>
+            {!access.isMember ? (
+              <p className="rounded-xl border border-hairline bg-surface px-4 py-3 text-[14px] leading-relaxed text-ink-muted">
+                {openingNote}
+              </p>
+            ) : null}
             <p className="text-[14px] leading-relaxed text-ink-muted">{membershipNote}</p>
           </div>
 

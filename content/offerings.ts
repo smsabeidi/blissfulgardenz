@@ -187,6 +187,16 @@ export const tiers: Tier[] = [
   },
 ];
 
+// What a member gets ON THE DAY THEY PAY, said plainly.
+//
+// The film library and the Resource Vault are authored but not yet filmed or
+// written, so the tier list below describes a membership that is still filling
+// out. Selling that list without saying so would be selling an empty shelf.
+// This note sits beside every join button and under the tier grid, so nobody
+// pays expecting a library tonight.
+export const openingNote =
+  "The Garden is opening. Your member rate on private conversations, the monthly webinar with Dr. Laiyemo, and Seeds of Harmony begin the day you join. Films and guides are published as they are finished, and your membership covers every one of them as it arrives.";
+
 export const membershipNote =
   "Blissful Gardenz is for individuals, couples, and families with unique email addresses. The Inner Garden is for adults, eighteen and over.";
 

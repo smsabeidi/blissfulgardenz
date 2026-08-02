@@ -10,7 +10,7 @@ import { Reveal, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow, SectionHeading } from "@/components/garden/primitives";
 import { BloomButton } from "@/components/garden/buttons";
 import { ctaLabels } from "@/content/site";
-import { consultationPricing } from "@/content/offerings";
+import { consultationPricing, openingNote } from "@/content/offerings";
 import { faq } from "@/content/library";
 
 export const metadata: Metadata = {
@@ -125,6 +125,9 @@ export default function MembershipPage() {
         />
         <div className="mt-12 flex flex-col gap-6">
           <TierGrid />
+          <p className="mt-8 max-w-[70ch] text-[15px] leading-relaxed text-ink-muted">
+            {openingNote}
+          </p>
         </div>
         <Reveal>
           <p className="mt-14 text-center text-[15px] text-ink-muted">
