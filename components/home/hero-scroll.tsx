@@ -7,6 +7,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ctaLabels } from "@/content/site";
 import { Magnetic } from "@/components/garden/motion-reveals";
+import { HeroPoem } from "@/components/home/hero-poem";
+import { poem } from "@/content/poem";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -25,7 +27,20 @@ gsap.registerPlugin(ScrollTrigger);
 // loop in a single stationary viewport. The poster paints instantly under
 // everything, so the hero is never empty.
 
-const SCRUB_TRAVEL_VH = 360; // viewports of scroll spent inside the flight
+// Viewports of scroll spent inside the flight. Raised from 360 to give the poem
+// room to be read rather than flickered through: nine rungs occupy the middle
+// ~46% of the runway, which works out to roughly a quarter-viewport of scroll
+// each. Scrubbing means the visitor sets the pace and can hold on any line.
+const SCRUB_TRAVEL_VH = 520;
+
+// Where the poem lives on the 0..1 scroll timeline, and how long each rung
+// holds. Kept as named constants because these four numbers are the whole
+// choreography, and a magic number buried in a tween is a number nobody dares
+// change later.
+const POEM_START = 0.3;
+const POEM_END = 0.78;
+const RUNG_STEP = (POEM_END - POEM_START) / poem.rungs.length;
+const RUNG_FADE = RUNG_STEP * 0.26;
 
 export function HeroScroll({
   videoSrc,
@@ -39,6 +54,12 @@ export function HeroScroll({
   const [ready, setReady] = useState(false);
   // null until decided on the client, so SSR never guesses wrong.
   const [scrub, setScrub] = useState<boolean | null>(null);
+  // True only once the scroll timeline is actually built. The poem asks for its
+  // stacked layout on this, not on `scrub`, because stacked rungs are only
+  // legible while something is cross-fading them. If GSAP never initialises,
+  // this stays false and the poem lays out as an ordinary readable stanza
+  // rather than nine lines piled on one another.
+  const [timelineReady, setTimelineReady] = useState(false);
 
   // Cream header treatment while it floats over the dark film.
   useEffect(() => {
@@ -97,21 +118,73 @@ export function HeroScroll({
 
       // The Horizon Line traces the whole flight (this IS the progress bar).
       tl.fromTo("[data-hero-progress]", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
-      // Motto drifts up a touch across the journey; it never leaves.
-      tl.to("[data-hero-motto]", { yPercent: -8, duration: 1 }, 0);
       // Lede and pill recede once the traveller is underway.
       tl.to("[data-hero-lede]", { opacity: 0, y: -14, duration: 0.35 }, 0.12);
       tl.to("[data-hero-pill]", { opacity: 0, y: -12, duration: 0.3 }, 0.2);
-      // Arrival: the closing invitation resolves in the final stretch.
+      // The motto drifts up, then yields the stage. It used to hold the whole
+      // flight, but an 8.75rem headline and a poem cannot share a centre: one
+      // of them has to be the thing you are reading. The headline hands over.
+      tl.to("[data-hero-motto]", { yPercent: -14, duration: 1 }, 0);
+      tl.to("[data-hero-motto]", { opacity: 0, duration: 0.09 }, POEM_START - 0.09);
+
+      // ── "Time well spent" ────────────────────────────────────────────────
+      // The container simply becomes present; each rung governs its own moment
+      // inside it, so the poem can never half-appear between two lines.
+      tl.fromTo(
+        "[data-hero-poem]",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.05 },
+        POEM_START - 0.06
+      );
+      tl.fromTo(
+        "[data-poem-title]",
+        { opacity: 0, y: 10 },
+        { opacity: 0.9, y: 0, duration: 0.045 },
+        POEM_START - 0.05
+      );
+      tl.to("[data-poem-title]", { opacity: 0, duration: 0.05 }, POEM_START + RUNG_STEP * 1.6);
+
+      // Each rung rises, holds, and gives way to the next. The overlap is
+      // deliberate: a hard cut between two lines of a poem reads as a slide
+      // deck, while a brief dissolve reads as one thought becoming the next.
+      poem.rungs.forEach((_, i) => {
+        const at = POEM_START + i * RUNG_STEP;
+        tl.fromTo(
+          `[data-poem-rung="${i}"]`,
+          { opacity: 0, y: 18 },
+          { opacity: 1, y: 0, duration: RUNG_FADE },
+          at
+        );
+        tl.to(
+          `[data-poem-rung="${i}"]`,
+          { opacity: 0, y: -18, duration: RUNG_FADE },
+          at + RUNG_STEP - RUNG_FADE * 0.35
+        );
+      });
+
+      // The coda arrives last and does not leave: "I love you." is the line the
+      // visitor should still be looking at when the invitation appears.
+      tl.fromTo(
+        "[data-poem-coda]",
+        { opacity: 0, y: 22, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.05 },
+        POEM_END
+      );
+
+      // Arrival: the closing invitation resolves beneath the coda.
       tl.fromTo(
         "[data-hero-arrival]",
         { opacity: 0, y: 18 },
         { opacity: 1, y: 0, duration: 0.22 },
-        0.8
+        0.86
       );
     }, root);
 
-    return () => ctx.revert();
+    setTimelineReady(true);
+    return () => {
+      setTimelineReady(false);
+      ctx.revert();
+    };
   }, [scrub]);
 
   const arrow = (
@@ -141,7 +214,19 @@ export function HeroScroll({
     >
       {/* The sticky stage: viewport-sized, stays in view while the section
           scrolls past. Immune to transformed ancestors (no GSAP pin). */}
-      <div className="sticky top-0 flex h-[100dvh] flex-col overflow-hidden">
+      {/* Sticky, fixed-height and clipped ONLY when there is a runway to stick
+          through. In every other mode the poem reads as a stanza in normal flow
+          inside this stage, so the stage must be free to grow with it: a fixed
+          100dvh with overflow-hidden guillotines the poem after the fourth
+          rung, and a sticky stage above flowing content pins the film while the
+          stanza scrolls up through it. */}
+      <div
+        className={
+          tall
+            ? "sticky top-0 flex h-[100dvh] flex-col overflow-hidden"
+            : "relative flex min-h-[100dvh] flex-col"
+        }
+      >
         {/* L1 · The film, with the poster painting instantly underneath */}
         <div className="absolute inset-0">
           <Image
@@ -236,6 +321,16 @@ export function HeroScroll({
             </div>
           </div>
 
+          {/* L4b · "Time well spent".
+              ONE render position, in both modes, and that is load-bearing.
+              Rendering the stacked version here and the reading version
+              elsewhere made React unmount one and mount the other the moment
+              the timeline came up, so every tween kept animating detached nodes
+              while nine freshly-built, unstyled rungs piled up on screen. Same
+              slot means React reuses the same elements, and the opening state
+              GSAP wrote survives the switch to the stacked layout. */}
+          <HeroPoem animated={tall && timelineReady} />
+
           {/* Arrival: resolves only at the end of the flight (scrub mode). */}
           {tall ? (
             <div
@@ -276,6 +371,7 @@ export function HeroScroll({
           A garden of bliss for the people
         </p>
       </div>
+
     </section>
   );
 }
