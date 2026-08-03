@@ -44,7 +44,7 @@ export default function ResetPage() {
 
       <div className="mt-8 flex flex-col gap-1 text-[15px] text-ink-muted">
         <p>
-          Signed in with Google or Apple?{" "}
+          Signed in with Google?{" "}
           <Link
             href="/enter"
             className="inline-block py-1 font-medium text-gold-text underline decoration-transparent underline-offset-4 transition-colors hover:decoration-current motion-reduce:transition-none"

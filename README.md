@@ -74,6 +74,39 @@ npx tsc --noEmit   # typecheck
 
 Node 20+. The hero video files live in `public/videos/`; if they are absent the hero falls back to its poster frame automatically, so the app runs without them.
 
+Copy `.env.example` to `.env.local` and fill in what you need. Every key is optional: without them the marketing site renders exactly as it does in production and the member area simply stays closed.
+
+## Sign-in
+
+Two ways into The Inner Garden, both landing on the same session: **Google**, and an **email address with a password**. The gate is `app/enter/`, the callbacks are `app/auth/callback` (OAuth) and `app/auth/confirm` (emailed links), and the password actions are `app/actions/auth.ts`.
+
+### The Supabase side lives in `supabase/config.toml`
+
+Providers, password rules, the redirect allow-list, SMTP, and the email templates are all in that file rather than in the dashboard, so the answer to "how does sign-in work here" is a diff rather than a click path.
+
+```bash
+set -a && . ./.env.supabase && set +a && supabase config push
+```
+
+**Read this before running it.** `config push` sends the *whole* auth configuration and there is no `config pull` to read the remote state first. Anything missing reverts to a CLI default — so both `SUPABASE_AUTH_EXTERNAL_GOOGLE_*` values plus `RESEND_API_KEY` must resolve when you push. An empty Google secret would disable live Google sign-in rather than leave it alone. `.env.supabase` (gitignored) is where those live; `.env.example` documents them. The CLI prints a diff and asks first: read it, and if it proposes removing or changing Google, stop.
+
+**Verify the Resend domain before the first push.** `config.toml` points Supabase auth mail at Resend, and Resend rejects anything sent from an unverified domain. Add `mail.blissfulgardenz.com` under Resend → Domains and publish the DNS records first, or set `[auth.email.smtp] enabled = false` and flip it in a second push. Pushing SMTP against an unverified domain means no confirmation email arrives at all, which is worse than the built-in mailer's rate cap.
+
+### Two things that must not be switched off
+
+- **`enable_confirmations`.** `supabase/migrations/0004_staff_allowlist.sql` grants the admin desk to any address in `staff_allowlist` and guards it with `email_confirmed_at`. That guard was written when Google — which verifies addresses itself — was the only provider. With passwords enabled and confirmations off, anyone registering `admin@blissfulgardenz.com` would be handed the desk.
+- **Custom SMTP.** Supabase's built-in mailer is capped at a couple of messages per hour for the whole project. Confirmations and password resets are now on the critical path of signing in, so `config.toml` routes auth mail through Resend, which already sends this site's transactional mail.
+
+### Why there is no Sign in with Apple
+
+It was scoped and dropped. Apple requires a paid Developer Program membership, and its client secret is a JWT that Apple caps at six months — a recurring calendar obligation that breaks sign-in silently when it lapses, rather than a one-time setup. Google plus a password covers everyone without that.
+
+`config.toml` says `enabled = false` for Apple rather than leaving the block out, because `config push` fills in omissions with CLI defaults and a deliberate decision should not read as an oversight. Adding it later is that block plus a second button in `app/enter/enter-form.tsx`.
+
+### Testing it locally
+
+`NEXT_PUBLIC_DEMO_MODE=1` opens the gate for everyone and short-circuits `getAccess()` to a fully entitled member. Set it to `0` before testing anything about sign-in, or you will be testing the bypass.
+
 ## Project structure
 
 ```

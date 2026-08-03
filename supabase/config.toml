@@ -34,27 +34,63 @@ max_rows = 1000
 [auth]
 enabled = true
 
-# The base URL of the site, used to build the links inside auth emails.
-site_url = "env(NEXT_PUBLIC_SITE_URL)"
+# The base URL of the site, used to build every link inside an auth email.
+#
+# Written out rather than read from env(NEXT_PUBLIC_SITE_URL) on purpose. That
+# variable is "http://localhost:3000" in a developer's .env.local, and pushing
+# from a shell that had loaded it would point every confirmation and reset link
+# in production at localhost. It is not a secret; the literal is safer.
+site_url = "https://www.blissfulgardenz.com"
 
-# THE ALLOW-LIST, AND WHY IT MATTERS MORE THAN IT LOOKS.
+# THE ALLOW-LIST.
 #
-# Supabase only honours a `redirect_to` that appears here. This list previously
-# contained the Site URL and nothing else, so every sign-in — Google included —
-# came back to the home page carrying its credential in the query string, and
-# `components/garden/auth-landing.tsx` had to be written to rescue it. Two real
-# accounts were created that never once reached the garden.
+# Supabase only honours a `redirect_to` that appears here. It once contained the
+# Site URL and nothing else, which is why every sign-in came back to the home
+# page carrying its credential in the query string and why
+# `components/garden/auth-landing.tsx` exists to rescue it. Two real accounts
+# were created that never reached the garden.
 #
-# Password reset and email confirmation links would land in exactly the same
-# place. These entries are the actual repair; the shim in the root layout stays
-# only as a net.
+# By the time this file was first pushed, someone had already patched that by
+# adding `https://www.blissfulgardenz.com/**`. A wildcard does work, and it is
+# replaced here rather than kept: it approves every path on the origin forever,
+# including ones that do not exist yet, and an allow-list is only worth having
+# if it is a list. These six are the only redirect targets the app actually
+# uses — two routes, three origins.
+#
+# Note the apex domain as well as www. Someone who types the address without
+# the www gets served, and a sign-in that works on one host and mysteriously
+# fails on the other is a bug nobody reports clearly.
+# EACH ROUTE APPEARS TWICE, AND THE `?**` TWIN IS NOT OPTIONAL.
+#
+# The allow-list is a glob matched against the WHOLE url, query string included,
+# where the only separator characters are `.` and `/`. A bare
+# ".../auth/callback" therefore does NOT match the redirect the app actually
+# sends, which is ".../auth/callback?next=%2Fgarden" — Supabase finds no match,
+# silently falls back to site_url, and drops the person on the marketing home
+# page instead of in the garden, losing `next` on the way.
+#
+# The previous "https://www.blissfulgardenz.com/**" hid this, because it matched
+# everything on the origin. Narrowing it to exact paths was right, but exact
+# paths alone quietly broke Google sign-in until the query form was added back.
+# `**` rather than `*`: `*` stops at `.` and `/`, and a query string can contain
+# either.
 additional_redirect_urls = [
   "https://www.blissfulgardenz.com/auth/callback",
+  "https://www.blissfulgardenz.com/auth/callback?**",
   "https://www.blissfulgardenz.com/auth/confirm",
+  "https://www.blissfulgardenz.com/auth/confirm?**",
   "https://blissfulgardenz.com/auth/callback",
+  "https://blissfulgardenz.com/auth/callback?**",
   "https://blissfulgardenz.com/auth/confirm",
+  "https://blissfulgardenz.com/auth/confirm?**",
   "http://localhost:3000/auth/callback",
+  "http://localhost:3000/auth/callback?**",
   "http://localhost:3000/auth/confirm",
+  "http://localhost:3000/auth/confirm?**",
+  "http://localhost:3100/auth/callback",
+  "http://localhost:3100/auth/callback?**",
+  "http://localhost:3100/auth/confirm",
+  "http://localhost:3100/auth/confirm?**",
 ]
 
 jwt_expiry = 3600
@@ -104,8 +140,23 @@ otp_expiry = 3600
 # Supabase's built-in email service is a development convenience capped at a
 # couple of messages per hour for the entire project. Confirmations and password
 # resets are now on the critical path of signing in, so that cap would read to
-# members as "the site is broken". Resend already sends this site's transactional
-# mail and its domains are already verified, so auth mail goes the same way.
+# members as "the site is broken". Resend sends this site's other transactional
+# mail, so auth mail goes the same way.
+#
+# ⚠️ PRECONDITION: the sending domain below must be VERIFIED IN RESEND before
+# this is switched on. As of writing the Resend account has no verified domains
+# at all (checked against its /domains API), which means every message sent from
+# @mail.blissfulgardenz.com would be rejected outright — a worse failure than
+# the built-in mailer's rate cap, because confirmations would not arrive and
+# nobody could finish signing up.
+#
+# ON, now that mail.blissfulgardenz.com is verified in Resend. It was held off
+# for one push while DNS propagated, because Resend rejects mail from an
+# unverified domain and that would have failed harder than the rate cap it
+# replaces: no confirmation emails at all, and confirmation is mandatory.
+#
+# If auth email ever stops arriving, check the domain's status in Resend first.
+# A domain can fall out of verification if its DNS records are changed.
 [auth.email.smtp]
 enabled = true
 host = "smtp.resend.com"
@@ -133,6 +184,23 @@ content_path = "./supabase/templates/recovery.html"
 subject = "Confirm your new email address"
 content_path = "./supabase/templates/email_change.html"
 
+# Two-factor, restored rather than chosen.
+#
+# The first push turned both of these OFF without meaning to. They were true on
+# the project, this file said nothing about them, and `config push` filled the
+# silence with the CLI's default of false — the exact failure this file's header
+# warns about, demonstrated on the very first run. Nobody was affected (no
+# factors were enrolled, checked against auth.mfa_factors), but with even one
+# enrolled TOTP factor, verify_enabled = false would have locked that person out
+# of their own account.
+#
+# So they are written down now. Not because the garden offers two-factor today,
+# but because a config file that omits a setting is a config file that silently
+# decides it.
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
 [auth.rate_limit]
 # Raised from the default of 2/hour, which assumed the built-in mailer. With
 # Resend behind it the real constraint is abuse, not quota.
@@ -158,19 +226,18 @@ client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 skip_nonce_check = false
 
-# Apple. The code ships whether or not this is configured: the button on /enter
-# is behind NEXT_PUBLIC_AUTH_APPLE_ENABLED, so it simply does not appear until
-# there is something behind it.
+# Apple is off, and stated rather than omitted.
 #
-# client_id is the Services ID from developer.apple.com (not the App ID, and not
-# the bundle identifier). `secret` is a JWT generated from the Sign in with Apple
-# .p8 key — Apple caps its lifetime at six months, so it needs a calendar
-# reminder or Apple sign-in stops working with no warning. See the README.
+# `config push` fills in anything this file leaves out with a CLI default, so a
+# provider that is simply absent and a provider that is deliberately disabled
+# look identical in a diff. Writing it down means the next person reading this
+# file learns a decision instead of guessing at an oversight.
+#
+# It was scoped and then dropped: Sign in with Apple needs a paid Apple Developer
+# Program membership, and its client secret is a JWT that Apple caps at six
+# months, so it is a recurring calendar obligation rather than a one-time setup.
+# Google plus a password covers everyone without that. Turning it on later is
+# this block with `enabled = true`, a Services ID and secret from
+# developer.apple.com, and a second button in app/enter/enter-form.tsx.
 [auth.external.apple]
-enabled = true
-client_id = "env(SUPABASE_AUTH_EXTERNAL_APPLE_CLIENT_ID)"
-secret = "env(SUPABASE_AUTH_EXTERNAL_APPLE_SECRET)"
-# Apple will not hand back an email address for every account (Private Relay,
-# and accounts that decline to share). We require one: the whole membership is
-# keyed on it, from Stripe receipts to the second seat.
-email_optional = false
+enabled = false

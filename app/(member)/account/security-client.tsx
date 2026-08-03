@@ -23,9 +23,11 @@ import { setPassword, type AuthResult } from "@/app/actions/auth";
 // absence is decided on the server too — the action re-derives it from the
 // user's identities rather than trusting the shape of this form.
 
+// Keyed on Supabase's own provider names. Anything not listed is simply not
+// shown rather than printed raw, so an identity from a provider this site does
+// not offer cannot leak a Supabase internal into the page.
 const PROVIDER_LABELS: Record<string, string> = {
   google: "Google",
-  apple: "Apple",
   email: "A password",
 };
 
@@ -43,12 +45,10 @@ export function SecurityClient({ providers, email }: { providers: string[]; emai
     else if (state.errors.password) passwordRef.current?.focus();
   }, [state]);
 
-  // Fold the form away once it has done its job, so the section settles back to
-  // a statement of fact rather than sitting open with a stale success line.
-  useEffect(() => {
-    if (state?.status === "ok") setOpen(false);
-  }, [state]);
-
+  // The form is not folded away on success. Collapsing it would mean closing it
+  // from inside an effect, which cascades a render, and it would move the button
+  // out from under the pointer at the moment of confirmation. Instead the
+  // outcome is stated beside the button, the way "Your details" above does it.
   const linked = providers
     .map((p) => PROVIDER_LABELS[p])
     .filter(Boolean)
@@ -66,12 +66,6 @@ export function SecurityClient({ providers, email }: { providers: string[]; emai
           the address itself, write to us and we will move it safely.
         </p>
       </div>
-
-      {state?.status === "ok" && !open ? (
-        <p role="status" className="text-[15px] text-success">
-          {hasPassword ? "Your password has been changed." : "Your password is set."}
-        </p>
-      ) : null}
 
       {!open ? (
         <div>
@@ -142,17 +136,23 @@ export function SecurityClient({ providers, email }: { providers: string[]; emai
             <BloomButton type="submit" disabled={pending} arrow={false}>
               {pending ? "Saving" : hasPassword ? "Change it" : "Set it"}
             </BloomButton>
-            <button
-              type="button"
-              aria-disabled={pending}
-              onClick={() => {
-                if (pending) return;
-                setOpen(false);
-              }}
-              className={textActionClasses}
-            >
-              Never mind
-            </button>
+            {state?.status === "ok" ? (
+              <span role="status" className="text-[15px] text-success">
+                {hasPassword ? "Changed." : "Set. You can now sign in with it."}
+              </span>
+            ) : (
+              <button
+                type="button"
+                aria-disabled={pending}
+                onClick={() => {
+                  if (pending) return;
+                  setOpen(false);
+                }}
+                className={textActionClasses}
+              >
+                Never mind
+              </button>
+            )}
           </div>
         </form>
       )}

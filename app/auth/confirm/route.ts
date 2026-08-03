@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient();
   if (!supabase) return back("/enter?error=unavailable");
 
-  const { error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
+  const { data, error } = await supabase.auth.verifyOtp({ token_hash: tokenHash, type });
   // Used, expired, or already consumed by a scanner. The gate answers with a
   // fresh way in rather than a dead end.
   if (error) return back("/enter?error=exchange");
@@ -59,9 +59,13 @@ export async function GET(request: NextRequest) {
   // A recovery session belongs to someone who by definition cannot tell us their
   // current password, so setPassword needs to know this one arrived that way.
   // Server-set and HttpOnly: whether the current-password check is skipped is
-  // not a decision the browser gets to make. Short-lived, and spent on first use.
-  if (type === "recovery") {
-    response.cookies.set(RECOVERY_COOKIE, "1", {
+  // not a decision the browser gets to make. Short-lived, spent on first use.
+  //
+  // The value is the user id, not a flag. A shared machine can hold more than
+  // one session in fifteen minutes, and a bare "1" would let whoever signed in
+  // next change a password without knowing the old one.
+  if (type === "recovery" && data.user) {
+    response.cookies.set(RECOVERY_COOKIE, data.user.id, {
       httpOnly: true,
       sameSite: "lax",
       secure: url.protocol === "https:",

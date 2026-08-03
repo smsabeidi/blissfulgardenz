@@ -7,12 +7,18 @@ import { safeNext } from "@/lib/auth";
 // Finishes a sign-in that landed on the wrong page.
 //
 // Supabase only honours a `redirect_to` that appears in its redirect allow
-// list. This project's list contains just the Site URL, so every sign-in —
-// Google included — comes back to https://www.blissfulgardenz.com/ instead of
+// list. That list once contained just the Site URL, so every sign-in — Google
+// included — came back to https://www.blissfulgardenz.com/ instead of
 // /auth/callback, carrying its credential in the query string or the fragment.
 // The home page had nothing to receive that, so accounts were being created in
 // auth.users while the person bounced back to the marketing site still signed
 // out. Two real accounts exist that never once reached the garden.
+//
+// FIXED AT THE SOURCE: supabase/config.toml now lists /auth/callback and
+// /auth/confirm on all three origins, so the fallback below should never fire
+// in normal use. It is kept because the allow list is remote state that a
+// dashboard edit can undo without touching this repo, and the cost of being
+// wrong about that is silent, invisible sign-in failures.
 //
 // This catches both shapes wherever they land:
 //   ?code=…                     PKCE, what Google sends

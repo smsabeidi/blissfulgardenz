@@ -2,9 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { safeNext } from "@/lib/auth";
 
-// Where Google and Apple send people back. The browser client started a PKCE
-// flow and left the code verifier in a cookie; this trades the returned code for
-// a session and writes the auth cookies onto the redirect response.
+// Where Google sends people back. The browser client started a PKCE flow and
+// left the code verifier in a cookie; this trades the returned code for a
+// session and writes the auth cookies onto the redirect response.
+//
+// Written for OAuth generally rather than for Google specifically, so a second
+// provider would need nothing here but a second button on /enter.
 //
 // Every exit from here is a redirect to a path on this origin. Nothing the
 // provider sends is ever reflected into a page: failures leave with a short
@@ -18,8 +21,8 @@ export async function GET(request: NextRequest) {
   const url = request.nextUrl;
   const back = (path: string) => NextResponse.redirect(new URL(path, url.origin));
 
-  // A provider can decline before we ever see a code (consent refused, app
-  // config, or someone tapping "cancel" on Apple's sheet).
+  // A provider can decline before we ever see a code (consent refused, or the
+  // OAuth app misconfigured at the provider's end).
   if (url.searchParams.get("error")) return back("/enter?error=oauth");
 
   // An emailed link that arrived here rather than at /auth/confirm — an older

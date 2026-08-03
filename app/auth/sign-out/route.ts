@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { RECOVERY_COOKIE } from "@/lib/auth";
 
 // POST only. A sign-out reachable by GET is a sign-out that any image tag or
 // prefetch on the internet can perform on someone mid-sentence.
@@ -28,5 +29,12 @@ export async function POST(request: NextRequest) {
 
   // 303, not the default 307: a 307 preserves the method, so the browser would
   // POST to "/" and collect a 405 instead of the home page.
-  return NextResponse.redirect(home, { status: 303 });
+  const response = NextResponse.redirect(home, { status: 303 });
+
+  // The recovery marker is bound to the session that just ended. Left behind, it
+  // would sit in the browser for up to fifteen minutes and let the NEXT person
+  // to sign in on this machine change a password without knowing the old one.
+  response.cookies.delete(RECOVERY_COOKIE);
+
+  return response;
 }

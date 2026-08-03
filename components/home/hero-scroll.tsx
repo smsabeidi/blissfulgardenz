@@ -33,14 +33,37 @@ gsap.registerPlugin(ScrollTrigger);
 // each. Scrubbing means the visitor sets the pace and can hold on any line.
 const SCRUB_TRAVEL_VH = 520;
 
-// Where the poem lives on the 0..1 scroll timeline, and how long each rung
-// holds. Kept as named constants because these four numbers are the whole
-// choreography, and a magic number buried in a tween is a number nobody dares
-// change later.
-const POEM_START = 0.3;
-const POEM_END = 0.78;
+// THE FLIGHT HAS FOUR MOVEMENTS, AND THEY DO NOT OVERLAP.
+//
+// That rule is the whole fix. The opening (headline, lede, pill) used to fade
+// out over 0.35 and 0.30 of the timeline while the poem began at 0.30, so on a
+// desktop the second rung — "I want to be in your arms" — arrived on top of a
+// lede still at 33% and a membership pill still at 49%. Two things asking to be
+// read at once, which on a wide viewport reads as a mistake rather than a
+// dissolve. On touch it never showed, because touch gets the plain stanza.
+//
+// So the opening now withdraws briskly and COMPLETELY, there is a beat of
+// nothing but the film, and only then does the poem begin. One thing to read at
+// a time, always.
+//
+//   0.00 → 0.14   the opening holds
+//   0.14 → 0.26   the opening withdraws, in the order it arrived
+//   0.26 → 0.32   a breath: only the garden
+//   0.32 → 0.80   the poem, one rung at a time
+//   0.80 → 1.00   the coda, the attribution, the invitation
+//
+// These are fractions of SCROLL, and they are only true if the timeline is
+// exactly 1.0 long — see the note on the arrival tween at the foot of the
+// sequence, which used to run to 1.08 and quietly compress everything above.
+const INTRO_OUT = 0.14;
+const INTRO_GONE = 0.26;
+const POEM_START = 0.32;
+const POEM_END = 0.8;
 const RUNG_STEP = (POEM_END - POEM_START) / poem.rungs.length;
-const RUNG_FADE = RUNG_STEP * 0.26;
+// A third of each rung's time is the dissolve, two thirds is the hold. A hard
+// cut between two lines of a poem reads as a slide deck; a long dissolve reads
+// as indecision. This is the middle, and it is where the line sits still.
+const RUNG_FADE = RUNG_STEP * 0.3;
 
 export function HeroScroll({
   videoSrc,
@@ -118,31 +141,57 @@ export function HeroScroll({
 
       // The Horizon Line traces the whole flight (this IS the progress bar).
       tl.fromTo("[data-hero-progress]", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
-      // Lede and pill recede once the traveller is underway.
-      tl.to("[data-hero-lede]", { opacity: 0, y: -14, duration: 0.35 }, 0.12);
-      tl.to("[data-hero-pill]", { opacity: 0, y: -12, duration: 0.3 }, 0.2);
-      // The motto drifts up, then yields the stage. It used to hold the whole
-      // flight, but an 8.75rem headline and a poem cannot share a centre: one
-      // of them has to be the thing you are reading. The headline hands over.
-      tl.to("[data-hero-motto]", { yPercent: -14, duration: 1 }, 0);
-      tl.to("[data-hero-motto]", { opacity: 0, duration: 0.09 }, POEM_START - 0.09);
 
-      // ── "Time well spent" ────────────────────────────────────────────────
+      // ── Movement one: the opening withdraws, completely ───────────────────
+      // Reverse order of arrival — the pill and lede came last, so they leave
+      // first and the headline is the last thing standing. Each fade is short
+      // and finished; nothing here is still on screen when the poem starts.
+      //
+      // autoAlpha, NOT opacity. autoAlpha is opacity plus visibility, so at zero
+      // these are genuinely gone rather than merely transparent. Two reasons
+      // that matters here. A transparent element still answers the mouse, and
+      // "Explore Membership" is a real link sitting directly over the middle of
+      // the poem — at opacity 0 it was an invisible click target across the
+      // verse. And `visibility: hidden` takes the whole subtree out of the
+      // accessibility tree, so a screen reader stops offering a lede and a
+      // membership link that a sighted visitor can no longer see.
+      tl.to("[data-hero-pill]", { autoAlpha: 0, y: -12, duration: 0.08 }, INTRO_OUT);
+      tl.to("[data-hero-lede]", { autoAlpha: 0, y: -14, duration: 0.08 }, INTRO_OUT + 0.03);
+      // The headline drifts as the camera moves, then yields the stage. An
+      // 8.75rem headline and a poem cannot share a centre: one of them has to
+      // be the thing you are reading. The drift ends when the headline does —
+      // it used to keep tweening for the whole flight, invisible, for nothing.
+      tl.to("[data-hero-motto]", { yPercent: -14, duration: INTRO_GONE }, 0);
+      tl.to("[data-hero-motto]", { autoAlpha: 0, duration: 0.08 }, INTRO_GONE - 0.08);
+
+      // ── Movement two: a scrim settles, so the verse has a ground ──────────
+      // The poem is ivory and gold type laid over a moving film, and the only
+      // thing that was holding it up was a 40px text-shadow on every line. A
+      // shadow makes type survive a bright frame; it does not make it calm. This
+      // is a soft pool of the garden's own deep green that arrives with the poem
+      // and stays through the coda, so every line is read against one steady
+      // ground instead of whatever the film happens to be doing.
+      tl.fromTo(
+        "[data-poem-scrim]",
+        { opacity: 0 },
+        { opacity: 1, duration: 0.06 },
+        INTRO_GONE
+      );
+
+      // ── Movement three: "Time well spent" ─────────────────────────────────
       // The container simply becomes present; each rung governs its own moment
       // inside it, so the poem can never half-appear between two lines.
-      tl.fromTo(
-        "[data-hero-poem]",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.05 },
-        POEM_START - 0.06
-      );
+      tl.fromTo("[data-hero-poem]", { opacity: 0 }, { opacity: 1, duration: 0.04 }, INTRO_GONE);
+      // The title stands above the verse for the whole poem and leaves with it.
+      // It used to duck out after the second rung, which left the reader with
+      // nine unattributed lines; a poem keeps its title at the top of the page.
       tl.fromTo(
         "[data-poem-title]",
         { opacity: 0, y: 10 },
-        { opacity: 0.9, y: 0, duration: 0.045 },
-        POEM_START - 0.05
+        { opacity: 0.9, y: 0, duration: 0.04 },
+        INTRO_GONE + 0.01
       );
-      tl.to("[data-poem-title]", { opacity: 0, duration: 0.05 }, POEM_START + RUNG_STEP * 1.6);
+      tl.to("[data-poem-title]", { opacity: 0, duration: 0.04 }, POEM_END - 0.02);
 
       // Each rung rises, holds, and gives way to the next. The overlap is
       // deliberate: a hard cut between two lines of a poem reads as a slide
@@ -162,6 +211,7 @@ export function HeroScroll({
         );
       });
 
+      // ── Movement four: the coda, the poet, the invitation ─────────────────
       // The coda arrives last and does not leave: "I love you." is the line the
       // visitor should still be looking at when the invitation appears.
       tl.fromTo(
@@ -170,13 +220,29 @@ export function HeroScroll({
         { opacity: 1, y: 0, scale: 1, duration: 0.05 },
         POEM_END
       );
+      // The poet's name, which until now only a screen reader ever received.
+      // A poem carries its author; that is not decoration, it is the courtesy
+      // owed to the person who wrote it.
+      tl.fromTo(
+        "[data-poem-byline]",
+        { opacity: 0, y: 10 },
+        { opacity: 0.75, y: 0, duration: 0.05 },
+        POEM_END + 0.06
+      );
 
       // Arrival: the closing invitation resolves beneath the coda.
+      //
+      // ENDS AT 1.0 ON PURPOSE. This used to start at 0.86 with a duration of
+      // 0.22, which made the timeline 1.08 long — so GSAP scaled everything
+      // above by 1/1.08 and every named constant in this file quietly meant
+      // something 7% earlier than it said, while the Horizon Line finished
+      // filling at 93% of the scroll and then sat there. Nothing after this
+      // tween may run past 1.0.
       tl.fromTo(
         "[data-hero-arrival]",
         { opacity: 0, y: 18 },
-        { opacity: 1, y: 0, duration: 0.22 },
-        0.86
+        { opacity: 1, y: 0, duration: 0.1 },
+        0.88
       );
     }, root);
 
@@ -269,6 +335,25 @@ export function HeroScroll({
 
         {/* L3 · Filmic grain, local to the hero */}
         <div aria-hidden className="hero-grain absolute inset-0" />
+
+        {/* L3b · The reading ground for the poem.
+            Sits above the film and below the type. Held at zero until the
+            opening has cleared, then brought up by the timeline and left there
+            for the rest of the flight, so the verse, the coda and the closing
+            invitation are all read against the same steady surface rather than
+            against whatever the camera is flying past. Only rendered where
+            there is a timeline to raise it. */}
+        {tall ? (
+          <div
+            data-poem-scrim
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-[5] opacity-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 82% 58% at 50% 50%, rgba(8,20,14,0.74) 0%, rgba(8,20,14,0.6) 42%, rgba(8,20,14,0.28) 68%, rgba(8,20,14,0) 88%)",
+            }}
+          />
+        ) : null}
 
         {/* L4 · The motto */}
         <div className="relative z-10 mx-auto flex w-full max-w-[92rem] flex-1 flex-col items-center justify-center gap-7 px-5 pb-40 pt-24 text-center lg:px-8">

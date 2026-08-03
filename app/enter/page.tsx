@@ -9,9 +9,9 @@ import { BloomButton } from "@/components/garden/buttons";
 import { GateFrame } from "./frame";
 import { EnterForm } from "./enter-form";
 
-// The gate to The Inner Garden. Three ways through it: Google, Apple, and an
-// email address with a password. The chrome lives in ./frame.tsx, shared with
-// the two pages of the reset flow.
+// The gate to The Inner Garden. Two ways through it: Google, and an email
+// address with a password. The chrome lives in ./frame.tsx, shared with the two
+// pages of the reset flow.
 
 export const metadata: Metadata = {
   title: "Enter the garden",

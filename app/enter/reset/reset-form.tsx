@@ -45,6 +45,10 @@ export function ResetForm() {
   }
 
   const error = state?.status === "invalid" ? state.errors.email : undefined;
+  // See the note on AuthResult: React clears an uncontrolled form once the
+  // action settles, so the address has to be handed back to survive an error.
+  const typedEmail =
+    state?.status === "invalid" || state?.status === "failed" ? (state.email ?? "") : "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -65,6 +69,7 @@ export function ResetForm() {
             autoCapitalize="none"
             spellCheck={false}
             placeholder="you@example.com"
+            defaultValue={typedEmail}
             aria-invalid={error ? true : undefined}
             aria-describedby={error ? "reset-email-error" : undefined}
             className={fieldClasses(Boolean(error))}

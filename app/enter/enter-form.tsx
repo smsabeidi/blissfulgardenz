@@ -15,13 +15,13 @@ import {
 import { signIn, signUp, type AuthResult } from "@/app/actions/auth";
 import { friendly, messageOf, safeNext } from "@/lib/auth";
 
-// The gate. Three ways in.
+// The gate. Two ways in.
 //
-// Google and Apple run in the browser: the PKCE verifier is written to a cookie
-// here and read back by /auth/callback, so the flow has to start client-side.
-// Email and password run as server actions instead — the password is read
-// straight out of FormData and never enters React state, and the form still
-// works if JavaScript does not.
+// Google runs in the browser: the PKCE verifier is written to a cookie here and
+// read back by /auth/callback, so the flow has to start client-side. Email and
+// password run as server actions instead — the password is read straight out of
+// FormData and never enters React state, and the form still works if JavaScript
+// does not.
 //
 // WHAT WAS HERE BEFORE, AND WHY IT IS GONE:
 // A typed 6-digit code, chosen because a magic link is a single-use token
@@ -34,8 +34,6 @@ import { friendly, messageOf, safeNext } from "@/lib/auth";
 // depended on a Supabase email template change that was never made, so it sat
 // switched off for months while people with no Google account had no way in at
 // all. A password has neither failure and needs no template.
-
-const APPLE_SIGN_IN_ENABLED = process.env.NEXT_PUBLIC_AUTH_APPLE_ENABLED === "1";
 
 const UNAVAILABLE = "The gate is closed just now. Please try again shortly.";
 
@@ -62,16 +60,6 @@ function GoogleMark() {
   );
 }
 
-/** currentColor, so the mark takes the button's ink in either theme. Apple's
- *  guidelines allow the black or white logotype; this is the black one. */
-function AppleMark() {
-  return (
-    <svg aria-hidden viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0">
-      <path d="M16.36 12.78c.02 2.6 2.28 3.47 2.31 3.48-.02.06-.36 1.24-1.19 2.46-.72 1.05-1.46 2.1-2.64 2.12-1.15.02-1.53-.68-2.85-.68-1.32 0-1.73.66-2.83.7-1.13.04-1.99-1.13-2.72-2.18-1.48-2.15-2.62-6.08-1.09-8.73.76-1.31 2.12-2.15 3.59-2.17 1.11-.02 2.16.75 2.84.75.68 0 1.95-.93 3.29-.79.56.02 2.13.23 3.14 1.7-.08.05-1.87 1.1-1.85 3.34zM14.2 4.7c.6-.73 1.01-1.75.9-2.76-.87.04-1.92.58-2.55 1.31-.56.65-1.05 1.68-.92 2.68.97.07 1.96-.49 2.57-1.23z" />
-    </svg>
-  );
-}
-
 const providerButtonClasses =
   "inline-flex h-12 w-full items-center justify-center gap-3 rounded-full border border-hairline bg-surface px-6 text-[15px] font-medium text-ink transition-colors duration-300 hover:bg-raised active:scale-[0.98] disabled:opacity-60 motion-reduce:transition-none";
 
@@ -84,7 +72,7 @@ export function EnterForm({ next }: { next: string }) {
   const [supabase] = useState(() => createBrowserSupabase());
 
   const [mode, setMode] = useState<Mode>("signin");
-  const [oauthBusy, setOauthBusy] = useState<"google" | "apple" | null>(null);
+  const [googleBusy, setGoogleBusy] = useState(false);
   const [oauthError, setOauthError] = useState<string | null>(null);
 
   const [signInState, signInAction, signingIn] = useActionState<AuthResult | null, FormData>(
@@ -97,7 +85,7 @@ export function EnterForm({ next }: { next: string }) {
   );
 
   const state = mode === "signin" ? signInState : signUpState;
-  const pending = signingIn || signingUp || oauthBusy !== null;
+  const pending = signingIn || signingUp || googleBusy;
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -119,31 +107,30 @@ export function EnterForm({ next }: { next: string }) {
     else if (state.errors.password) passwordRef.current?.focus();
   }, [state]);
 
-  async function handleOAuth(provider: "google" | "apple") {
+  async function handleGoogle() {
     if (!supabase) {
       setOauthError(UNAVAILABLE);
       return;
     }
-    setOauthBusy(provider);
+    setGoogleBusy(true);
     setOauthError(null);
-    const label = provider === "google" ? "Google" : "Apple";
-    const fallback = `We could not reach ${label} just then. Please try once more.`;
+    const fallback = "We could not reach Google just then. Please try once more.";
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider,
+        provider: "google",
         options: {
           redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
         },
       });
       if (error) {
-        setOauthBusy(null);
+        setGoogleBusy(false);
         setOauthError(friendly(error.message, fallback));
         return;
       }
-      // Success means the browser is already leaving. Staying busy keeps the
-      // buttons quiet through the handoff.
+      // Success means the browser is already leaving for Google. Staying busy
+      // keeps the buttons quiet through the handoff.
     } catch (err) {
-      setOauthBusy(null);
+      setGoogleBusy(false);
       setOauthError(friendly(messageOf(err), fallback));
     }
   }
@@ -188,34 +175,25 @@ export function EnterForm({ next }: { next: string }) {
   }
 
   const errors = state?.status === "invalid" ? state.errors : {};
-  const formMessage =
-    oauthError ?? (state?.status === "failed" ? state.message : null);
+  const formMessage = oauthError ?? (state?.status === "failed" ? state.message : null);
+
+  // React resets an uncontrolled form once its action settles, so without this
+  // a rejected sign-in would wipe the address and ask the person to type it
+  // again just to see the same message. The password is left to clear.
+  const typedEmail =
+    state?.status === "invalid" || state?.status === "failed" ? (state.email ?? "") : "";
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3">
-        <button
-          type="button"
-          onClick={() => void handleOAuth("google")}
-          disabled={pending}
-          className={providerButtonClasses}
-        >
-          <GoogleMark />
-          {oauthBusy === "google" ? "Taking you to Google..." : "Continue with Google"}
-        </button>
-
-        {APPLE_SIGN_IN_ENABLED ? (
-          <button
-            type="button"
-            onClick={() => void handleOAuth("apple")}
-            disabled={pending}
-            className={providerButtonClasses}
-          >
-            <AppleMark />
-            {oauthBusy === "apple" ? "Taking you to Apple..." : "Continue with Apple"}
-          </button>
-        ) : null}
-      </div>
+      <button
+        type="button"
+        onClick={() => void handleGoogle()}
+        disabled={pending}
+        className={providerButtonClasses}
+      >
+        <GoogleMark />
+        {googleBusy ? "Taking you to Google..." : "Continue with Google"}
+      </button>
 
       <div className="flex items-center gap-4">
         <span aria-hidden className="h-px flex-1 bg-hairline" />
@@ -248,6 +226,7 @@ export function EnterForm({ next }: { next: string }) {
             autoCapitalize="none"
             spellCheck={false}
             placeholder="you@example.com"
+            defaultValue={typedEmail}
             aria-invalid={errors.email ? true : undefined}
             aria-describedby={errors.email ? "enter-email-error" : undefined}
             className={fieldClasses(Boolean(errors.email))}

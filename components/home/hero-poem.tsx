@@ -20,10 +20,26 @@ import { poem } from "@/content/poem";
 // JavaScript disabled all receive the whole poem in the poet's order. The
 // stacking is presentational only.
 
-const IVORY = "text-[#f5f3ea] [text-shadow:0_2px_40px_rgba(11,31,22,0.55)]";
-const GOLD = "text-[#e4ce7f] [text-shadow:0_2px_40px_rgba(11,31,22,0.55)]";
+// THE SHADOW FOLLOWS THE GROUND, because the two presentations do not have the
+// same one.
+//
+// The animated flight now has a scrim behind it (data-poem-scrim), so the type
+// sits on a settled surface and only needs its edges tidied against the grain.
+// A 40px halo there is actively harmful: at that radius it greys the air around
+// every letter, which is precisely what stops a serif looking crisp.
+//
+// The static stanza — touch, reduced motion, no film — has NO scrim. It reads
+// straight over the looping garden, so it keeps the wide halo it has always
+// had. That is the presentation the client singled out as working, and it would
+// have quietly lost contrast if these constants were shared.
+const SHADOW_ON_SCRIM = "[text-shadow:0_1px_12px_rgba(8,20,14,0.5)]";
+const SHADOW_ON_FILM = "[text-shadow:0_2px_40px_rgba(11,31,22,0.55)]";
 
 export function HeroPoem({ animated }: { animated: boolean }) {
+  const shadow = animated ? SHADOW_ON_SCRIM : SHADOW_ON_FILM;
+  const IVORY = `text-[#f5f3ea] ${shadow}`;
+  const GOLD = `text-[#e4ce7f] ${shadow}`;
+
   return (
     <figure
       data-hero-poem
@@ -47,10 +63,17 @@ export function HeroPoem({ animated }: { animated: boolean }) {
 
       {/* The title, shown once as the poem begins (animated) or as a heading
           above the stanza (static). */}
+      {/* OFFSET BY MARGIN, NOT BY TRANSFORM — and that is not a style choice.
+          This used to lift itself with -translate-y-[7.5rem]. GSAP animates the
+          title's `y`, and `y` is written as a transform, so the moment the
+          timeline touched it the class was overwritten and the title dropped
+          from above the verse onto the middle of it. In a place-items-center
+          grid cell a bottom margin does the same job and nothing else in the
+          system writes to it. */}
       <p
         data-poem-title
         className={`text-meta ${GOLD} ${
-          animated ? "col-start-1 row-start-1 -translate-y-[7.5rem]" : "opacity-90"
+          animated ? "col-start-1 row-start-1 mb-[15rem]" : "opacity-90"
         }`}
       >
         {poem.title}
@@ -98,6 +121,25 @@ export function HeroPoem({ animated }: { animated: boolean }) {
         }
       >
         {poem.coda}
+      </p>
+
+      {/* The poet, under his own last line. Visible now rather than only in the
+          figcaption: a poem carries its author, and a visitor who has just read
+          nine rungs of it should be told whose words those were without having
+          to use a screen reader to find out. In the animated flight it sits
+          below the coda and arrives just after it; in the static stanza it is
+          simply the last line. */}
+      <p
+        data-poem-byline
+        // aria-hidden because the figcaption above already gives a screen
+        // reader the title and the poet. This is the same fact, made visible.
+        aria-hidden={animated ? true : undefined}
+        className={`text-meta ${GOLD} ${
+          // Margin, not transform — same reason as the title. GSAP owns `y` here.
+          animated ? "col-start-1 row-start-1 mt-[11rem] opacity-0" : "opacity-75"
+        }`}
+      >
+        {poem.byline}
       </p>
     </figure>
   );

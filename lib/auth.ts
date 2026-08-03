@@ -12,7 +12,9 @@
  *
  * It is a server-set HttpOnly cookie rather than a field on the form because a
  * form field is something the client chooses, and "skip the password check" is
- * not a decision the client gets to make.
+ * not a decision the client gets to make. Its value is the id of the user the
+ * link was issued for, so a different session on the same machine cannot
+ * inherit the exemption; /auth/sign-out clears it as well, for the same reason.
  */
 export const RECOVERY_COOKIE = "bg-recovery";
 export const RECOVERY_COOKIE_MAX_AGE = 15 * 60;
@@ -22,16 +24,29 @@ export const RECOVERY_COOKIE_MAX_AGE = 15 * 60;
  *
  * An open redirect on a sign-in callback is a phishing primitive: an attacker
  * sends a real link to a real gate and collects whoever lands on the far side.
- * Only same-site paths survive. "//evil.example" is protocol-relative, so it is
- * absolute in disguise and gets the same treatment as https://.
+ * Only same-site paths survive.
  *
  * Used by /enter, /auth/callback, /auth/confirm, and the form itself. It is one
- * function rather than four copies because four copies is how one of them ends
- * up missing the "//" case.
+ * function rather than four copies, because four copies is how three of them
+ * end up missing a case — which is what had happened. "//evil.example" was
+ * caught, but two disguises were not:
+ *
+ *   /\evil.example    A backslash. The URL standard treats \ as / inside a
+ *                     special scheme, so new URL("/\evil.example", origin)
+ *                     resolves to https://evil.example/. It walked straight
+ *                     through a check that only looked for a second slash.
+ *   /\t/evil.example  Tabs, newlines, and carriage returns are STRIPPED by the
+ *                     URL parser before parsing, so "/<tab>/evil.example"
+ *                     becomes "//evil.example" after the guard has approved it.
+ *
+ * Hence: reject control characters outright, then require the first character
+ * to be a slash and the second to be neither kind of slash.
  */
 export function safeNext(value: string | string[] | null | undefined): string {
   if (typeof value !== "string") return "/garden";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/garden";
+  if (/[\u0000-\u001F\u007F]/.test(value)) return "/garden";
+  if (value[0] !== "/") return "/garden";
+  if (value[1] === "/" || value[1] === "\\") return "/garden";
   return value;
 }
 

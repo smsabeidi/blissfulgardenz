@@ -9,7 +9,7 @@ import { friendly, messageOf, RECOVERY_COOKIE } from "@/lib/auth";
 
 // The password half of the gate.
 //
-// WHY THESE ARE SERVER ACTIONS WHEN GOOGLE AND APPLE ARE NOT:
+// WHY THESE ARE SERVER ACTIONS WHEN GOOGLE IS NOT:
 // OAuth has to start in the browser — the PKCE verifier is written to a cookie
 // by the browser client and read back by /auth/callback, and that already works.
 // A password is different. Handled here, it is read straight out of FormData and
@@ -20,12 +20,19 @@ import { friendly, messageOf, RECOVERY_COOKIE } from "@/lib/auth";
 // them calls redirect(). Navigation stays a client decision, the way the gate
 // has always done it, so the form can hold its busy state through the move.
 
+// `email` is echoed back on every arm that leaves the person still at the form.
+//
+// Not decoration: React resets an uncontrolled form once its action settles, so
+// a rejected sign-in would otherwise clear the address the person just typed and
+// ask them to type it again to see the same error. The forms feed this straight
+// back in as defaultValue. The password is deliberately not echoed — it should
+// clear, and it has no business making the round trip.
 export type AuthResult =
   | { status: "ok" }
-  /** The work now continues in an inbox. `email` is echoed back so the page can say where. */
+  /** The work now continues in an inbox. `email` says where, so the page can too. */
   | { status: "sent"; email: string }
-  | { status: "invalid"; errors: Record<string, string> }
-  | { status: "failed"; message: string };
+  | { status: "invalid"; errors: Record<string, string>; email?: string }
+  | { status: "failed"; message: string; email?: string };
 
 type Issue = { readonly path: readonly PropertyKey[]; readonly message: string };
 
@@ -80,25 +87,24 @@ export async function signIn(_prev: AuthResult | null, formData: FormData): Prom
   // and "your password is too short" on a sign-in form is both useless and a
   // small confession about what we store. Supabase is the judge of correctness.
   const parsed = emailOnlySchema.safeParse({ email });
-  if (!parsed.success) return { status: "invalid", errors: fieldErrors(parsed.error.issues) };
-  if (!password) return { status: "invalid", errors: { password: "Please enter your password." } };
+  if (!parsed.success) {
+    return { status: "invalid", errors: fieldErrors(parsed.error.issues), email };
+  }
+  if (!password) {
+    return { status: "invalid", errors: { password: "Please enter your password." }, email };
+  }
 
   const supabase = await createClient();
-  if (!supabase) return { status: "failed", message: UNAVAILABLE };
+  if (!supabase) return { status: "failed", message: UNAVAILABLE, email };
 
+  const fallback = "We could not sign you in just then. Please try once more.";
   try {
     const { error } = await supabase.auth.signInWithPassword({ email: parsed.data.email, password });
     if (error) {
-      return {
-        status: "failed",
-        message: friendly(error.message, "We could not sign you in just then. Please try once more."),
-      };
+      return { status: "failed", message: friendly(error.message, fallback), email };
     }
   } catch (err) {
-    return {
-      status: "failed",
-      message: friendly(messageOf(err), "We could not sign you in just then. Please try once more."),
-    };
+    return { status: "failed", message: friendly(messageOf(err), fallback), email };
   }
 
   // No revalidatePath here on purpose. router.refresh() on the client picks up
@@ -113,11 +119,14 @@ export async function signIn(_prev: AuthResult | null, formData: FormData): Prom
 export async function signUp(_prev: AuthResult | null, formData: FormData): Promise<AuthResult> {
   const email = readEmail(formData);
   const parsed = credentialsSchema.safeParse({ email, password: read(formData, "password") });
-  if (!parsed.success) return { status: "invalid", errors: fieldErrors(parsed.error.issues) };
+  if (!parsed.success) {
+    return { status: "invalid", errors: fieldErrors(parsed.error.issues), email };
+  }
 
   const supabase = await createClient();
-  if (!supabase) return { status: "failed", message: UNAVAILABLE };
+  if (!supabase) return { status: "failed", message: UNAVAILABLE, email };
 
+  const fallback = "We could not open a garden just then. Please try once more.";
   try {
     const { error } = await supabase.auth.signUp({
       email: parsed.data.email,
@@ -125,16 +134,10 @@ export async function signUp(_prev: AuthResult | null, formData: FormData): Prom
       options: { emailRedirectTo: `${env.siteUrl()}/auth/confirm` },
     });
     if (error) {
-      return {
-        status: "failed",
-        message: friendly(error.message, "We could not open a garden just then. Please try once more."),
-      };
+      return { status: "failed", message: friendly(error.message, fallback), email };
     }
   } catch (err) {
-    return {
-      status: "failed",
-      message: friendly(messageOf(err), "We could not open a garden just then. Please try once more."),
-    };
+    return { status: "failed", message: friendly(messageOf(err), fallback), email };
   }
 
   // Note what is NOT checked here: whether the address was already taken.
@@ -153,10 +156,12 @@ export async function requestReset(
 ): Promise<AuthResult> {
   const email = readEmail(formData);
   const parsed = emailOnlySchema.safeParse({ email });
-  if (!parsed.success) return { status: "invalid", errors: fieldErrors(parsed.error.issues) };
+  if (!parsed.success) {
+    return { status: "invalid", errors: fieldErrors(parsed.error.issues), email };
+  }
 
   const supabase = await createClient();
-  if (!supabase) return { status: "failed", message: UNAVAILABLE };
+  if (!supabase) return { status: "failed", message: UNAVAILABLE, email };
 
   try {
     await supabase.auth.resetPasswordForEmail(parsed.data.email, {
@@ -166,6 +171,7 @@ export async function requestReset(
     return {
       status: "failed",
       message: friendly(messageOf(err), "We could not send that just then. Please try once more."),
+      email,
     };
   }
 
@@ -187,8 +193,8 @@ export async function requestReset(
  * both of them checked on the server:
  *   - a session that came through a recovery link, which by definition belongs to
  *     someone who cannot supply it (see RECOVERY_COOKIE);
- *   - an account with no password at all yet, which is every Google and Apple
- *     member setting one for the first time.
+ *   - an account with no password at all yet, which is every Google member
+ *     setting one for the first time.
  */
 export async function setPassword(
   _prev: AuthResult | null,
@@ -210,7 +216,9 @@ export async function setPassword(
   if (!user) return { status: "failed", message: SIGNED_OUT };
 
   const jar = await cookies();
-  const viaRecovery = jar.get(RECOVERY_COOKIE)?.value === "1";
+  // The marker carries the id of the person the recovery link was for, so a
+  // second session on the same machine cannot inherit the exemption.
+  const viaRecovery = jar.get(RECOVERY_COOKIE)?.value === user.id;
   const hasPassword = (user.identities ?? []).some((i) => i.provider === "email");
 
   if (hasPassword && !viaRecovery) {
