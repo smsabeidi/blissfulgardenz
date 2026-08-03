@@ -46,20 +46,37 @@ const SCRUB_TRAVEL_VH = 520;
 // nothing but the film, and only then does the poem begin. One thing to read at
 // a time, always.
 //
-//   0.00 → 0.14   the opening holds
-//   0.14 → 0.26   the opening withdraws, in the order it arrived
-//   0.26 → 0.32   a breath: only the garden
-//   0.32 → 0.80   the poem, one rung at a time
-//   0.80 → 1.00   the coda, the attribution, the invitation
+//   0.00 → 0.12   the opening holds
+//   0.12 → 0.24   the opening withdraws — ALL of it (see below)
+//   0.24 → 0.32   an empty stage: nothing but the garden, for a full beat
+//   0.32 → 0.36   the poem's ground and its title arrive
+//   0.36 → 0.80   the verse, one rung at a time
+//   0.80 → 1.00   the coda, the poet, the invitation
+//
+// "ALL of it" is meant literally, and it is the part that was wrong twice.
+// The stage carries five things at the start, not three: the headline, the
+// lede, the membership pill, the Horizon Line, and the corner line reading
+// "A garden of bliss for the people". That last one had no handle on it at all
+// — the timeline never referenced it — so it sat in the bottom corner through
+// the entire poem. Only the Horizon Line stays now, and it stays on purpose:
+// it is the progress indicator, a 1px rule at the very foot of the frame.
+//
+// There is also a real, empty beat between the two — eight percent of the
+// scroll with nothing on screen. Handing straight from one to the other reads
+// as a cross-fade, and a cross-fade is the thing being complained about.
 //
 // These are fractions of SCROLL, and they are only true if the timeline is
 // exactly 1.0 long — see the note on the arrival tween at the foot of the
 // sequence, which used to run to 1.08 and quietly compress everything above.
-const INTRO_OUT = 0.14;
-const INTRO_GONE = 0.26;
-const POEM_START = 0.32;
+const INTRO_OUT = 0.12;
+const INTRO_GONE = 0.24;
+/** The poem's ground and title arrive. Nothing is on screen before this. */
+const POEM_IN = 0.32;
+/** The first rung. Deliberately after POEM_IN, so the title lands first. */
+const RUNGS_START = 0.36;
 const POEM_END = 0.8;
-const RUNG_STEP = (POEM_END - POEM_START) / poem.rungs.length;
+const CODA_AT = 0.83;
+const RUNG_STEP = (POEM_END - RUNGS_START) / poem.rungs.length;
 // A third of each rung's time is the dissolve, two thirds is the hold. A hard
 // cut between two lines of a poem reads as a slide deck; a long dissolve reads
 // as indecision. This is the middle, and it is where the line sits still.
@@ -163,6 +180,9 @@ export function HeroScroll({
       // it used to keep tweening for the whole flight, invisible, for nothing.
       tl.to("[data-hero-motto]", { yPercent: -14, duration: INTRO_GONE }, 0);
       tl.to("[data-hero-motto]", { autoAlpha: 0, duration: 0.08 }, INTRO_GONE - 0.08);
+      // And the corner line, which used to sit out the whole poem in the bottom
+      // left because nothing in this timeline had ever referred to it.
+      tl.to("[data-hero-meta]", { autoAlpha: 0, duration: 0.08 }, INTRO_OUT);
 
       // ── Movement two: a scrim settles, so the verse has a ground ──────────
       // The poem is ivory and gold type laid over a moving film, and the only
@@ -171,17 +191,12 @@ export function HeroScroll({
       // is a soft pool of the garden's own deep green that arrives with the poem
       // and stays through the coda, so every line is read against one steady
       // ground instead of whatever the film happens to be doing.
-      tl.fromTo(
-        "[data-poem-scrim]",
-        { opacity: 0 },
-        { opacity: 1, duration: 0.06 },
-        INTRO_GONE
-      );
+      tl.fromTo("[data-poem-scrim]", { opacity: 0 }, { opacity: 1, duration: 0.05 }, POEM_IN);
 
       // ── Movement three: "Time well spent" ─────────────────────────────────
       // The container simply becomes present; each rung governs its own moment
       // inside it, so the poem can never half-appear between two lines.
-      tl.fromTo("[data-hero-poem]", { opacity: 0 }, { opacity: 1, duration: 0.04 }, INTRO_GONE);
+      tl.fromTo("[data-hero-poem]", { opacity: 0 }, { opacity: 1, duration: 0.03 }, POEM_IN);
       // The title stands above the verse for the whole poem and leaves with it.
       // It used to duck out after the second rung, which left the reader with
       // nine unattributed lines; a poem keeps its title at the top of the page.
@@ -189,15 +204,15 @@ export function HeroScroll({
         "[data-poem-title]",
         { opacity: 0, y: 10 },
         { opacity: 0.9, y: 0, duration: 0.04 },
-        INTRO_GONE + 0.01
+        POEM_IN + 0.01
       );
-      tl.to("[data-poem-title]", { opacity: 0, duration: 0.04 }, POEM_END - 0.02);
+      tl.to("[data-poem-title]", { opacity: 0, duration: 0.03 }, CODA_AT - 0.03);
 
       // Each rung rises, holds, and gives way to the next. The overlap is
       // deliberate: a hard cut between two lines of a poem reads as a slide
       // deck, while a brief dissolve reads as one thought becoming the next.
       poem.rungs.forEach((_, i) => {
-        const at = POEM_START + i * RUNG_STEP;
+        const at = RUNGS_START + i * RUNG_STEP;
         tl.fromTo(
           `[data-poem-rung="${i}"]`,
           { opacity: 0, y: 18 },
@@ -218,7 +233,7 @@ export function HeroScroll({
         "[data-poem-coda]",
         { opacity: 0, y: 22, scale: 0.97 },
         { opacity: 1, y: 0, scale: 1, duration: 0.05 },
-        POEM_END
+        CODA_AT
       );
       // The poet's name, which until now only a screen reader ever received.
       // A poem carries its author; that is not decoration, it is the courtesy
@@ -227,7 +242,7 @@ export function HeroScroll({
         "[data-poem-byline]",
         { opacity: 0, y: 10 },
         { opacity: 0.75, y: 0, duration: 0.05 },
-        POEM_END + 0.06
+        CODA_AT + 0.05
       );
 
       // Arrival: the closing invitation resolves beneath the coda.
@@ -448,8 +463,12 @@ export function HeroScroll({
           />
         </div>
 
-        {/* Corner meta (unseen.co accessory): the invitation, quietly */}
+        {/* Corner meta (unseen.co accessory): the invitation, quietly.
+            data-hero-meta so the timeline can take it away with the rest of the
+            opening. Without a handle it had none, and quietly outstayed the
+            headline it belongs to by the entire length of the poem. */}
         <p
+          data-hero-meta
           className="hero-rise text-meta absolute bottom-8 left-5 z-10 text-brand-ink/75 lg:left-8"
           style={{ "--rise-i": 4 } as React.CSSProperties}
         >
