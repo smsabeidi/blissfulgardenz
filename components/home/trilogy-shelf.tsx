@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { books } from "@/content/books";
+import { trilogyBooks } from "@/content/books";
 import { track } from "@/lib/track";
 
 // The Trilogy Shelf: real covers on a CSS 3D shelf with pointer tilt and
@@ -72,7 +72,7 @@ export function TrilogyShelf() {
       className="mx-auto grid max-w-4xl grid-cols-1 items-end gap-12 sm:grid-cols-3 sm:gap-8"
       style={{ perspective: "1200px" }}
     >
-      {books.map((book) => (
+      {trilogyBooks.map((book) => (
         <div key={book.slug} role="listitem" className="flex flex-col items-center gap-5">
           <div
             data-book

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { QuietButton } from "@/components/garden/buttons";
 import { Reveal } from "@/components/garden/reveal";
-import type { Book } from "@/content/books";
+import { getBookDisplayTitle, getBookFullTitle, type Book } from "@/content/books";
 
 // Hub band: one full-width composition per book, cover and words in an
 // asymmetric split. `flip` mirrors the composition so the shelf page never
@@ -17,6 +17,11 @@ export function BookBand({
   headingId: string;
   flip?: boolean;
 }) {
+  const displayTitle = getBookDisplayTitle(book);
+  const fullTitle = getBookFullTitle(book);
+  const bookLabel =
+    book.collection === "trilogy" ? `Book ${book.order}` : "Standalone novel";
+
   return (
     <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-5 lg:grid-cols-12 lg:gap-8 lg:px-8">
       <Reveal
@@ -24,7 +29,11 @@ export function BookBand({
       >
         <Link
           href={`/books/${book.slug}`}
-          aria-label={`${book.title}: ${book.subtitle}, book ${book.order} of the trilogy`}
+          aria-label={
+            book.collection === "trilogy"
+              ? `${fullTitle}, book ${book.order} of the trilogy`
+              : fullTitle
+          }
           className="group mx-auto block w-full max-w-[260px]"
         >
           <Image
@@ -45,14 +54,19 @@ export function BookBand({
       >
         <Reveal>
           <p className="text-meta text-gold-text">
-            Book {book.order} · {book.publishedYear} · {book.pages} pages
+            {bookLabel} · {book.publishedYear} · {book.pages} pages
           </p>
         </Reveal>
         <Reveal>
           <h2 id={headingId} className="text-display max-w-3xl text-balance">
-            {book.subtitle}
+            {displayTitle}
           </h2>
         </Reveal>
+        {book.collection === "standalone" && (
+          <Reveal>
+            <p className="text-display-sm text-ink-muted">{book.subtitle}</p>
+          </Reveal>
+        )}
         <Reveal>
           <p className="text-body max-w-[58ch] text-ink-muted">{book.synopsis[0]}</p>
         </Reveal>

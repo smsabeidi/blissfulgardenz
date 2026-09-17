@@ -1,7 +1,7 @@
 "use client";
 
 import { track } from "@/lib/track";
-import type { Book } from "@/content/books";
+import { getBookFullTitle, type Book } from "@/content/books";
 
 // FR-04 format selector: three honest rows, each straight to the retailer in a
 // new tab. Every click is counted (book_click) so the client can see which
@@ -23,24 +23,28 @@ export function FormatLinks({ book }: { book: Book }) {
       trackAs: "kindle",
       url: book.formats.kindle.url,
     },
-    {
-      format: "Audiobook",
-      detail: `${book.formats.audiobook.duration}, narrated by ${book.formats.audiobook.narrator}`,
-      retailer: "Audible",
-      trackAs: "audible",
-      url: book.formats.audiobook.url,
-    },
+    ...(book.formats.audiobook
+      ? [
+          {
+            format: "Audiobook",
+            detail: `${book.formats.audiobook.duration}, narrated by ${book.formats.audiobook.narrator}`,
+            retailer: "Audible",
+            trackAs: "audible",
+            url: book.formats.audiobook.url,
+          },
+        ]
+      : []),
   ];
 
   return (
-    <ul aria-label={`Where to find ${book.subtitle}`} className="border-y border-hairline">
+    <ul aria-label={`Where to find ${getBookFullTitle(book)}`} className="border-y border-hairline">
       {rows.map((row) => (
         <li key={row.format} className="border-b border-hairline last:border-b-0">
           <a
             href={row.url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => track("book_click", { title: book.subtitle, retailer: row.trackAs })}
+            onClick={() => track("book_click", { title: getBookFullTitle(book), retailer: row.trackAs })}
             className="group flex min-h-[76px] flex-wrap items-center justify-between gap-x-6 gap-y-1 py-5 transition-colors duration-300 hover:bg-surface motion-reduce:transition-none sm:flex-nowrap sm:px-4"
           >
             <span className="flex flex-col gap-0.5">

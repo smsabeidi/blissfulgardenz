@@ -7,12 +7,18 @@ import { SamplePlayer } from "@/components/books/sample-player";
 import { Reveal, HorizonDraw } from "@/components/garden/reveal";
 import { SectionHeading, PetalCard } from "@/components/garden/primitives";
 import { QuietButton } from "@/components/garden/buttons";
-import { books, getBook } from "@/content/books";
+import {
+  books,
+  getBook,
+  getBookDisplayTitle,
+  getBookFullTitle,
+  trilogyBooks,
+} from "@/content/books";
 import { ctaLabels } from "@/content/site";
 
 // Book detail: cover, synopsis, format selector (FR-04), the sample player in
-// its designed disabled state, the reception line, the companion-guide funnel,
-// and prev/next along the reading order. All facts from content/books.ts.
+// its designed disabled state when an audiobook exists, and collection-aware
+// navigation. All facts come from content/books.ts.
 
 type Params = Promise<{ slug: string }>;
 
@@ -24,9 +30,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params;
   const book = getBook(slug);
   if (!book) return { title: "Book not found" };
+
+  const formats = book.formats.audiobook
+    ? "paperback, Kindle, and audiobook"
+    : "paperback and Kindle";
+  const description =
+    book.collection === "trilogy"
+      ? `Book ${book.order} of the Three Guys Talking trilogy by Dr. Adeyinka Laiyemo. ${book.pages} pages, published ${book.publishedYear}. Available in ${formats}.`
+      : `${getBookFullTitle(book)} by Dr. Adeyinka Laiyemo. ${book.pages} pages, published ${book.publishedYear}. Available in ${formats}.`;
+
   return {
-    title: `${book.subtitle} · ${book.title}`,
-    description: `Book ${book.order} of the Three Guys Talking trilogy by Dr. Adeyinka Laiyemo. ${book.pages} pages, published ${book.publishedYear}. In paperback, Kindle, and audiobook.`,
+    title: getBookFullTitle(book),
+    description,
   };
 }
 
@@ -35,16 +50,24 @@ export default async function BookDetailPage({ params }: { params: Params }) {
   const book = getBook(slug);
   if (!book) notFound();
 
-  const prev = books.find((b) => b.order === book.order - 1);
-  const next = books.find((b) => b.order === book.order + 1);
+  const displayTitle = getBookDisplayTitle(book);
+  const fullTitle = getBookFullTitle(book);
+  const prev =
+    book.collection === "trilogy"
+      ? trilogyBooks.find((candidate) => candidate.order === book.order - 1)
+      : undefined;
+  const next =
+    book.collection === "trilogy"
+      ? trilogyBooks.find((candidate) => candidate.order === book.order + 1)
+      : undefined;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Book",
-    name: `${book.title}: ${book.subtitle}`,
+    name: fullTitle,
     isbn: book.isbn13,
     numberOfPages: book.pages,
-    datePublished: String(book.publishedYear),
+    datePublished: book.publishedDate ?? String(book.publishedYear),
     inLanguage: "en",
     image: `https://blissfulgardenz.com${book.cover}`,
     author: { "@type": "Person", name: "Adeyinka Laiyemo" },
@@ -90,14 +113,20 @@ export default async function BookDetailPage({ params }: { params: Params }) {
           <div className="flex flex-col gap-6 lg:col-span-7 lg:col-start-6">
             <Reveal>
               <p className="text-meta text-gold-text">
-                Book {book.order} of 3 · {book.publishedYear}, {book.pages} pages
+                {book.collection === "trilogy" ? `Book ${book.order} of 3` : "Standalone novel"} ·{" "}
+                {book.publishedYear}, {book.pages} pages
               </p>
             </Reveal>
             <Reveal>
               <h1 id="book-title" className="text-display-xl max-w-3xl text-balance">
-                {book.subtitle}
+                {displayTitle}
               </h1>
             </Reveal>
+            {book.collection === "standalone" && (
+              <Reveal>
+                <p className="text-display-sm text-ink-muted">{book.subtitle}</p>
+              </Reveal>
+            )}
             <div className="flex flex-col gap-5">
               {book.synopsis.map((paragraph) => (
                 <Reveal key={paragraph.slice(0, 24)}>
@@ -105,17 +134,20 @@ export default async function BookDetailPage({ params }: { params: Params }) {
                 </Reveal>
               ))}
             </div>
-            {/* Reception: the real rating note and reader themes, one calm sentence row */}
+            {/* Reception or editorial themes, using only verified review data. */}
             <Reveal>
               <div className="mt-4 flex items-start gap-3 border-t border-hairline pt-6">
-                <svg aria-hidden viewBox="0 0 16 16" className="mt-1 h-4 w-4 shrink-0 text-gold">
-                  <path
-                    d="M8 1.5l1.9 4.1 4.5.5-3.3 3 .9 4.4L8 11.3l-4 2.2.9-4.4-3.3-3 4.5-.5z"
-                    fill="currentColor"
-                  />
-                </svg>
+                {book.rating && (
+                  <svg aria-hidden viewBox="0 0 16 16" className="mt-1 h-4 w-4 shrink-0 text-gold">
+                    <path
+                      d="M8 1.5l1.9 4.1 4.5.5-3.3 3 .9 4.4L8 11.3l-4 2.2.9-4.4-3.3-3 4.5-.5z"
+                      fill="currentColor"
+                    />
+                  </svg>
+                )}
                 <p className="text-[15px] leading-relaxed text-ink-muted">
-                  {book.rating.note}. {book.themes}
+                  {book.rating ? `${book.rating.note}. ` : ""}
+                  {book.themes}
                 </p>
               </div>
             </Reveal>
@@ -131,75 +163,101 @@ export default async function BookDetailPage({ params }: { params: Params }) {
             lede="Choose the format that suits your evenings. Every link below opens the retailer in a new tab."
           />
           <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-12">
-            <Reveal className="lg:col-span-7">
+            <Reveal className={book.formats.audiobook ? "lg:col-span-7" : "lg:col-span-8"}>
               <FormatLinks book={book} />
             </Reveal>
-            <Reveal delay={0.1} className="lg:col-span-5">
-              <SamplePlayer book={book} />
-            </Reveal>
+            {book.formats.audiobook && (
+              <Reveal delay={0.1} className="lg:col-span-5">
+                <SamplePlayer book={book} />
+              </Reveal>
+            )}
           </div>
         </div>
       </section>
 
       {/* 3 · Go deeper: the companion-guide funnel */}
-      <section aria-labelledby="deeper-title" className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
-        <Reveal>
-          <PetalCard>
-            <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
-              <div className="flex flex-col gap-3">
-                <h2 id="deeper-title" className="text-display-sm">
-                  Go deeper than the last page
-                </h2>
-                <p className="text-body max-w-[52ch] text-ink-muted">
-                  Every book has a members-only Companion Conversation Guide, included in the Inner
-                  Garden.
-                </p>
+      {book.collection === "trilogy" && (
+        <section aria-labelledby="deeper-title" className="mx-auto max-w-7xl px-5 py-24 lg:px-8">
+          <Reveal>
+            <PetalCard>
+              <div className="flex flex-col items-start gap-6 md:flex-row md:items-center md:justify-between">
+                <div className="flex flex-col gap-3">
+                  <h2 id="deeper-title" className="text-display-sm">
+                    Go deeper than the last page
+                  </h2>
+                  <p className="text-body max-w-[52ch] text-ink-muted">
+                    Every trilogy book has a members-only Companion Conversation Guide, included in
+                    the Inner Garden.
+                  </p>
+                </div>
+                <QuietButton href="/membership">{ctaLabels.membership}</QuietButton>
               </div>
-              <QuietButton href="/membership">{ctaLabels.membership}</QuietButton>
-            </div>
-          </PetalCard>
-        </Reveal>
-      </section>
+            </PetalCard>
+          </Reveal>
+        </section>
+      )}
 
-      {/* 4 · The trilogy in reading order */}
+      {/* 4 · Collection-aware book navigation */}
       <nav
-        aria-label="The trilogy in reading order"
-        className="mx-auto max-w-7xl px-5 pb-24 lg:px-8"
+        aria-label={book.collection === "trilogy" ? "The trilogy in reading order" : "Book navigation"}
+        className={`mx-auto max-w-7xl px-5 pb-24 lg:px-8 ${book.collection === "standalone" ? "pt-24" : ""}`}
       >
         <HorizonDraw className="mb-10" />
         <div className="flex flex-col gap-8 sm:flex-row sm:items-start sm:justify-between">
-          {prev ? (
-            <Link href={`/books/${prev.slug}`} className="group flex flex-col gap-1">
-              <span className="text-meta text-gold-text">Previous · Book {prev.order}</span>
-              <span className="text-display-sm max-w-[24ch] text-balance transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
-                {prev.subtitle}
-              </span>
-            </Link>
+          {book.collection === "trilogy" ? (
+            <>
+              {prev ? (
+                <Link href={`/books/${prev.slug}`} className="group flex flex-col gap-1">
+                  <span className="text-meta text-gold-text">Previous · Book {prev.order}</span>
+                  <span className="text-display-sm max-w-[24ch] text-balance transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                    {prev.subtitle}
+                  </span>
+                </Link>
+              ) : (
+                <Link href="/books" className="group flex flex-col gap-1">
+                  <span className="text-meta text-gold-text">The beginning</span>
+                  <span className="text-display-sm transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                    Browse all books
+                  </span>
+                </Link>
+              )}
+              {next ? (
+                <Link
+                  href={`/books/${next.slug}`}
+                  className="group flex flex-col gap-1 sm:items-end sm:text-right"
+                >
+                  <span className="text-meta text-gold-text">Next · Book {next.order}</span>
+                  <span className="text-display-sm max-w-[24ch] text-balance transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                    {next.subtitle}
+                  </span>
+                </Link>
+              ) : (
+                <Link href="/books" className="group flex flex-col gap-1 sm:items-end sm:text-right">
+                  <span className="text-meta text-gold-text">The conversation continues</span>
+                  <span className="text-display-sm transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                    Browse all books
+                  </span>
+                </Link>
+              )}
+            </>
           ) : (
-            <Link href="/books" className="group flex flex-col gap-1">
-              <span className="text-meta text-gold-text">The beginning</span>
-              <span className="text-display-sm transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
-                Browse the trilogy
-              </span>
-            </Link>
-          )}
-          {next ? (
-            <Link
-              href={`/books/${next.slug}`}
-              className="group flex flex-col gap-1 sm:items-end sm:text-right"
-            >
-              <span className="text-meta text-gold-text">Next · Book {next.order}</span>
-              <span className="text-display-sm max-w-[24ch] text-balance transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
-                {next.subtitle}
-              </span>
-            </Link>
-          ) : (
-            <Link href="/books" className="group flex flex-col gap-1 sm:items-end sm:text-right">
-              <span className="text-meta text-gold-text">The conversation continues</span>
-              <span className="text-display-sm transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
-                Browse the trilogy
-              </span>
-            </Link>
+            <>
+              <Link href="/books" className="group flex flex-col gap-1">
+                <span className="text-meta text-gold-text">All books</span>
+                <span className="text-display-sm transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                  Browse the collection
+                </span>
+              </Link>
+              <Link
+                href={`/books/${trilogyBooks[0].slug}`}
+                className="group flex flex-col gap-1 sm:items-end sm:text-right"
+              >
+                <span className="text-meta text-gold-text">Read next</span>
+                <span className="text-display-sm max-w-[24ch] text-balance transition-colors duration-300 group-hover:text-gold-text motion-reduce:transition-none">
+                  Begin the Three Guys Talking trilogy
+                </span>
+              </Link>
+            </>
           )}
         </div>
       </nav>

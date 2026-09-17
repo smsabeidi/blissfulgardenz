@@ -12,7 +12,10 @@ const BARS = Array.from({ length: 44 }, (_, i) => {
 });
 
 export function SamplePlayer({ book }: { book: Book }) {
-  const { duration, narrator } = book.formats.audiobook;
+  const audiobook = book.formats.audiobook;
+  if (!audiobook) return null;
+
+  const { duration, narrator } = audiobook;
   return (
     <div className="flex h-full flex-col justify-center gap-5 rounded-[2rem] border border-hairline bg-surface p-8">
       <p className="text-meta text-ink-muted">Audiobook sample</p>

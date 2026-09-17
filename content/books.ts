@@ -1,11 +1,10 @@
-// The Three Guys Talking trilogy. Every fact below was verified against the live
-// Amazon.com product pages, Audible listings, and the physical cover art on
-// 2026-07-16. Synopses are paraphrased, never copied. Do not edit facts without
-// re-verifying against the retailer pages.
+// Books by Adeyinka Laiyemo. Every fact below was verified against the live
+// Amazon.com product pages, Audible listings, and the physical cover art. The
+// newest verification was completed on 2026-09-17. Synopses are paraphrased,
+// never copied. Do not edit facts without re-verifying against retailer pages.
 
-export type Book = {
+type BookBase = {
   slug: string;
-  order: 1 | 2 | 3;
   title: string;
   subtitle: string;
   accent: "gold" | "sage" | "terracotta";
@@ -15,15 +14,31 @@ export type Book = {
   pages: number;
   publisher: string;
   isbn13: string;
+  publishedDate?: string;
   synopsis: string[];
   themes: string;
   formats: {
     paperback: { price: string; url: string };
     kindle: { price: string; url: string };
+    audiobook?: { duration: string; narrator: string; url: string };
+  };
+  rating?: { stars: number; note: string };
+};
+
+export type TrilogyBook = BookBase & {
+  collection: "trilogy";
+  order: 1 | 2 | 3;
+  formats: BookBase["formats"] & {
     audiobook: { duration: string; narrator: string; url: string };
   };
   rating: { stars: number; note: string };
 };
+
+export type StandaloneBook = BookBase & {
+  collection: "standalone";
+};
+
+export type Book = TrilogyBook | StandaloneBook;
 
 export const series = {
   name: "Three Guys Talking",
@@ -34,8 +49,9 @@ export const series = {
     "Read them in order. Each book picks up the conversation where the last one paused.",
 } as const;
 
-export const books: Book[] = [
+export const trilogyBooks: TrilogyBook[] = [
   {
+    collection: "trilogy",
     slug: "my-wife-or-my-childrens-mother",
     order: 1,
     title: "Three Guys Talking",
@@ -73,6 +89,7 @@ export const books: Book[] = [
     rating: { stars: 5.0, note: "5.0 on Amazon" },
   },
   {
+    collection: "trilogy",
     slug: "when-ladies-fight-back",
     order: 2,
     title: "Three Guys Talking 2",
@@ -109,6 +126,7 @@ export const books: Book[] = [
     rating: { stars: 4.7, note: "4.7 on Amazon" },
   },
   {
+    collection: "trilogy",
     slug: "the-romantic-tragedy",
     order: 3,
     title: "Three Guys Talking 3",
@@ -145,6 +163,51 @@ export const books: Book[] = [
     rating: { stars: 5.0, note: "5.0 on Amazon" },
   },
 ];
+
+export const standaloneBooks: StandaloneBook[] = [
+  {
+    collection: "standalone",
+    slug: "struggling-with-our-struggles",
+    title: "Struggling With Our Struggles",
+    subtitle: "Muslim Families in the West",
+    accent: "gold",
+    cover: "/images/covers/struggling-with-our-struggles.jpg",
+    coverAlt:
+      "Book cover for Struggling With Our Struggles, featuring the Kaaba framed within the Freedom Wall at the World War II Memorial.",
+    publishedYear: 2026,
+    publishedDate: "2026-09-02",
+    pages: 92,
+    publisher: "Blissful Gardenz Inc",
+    isbn13: "979-8996224913",
+    synopsis: [
+      "Life brings unavoidable trials. For Muslim families, the deeper question is how to meet them while seeking lasting success in the hereafter and appreciating the gifts of the present life.",
+      "At a retreat hosted by the fictional Islamic Center of Riverdale, community members examine the pressures facing Muslim men, women, and children in the United States.",
+      "Their conversations turn toward faith, marriage, parenting, social identity, and the shared work of building a healthier community.",
+    ],
+    themes:
+      "A community-centered novel about faith, family life, belonging, and the choices people make under pressure.",
+    formats: {
+      paperback: {
+        price: "$14.99",
+        url: "https://a.co/d/05fvuaYE",
+      },
+      kindle: {
+        price: "$2.99",
+        url: "https://www.amazon.com/dp/B0HHGKQGQ2",
+      },
+    },
+  },
+];
+
+export const books: Book[] = [...standaloneBooks, ...trilogyBooks];
+
+export function getBookDisplayTitle(book: Book): string {
+  return book.collection === "trilogy" ? book.subtitle : book.title;
+}
+
+export function getBookFullTitle(book: Book): string {
+  return `${book.title}: ${book.subtitle}`;
+}
 
 export function getBook(slug: string): Book | undefined {
   return books.find((b) => b.slug === slug);

@@ -4,17 +4,15 @@ import { TrilogyShelf } from "@/components/home/trilogy-shelf";
 import { BookBand } from "@/components/books/book-band";
 import { Reveal, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow } from "@/components/garden/primitives";
-import { books, series } from "@/content/books";
+import { series, standaloneBooks, trilogyBooks } from "@/content/books";
 
-// /books hub: the trilogy on its shelf, the story behind it, the reading
-// order, then one full-width band per book. Layout families: centered hero,
-// left-asymmetric split, bordered strip, alternating bands (band two mirrored
-// so no more than two share a pattern).
+// /books hub: the trilogy on its shelf, the latest standalone release, the
+// story behind the trilogy, then one full-width band per trilogy book.
 
 export const metadata: Metadata = {
-  title: "The Three Guys Talking Trilogy",
+  title: "Books by Dr. Adeyinka Laiyemo",
   description:
-    "The Three Guys Talking trilogy by Dr. Adeyinka Laiyemo: three seriocomic novels about marriage, fatherhood, and second chances, in paperback, Kindle, and audiobook.",
+    "Novels by Dr. Adeyinka Laiyemo, including Struggling With Our Struggles and the Three Guys Talking trilogy, available in paperback, Kindle, and audiobook.",
 };
 
 export default function BooksPage() {
@@ -46,7 +44,16 @@ export default function BooksPage() {
         </Reveal>
       </section>
 
-      {/* 2 · The story behind the trilogy + reading order */}
+      {/* 2 · The newest standalone release */}
+      {standaloneBooks.map((book) => (
+        <section key={book.slug} aria-labelledby={`band-title-${book.slug}`}>
+          <div className="py-24 sm:py-28">
+            <BookBand book={book} headingId={`band-title-${book.slug}`} flip />
+          </div>
+        </section>
+      ))}
+
+      {/* 3 · The story behind the trilogy + reading order */}
       <section aria-labelledby="story-title" className="bg-raised">
         <div className="mx-auto max-w-7xl px-5 py-24 sm:py-32 lg:px-8">
           <HorizonDraw className="mb-14" />
@@ -73,7 +80,7 @@ export default function BooksPage() {
             <div className="flex flex-col gap-8 rounded-[2rem] border border-hairline bg-surface px-8 py-8 md:flex-row md:items-center md:justify-between">
               <p className="text-display-sm max-w-[26ch] text-balance">{series.readingOrderNote}</p>
               <ol aria-label="Reading order" className="flex flex-col gap-3">
-                {books.map((book) => (
+                {trilogyBooks.map((book) => (
                   <li key={book.slug} className="flex items-baseline gap-4">
                     <span
                       aria-hidden
@@ -96,8 +103,8 @@ export default function BooksPage() {
         </div>
       </section>
 
-      {/* 3-5 · One band per book, alternating composition */}
-      {books.map((book, i) => (
+      {/* 4-6 · One band per trilogy book, alternating composition */}
+      {trilogyBooks.map((book, i) => (
         <section
           key={book.slug}
           aria-labelledby={`band-title-${book.order}`}

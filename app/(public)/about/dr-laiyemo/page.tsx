@@ -4,7 +4,7 @@ import { Reveal, RevealItem, HorizonDraw } from "@/components/garden/reveal";
 import { Eyebrow, SectionHeading, PetalCard } from "@/components/garden/primitives";
 import { BloomButton, QuietButton } from "@/components/garden/buttons";
 import { brand } from "@/content/site";
-import { books, series } from "@/content/books";
+import { series, trilogyBooks } from "@/content/books";
 
 export const metadata: Metadata = {
   title: "Dr. Adeyinka (Musodiq) Laiyemo",
@@ -187,7 +187,7 @@ export default function DrLaiyemoPage() {
             </div>
             <Reveal className="lg:col-span-6">
               <div className="flex items-end justify-center">
-                {books.map((book) => (
+                {trilogyBooks.map((book) => (
                   <Image
                     key={book.slug}
                     src={book.cover}
